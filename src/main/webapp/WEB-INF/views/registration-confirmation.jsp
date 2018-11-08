@@ -18,6 +18,8 @@ Email: ${userRegistration.email}
 <br><br>
 Role: ${userRegistration.role}
 
+<br><br>
+
 <input type="button" onclick="location.href='/'" value="Home">
 </body>
 </html>

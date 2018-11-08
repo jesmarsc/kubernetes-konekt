@@ -31,4 +31,32 @@ public class UserAccountDAOImpl implements UserAccountDAO {
 		return userAccounts;
 	}
 
+	@Override
+	@Transactional
+	public boolean saveUser(UserAccount newUser) {
+		
+		// Getting a list of all users with email of new user
+		// If any exist user is already using email do not create
+		// new account with same email.
+		Session currentSession = factory.unwrap(Session.class);
+		Query<UserAccount> theQuery = currentSession.createQuery("FROM UserAccount where email = :email ", UserAccount.class);
+		theQuery.setParameter("email", newUser.getEmail());
+		List<UserAccount> matchingEmails = theQuery.getResultList();
+		
+		System.out.println(matchingEmails.isEmpty());
+		
+		if(!matchingEmails.isEmpty()) {
+			
+			// user already exist!
+			return false;
+		}
+		
+
+		
+		currentSession.save(newUser);
+		//successfully added user to list
+		return true;
+		
+	}
+
 }
