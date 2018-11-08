@@ -6,4 +6,6 @@ import com.kubernetes.konekt.entity.UserAccount;
 
 public interface UserAccountDAO {
 	public List<UserAccount> getUserAccounts();
+
+	public boolean saveUser(UserAccount newUser);
 }

@@ -4,6 +4,7 @@ package com.kubernetes.konekt.controller;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,12 +15,23 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.kubernetes.konekt.dao.UserAccountDAO;
+import com.kubernetes.konekt.entity.UserAccount;
 import com.kubernetes.konekt.entity.UserRegistration;
 
 
 @Controller
 public class RegisterController {
-
+	
+	@Autowired
+	private UserAccountDAO userDAO;
+	
+	
+	
+	
+	
+	
+	
 	// add an initbinder to convert trim inputs to strings
 	// remove leading and trailing whitespace
 	// resolve issue for validation
@@ -83,9 +95,24 @@ public class RegisterController {
 		}
 		
 		// else
-		// save data to database
-		// direct user to confirmation page or welcome/dashboard page
 		
+
+		// create user object
+		UserAccount newAccount = new UserAccount();
+		
+		//translating registration information into user information
+		newAccount.getUserFromRegistration(newUser);
+		
+		// save data to database
+		boolean didAdd = userDAO.saveUser(newAccount);
+		
+		if(!didAdd) {
+			String message = "Account with email provided already exist";
+			model.addAttribute("message", message);
+			return "registration-form";	
+		}
+		
+		// direct user to confirmation page or welcome/dashboard page
 		return "registration-confirmation";
 	}
 }

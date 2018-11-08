@@ -81,7 +81,19 @@ public class UserAccount {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
+	
+	public void getUserFromRegistration(UserRegistration newUser) {
+		this.firstName 	= newUser.getFirstName();
+		this.lastName 	= newUser.getLastName();
+		this.role 		= newUser.getRole();
+		this.email 		= newUser.getEmail();
+		// when security is added we'll need to apply 
+		// BCrypt to the password and store the hash of the password
+		// for now the password is being stored directly.
+		this.password	= newUser.getPassword();
+	}
+	
 	@Override
 	public String toString() {
 		return "UserAccount [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", role=" + role
