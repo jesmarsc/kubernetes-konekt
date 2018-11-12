@@ -16,7 +16,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	
 	<!-- Bootstrap CSS -->
-	<link href="/bootstrap.min.css" rel="stylesheet"/>
+	<link rel="stylesheet"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
 	
 	<title>Registration</title>
 </head>
@@ -31,9 +32,15 @@
 	</h1>
 	
 	<div class="container-fluid col-sm-12 col-md-6">
-		<form:form action="accountConfirmation" modelAttribute="userRegistration">
+		<form:form action="accountConfirmation" modelAttribute="registrationForm">
 			<div class="form-group row">
-				<label>First Name: </label>
+				<label> Username: </label>
+				<form:input class="form-control" path="userName" />
+				<form:errors path="firstName" cssClass="error" />
+			</div>
+			
+			<div class="form-group row">
+				<label> First Name: </label>
 				<form:input class="form-control" path="firstName" />
 				<form:errors path="firstName" cssClass="error" />
 			</div>
@@ -45,9 +52,9 @@
 			</div>
 
 			<div class="form-group row">
-				<label> User Role:  </label>
+				<label> Role:  </label>
 				<form:select class="form-control" path="role">
-					<form:options items="${userRegistration.accountRoles}" />
+					<form:options items="${registrationForm.accountRoles}" />
 				</form:select>
 				<form:errors path="role" cssClass="error" />
 			</div>
@@ -59,7 +66,7 @@
 			</div>
 
 			<div class="form-group row">
-				<label> Confirm Email:</label>
+				<label> Confirm Email: </label>
 				<form:input class="form-control" path="confirmEmail" />
 				<form:errors path="confirmEmail" cssClass="error" />
 			</div>

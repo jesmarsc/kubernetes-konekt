@@ -7,24 +7,24 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.kubernetes.konekt.dao.UserAccountDAO;
-import com.kubernetes.konekt.entity.UserAccount;
+import com.kubernetes.konekt.entity.Account;
+import com.kubernetes.konekt.service.AccountService;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class AccountListController {
 
 	@Autowired
-	private UserAccountDAO userDAO;
+	private AccountService accountService;
 	
 	@RequestMapping("/list")
 	public String listUserAccounts(Model theModel) {
 		
-		List<UserAccount> theUsers = userDAO.getUserAccounts();
+		List<Account> accounts = accountService.getAccounts();
 		
-		theModel.addAttribute("userAccounts", theUsers);
+		theModel.addAttribute("accounts", accounts);
 		
-		return "list-users";
+		return "list-accounts";
 	}
 	
 }
