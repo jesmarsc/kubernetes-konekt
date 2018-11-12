@@ -9,9 +9,9 @@
 	
 	<!-- reference our style sheet -->
 
-	<link type="text/css"
-		  rel="stylesheet"
-		  href="${pageContext.request.contextPath}/resources/css/style.css" />
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
 
 </head>
 
@@ -37,7 +37,7 @@
 				</tr>
 				
 				<!-- loop over and print our customers -->
-				<c:forEach var="tempUser" items="${userAccounts}">
+				<c:forEach var="tempUser" items="${accounts}">
 				
 					<tr>
 						<td> ${tempUser.firstName} </td>
@@ -57,12 +57,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-

@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page session="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <!-- Begin HTML Document -->
 <!DOCTYPE html>
@@ -11,7 +12,8 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- Bootstrap CSS -->
-<link href="/bootstrap.min.css" rel="stylesheet" />
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
 
 <!-- Title at the Tab of the Browser -->
 <title>Provider Dashboard</title>
@@ -32,7 +34,7 @@
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav ml-auto">
 
-					<li class="nav-item"><a class="nav-link" href="#"> Home </a></li>
+					<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/"> Home </a></li>
 
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
@@ -50,8 +52,11 @@
 					<li class="nav-item"><a class="nav-link" href="#">Profile</a>
 					</li>
 
-					<li class="nav-item"><a class="nav-link"
-						href="<c:url value = '/j_spring_security_logout'/> ">Logout </a></li>
+					<li class="nav-item">
+						<form:form action="${pageContext.request.contextPath}/logout" method="POST">
+							<input type="submit" value="Logout" class="btn btn-primary"/>
+						</form:form>
+					</li>
 
 				</ul>
 			</div>
