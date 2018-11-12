@@ -16,6 +16,7 @@
 - User/Provider dashboard .jsp frontend
 - Register form .jsp frontend
 - Read ~~LOCAL~~ Database Table
+- LIMITED DB CONNECTIONS - ONLY 1 PERSON CAN TEST AT A TIME, NEED UPGRADE
 
 ### TODO:
 - ~~Setup PWS MySQL Database~~
