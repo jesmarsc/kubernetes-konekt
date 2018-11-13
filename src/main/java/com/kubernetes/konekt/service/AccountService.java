@@ -14,4 +14,6 @@ public interface AccountService extends UserDetailsService {
 	public Account findByUserName(String userName);
 	
 	public boolean saveAccount(RegistrationForm form);
+
+	public Account getAccount(int accountId);
 }

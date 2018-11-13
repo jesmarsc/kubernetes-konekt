@@ -11,4 +11,6 @@ public interface AccountDAO {
 	public Account findByUserName(String userName);
 
 	public boolean saveAccount(Account newAccount);
+
+	Account getAccount(int accountId);
 }

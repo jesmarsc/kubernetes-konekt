@@ -70,42 +70,22 @@
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th>Cluster Name</th>
 					<th>Cluster IP</th>
 					<th>Options</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>Best cluster</td>
-					<td>125.114.112.1</td>
-					<td>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							1</button>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							2</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Bad cluster</td>
-					<td>128.111.22.31</td>
-					<td>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							1</button>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							2</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Okay cluster</td>
-					<td>123.456.78.9</td>
-					<td>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							1</button>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							2</button>
-					</td>
-				</tr>
+				<c:forEach var="cluster" items="${currentAccount.clusters}">
+					<tr>
+						<td>${cluster.ip}</td>
+						<td>
+							<button type="button" class="btn btn-secondary btn-sm">Option
+								1</button>
+							<button type="button" class="btn btn-secondary btn-sm">Option
+								2</button>
+						</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 		<!-- End of Table -->

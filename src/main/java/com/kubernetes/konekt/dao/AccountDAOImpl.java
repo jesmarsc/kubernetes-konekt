@@ -29,6 +29,21 @@ public class AccountDAOImpl implements AccountDAO {
 		return accounts;
 	}
 	
+	
+	
+	@Override
+	public Account getAccount(int accountId) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Account> theQuery = 
+				currentSession.createQuery("FROM Account WHERE id = :id", Account.class);
+				theQuery.setParameter("id", accountId);
+		Account account = theQuery.getSingleResult();
+		
+		return account;
+	}
+	
+	
 	@Override
 	public Account findByUserName(String userName) {
 		Session currentSession = factory.unwrap(Session.class);

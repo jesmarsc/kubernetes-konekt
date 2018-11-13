@@ -121,32 +121,21 @@
 						<thead>
 							<tr>
 								<th>Container</th>
-								<th>Uploaded</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<th scope="row">
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input"
-											id="checkContainer1"> <label
-											class="custom-control-label" for="checkContainer1">Container
-											1</label>
-									</div>
-								</th>
-								<td>11/05/2018 1:49PM</td>
-							</tr>
-							<tr>
-								<th scope="row">
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input"
-											id="checkContainer2"> <label
-											class="custom-control-label" for="checkContainer2">Container
-											2</label>
-									</div>
-								</th>
-								<td>11/15/2018 11:30PM</td>
-							</tr>
+							<c:forEach var="container" items="${currentAccount.containers}">
+								<tr>
+									<th scope="row">
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input"
+												id="${container.containerName}"> <label
+												class="custom-control-label" for="${container.containerName}">
+												${container.containerName} </label>
+										</div>
+									</th>
+								</tr>
+							</c:forEach>
 						</tbody>
 					</table>
 				</div>
@@ -162,24 +151,18 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<th scope="row">
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input"
-											id="checkCluster1"> <label
-											class="custom-control-label" for="checkCluster1">111.222.111.222</label>
-									</div>
-								</th>
-							</tr>
-							<tr>
-								<th scope="row">
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input"
-											id="checkCluster2"> <label
-											class="custom-control-label" for="checkCluster2">123.193.130.129</label>
-									</div>
-								</th>
-							</tr>
+							<c:forEach var="cluster" items="${availableClusters}">
+								<tr>
+									<th scope="row">
+										<div class="custom-control custom-checkbox">
+											<input type="checkbox" class="custom-control-input"
+												id="${cluster.ip}"> <label
+												class="custom-control-label" for="${cluster.ip}">
+												${cluster.ip} </label>
+										</div>
+									</th>
+								</tr>
+							</c:forEach>
 						</tbody>
 					</table>
 
