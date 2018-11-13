@@ -75,7 +75,7 @@ public class RegisterController {
 			model.addAttribute("message", message);
 			return "registration-form";	
 		}
-		
+		model.addAttribute("userRegistration", form);
 		return "registration-confirmation";
 	}
 }

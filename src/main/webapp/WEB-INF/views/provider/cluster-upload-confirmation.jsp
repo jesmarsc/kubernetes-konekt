@@ -1,12 +1,14 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html>
 <head>
-	<title>Home</title>
-	<!-- Bootstrap CSS -->
+<meta charset="UTF-8">
+<title>Cluster Upload Confirmation</title>
+<!-- Bootstrap CSS -->
     	<link rel="stylesheet" 
     		href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
-	
+
 </head>
 <body>
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
@@ -29,14 +31,11 @@
 		</nav>
 	</div>
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
-		<h1>Account Created!</h1>
-		<br>
-		<br> Name: ${userRegistration.firstName}
-			${userRegistration.lastName} <br>
-		<br> Email: ${userRegistration.email} <br>
-		<br> Role: ${userRegistration.role} <br>
-		<br>
+		<div class="jumbotron">
+			<h1 class="display-3">Upload Successful</h1>
+			<p class="lead">You have successfully uploaded cluster with IP
+				address: ${clusterIp}</p>
+		</div>
 	</div>
-
 </body>
 </html>

@@ -16,19 +16,6 @@ public class ClusterDAOImpl implements ClusterDAO {
 	
 	@Autowired
 	private EntityManager factory;
-	
-	@Override
-	public List<Cluster> getClusters(int providerId) {
-		Session currentSession = factory.unwrap(Session.class);
-		
-		Query<Cluster> theQuery = 
-				currentSession.createQuery("FROM Cluster WHERE ", Cluster.class);
-		
-		List<Cluster> clusters = theQuery.getResultList();
-		
-		return clusters;
-
-	}
 
 	@Override
 	public List<Cluster> getAllClusters() {
@@ -40,6 +27,22 @@ public class ClusterDAOImpl implements ClusterDAO {
 		List<Cluster> clusters = theQuery.getResultList();
 		
 		return clusters;
+	}
+
+	@Override
+	public boolean doesClusterExist(String ClusterIp) {
+Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Cluster> theQuery = 
+				currentSession.createQuery("FROM Cluster WHERE ip = :ip ", Cluster.class);
+		theQuery.setParameter("ip",ClusterIp);
+		List<Cluster> clusters = theQuery.getResultList();
+		
+		if(!clusters.isEmpty()) {
+			return true;
+		}
+	
+		return false;
 	}
 
 }

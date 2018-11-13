@@ -20,7 +20,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="user")
 public class Account {
-		
+	
 	@Id
  	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")

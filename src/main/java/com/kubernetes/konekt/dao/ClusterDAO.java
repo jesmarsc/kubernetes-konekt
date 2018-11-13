@@ -6,8 +6,9 @@ import com.kubernetes.konekt.entity.Cluster;
 
 public interface ClusterDAO {
 	
-	public List<Cluster> getClusters(int providerId);
+
 	public List<Cluster> getAllClusters();
+	public boolean doesClusterExist(String ClusterIp);
 
 
 }

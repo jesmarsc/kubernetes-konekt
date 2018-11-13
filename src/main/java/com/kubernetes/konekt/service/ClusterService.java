@@ -7,7 +7,8 @@ import com.kubernetes.konekt.entity.Cluster;
 public interface ClusterService  {
 	
 	
-	public List<Cluster> getClusters(int providerId);
+	public boolean doesClusterExist(String ClusterIp);
+
 	public List<Cluster> getAllClusters();
 
 

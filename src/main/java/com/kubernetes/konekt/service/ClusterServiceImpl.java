@@ -19,18 +19,16 @@ public class ClusterServiceImpl implements ClusterService{
 
 	@Override
 	@Transactional
-	public List<Cluster> getClusters(int providerId) {
-		
-		return clusterDAO.getClusters(providerId);
-
-	}
-	
-	@Override
-	@Transactional
 	public List<Cluster> getAllClusters() {
 		
 		return clusterDAO.getAllClusters();
 
+	}
+
+
+	@Override
+	public boolean doesClusterExist(String ClusterIp) {
+		return clusterDAO.doesClusterExist(ClusterIp);
 	}
 
 

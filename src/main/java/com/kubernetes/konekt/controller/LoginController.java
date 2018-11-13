@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
+import com.kubernetes.konekt.form.UploadClusterForm;
+import com.kubernetes.konekt.form.UploadContainerToClusterForm;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 
@@ -24,12 +26,14 @@ public class LoginController {
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
 		
+		UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
+		model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
+		
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		
 		List<Cluster> availableClusters = clusterService.getAllClusters();
-		System.out.println("\n\n\n\n" + availableClusters + "\n\n\n\n");
 		model.addAttribute("availableClusters", availableClusters);
 		
 		return "user/user-dashboard";
@@ -42,6 +46,8 @@ public class LoginController {
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		
+		UploadClusterForm newClusterForm = new UploadClusterForm();
+		model.addAttribute("newClusterForm", newClusterForm);
 
 		return "provider/provider-dashboard";
 	}

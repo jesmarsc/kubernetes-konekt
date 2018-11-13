@@ -100,75 +100,42 @@
 
 	<!--  probably will want to wrap the next three containers into with <form:form>...</form:form> -->
 
-	<form:form
-		class=" border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10"
-		action="UploadConfirmation">
-
-		<!-- input field browse/Upload button for 
+	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-		<div class="custom-file  mx-4 my-4 col-sm-10 col-md-10 col-lg-10">
-			<input type="file" class="custom-file-input" id="customFile">
-			<label class="custom-file-label" for="customFile">Choose
-				Container</label>
-		</div>
-		<!-- Uploaded containers -->
-		<div class="form-row">
-			<div class="col">
-				<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
-					<table class="table table-hover table-bordered">
-						<caption>Uploaded Containers</caption>
-						<thead>
-							<tr>
-								<th>Container</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="container" items="${currentAccount.containers}">
-								<tr>
-									<th scope="row">
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input"
-												id="${container.containerName}"> <label
-												class="custom-control-label" for="${container.containerName}">
-												${container.containerName} </label>
-										</div>
-									</th>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<!-- table Available cluster  -->
-			<div class="col">
-				<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
-					<table class="table table-hover table-bordered">
-						<caption>Available Clusters</caption>
-						<thead>
-							<tr>
-								<th>Clusters</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="cluster" items="${availableClusters}">
-								<tr>
-									<th scope="row">
-										<div class="custom-control custom-checkbox">
-											<input type="checkbox" class="custom-control-input"
-												id="${cluster.ip}"> <label
-												class="custom-control-label" for="${cluster.ip}">
-												${cluster.ip} </label>
-										</div>
-									</th>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table>
+	<div class="custom-file  mx-4 my-4 col-sm-10 col-md-10 col-lg-10">
+		<input type="file" class="custom-file-input" id="customFile">
+		<label class="custom-file-label" for="customFile">Upload New
+			Container</label>
+	</div>
 
-				</div>
-			</div>
+
+	<form:form
+		class=" border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10"
+		action="uploadContainerToClusterConfirmation" modelAttribute="uploadContainerClusterForm">
+
+
+		<!-- Uploaded containers -->
+
+
+		<div class="form-group row">
+			<label> Select An Uploaded Containers: </label>
+			<form:select class="form-control" path="containerName">
+				<form:options items="${currentAccount.containers}" />
+			</form:select>
+			<form:errors path="containerName" cssClass="error" />
 		</div>
+
+			<!-- table Available cluster  -->
+
+		<div class="form-group row">
+			<label> Select An Available Cluster: </label>
+			<form:select class="form-control" path="clusterIp">
+				<form:options items="${availableClusters}" />
+			</form:select>
+			<form:errors path="clusterIp" cssClass="error" />
+		</div>
+
 		<div class="form-group mx-4 my-4">
 			<input class="btn btn-primary text-center" type="submit"
 				value="Submit" />

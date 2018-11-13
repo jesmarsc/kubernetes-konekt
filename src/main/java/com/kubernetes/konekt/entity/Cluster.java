@@ -32,6 +32,10 @@ public class Cluster {
 
 	public Cluster() {
 	}
+	
+	public Cluster(String ip) {
+		this.ip = ip;
+	}
 
 
 
@@ -73,7 +77,7 @@ public class Cluster {
 
 	@Override
 	public String toString() {
-		return "Cluster [id=" + id + ", ip=" + ip + "]";
+		return ip;
 	}
 
 

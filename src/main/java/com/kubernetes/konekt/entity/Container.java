@@ -68,7 +68,7 @@ public class Container {
 
 	@Override
 	public String toString() {
-		return "Container [id=" + id + ", containerName=" + containerName + ", containerPath=" + containerPath + "]";
+		return containerName;
 	}
 	
 	

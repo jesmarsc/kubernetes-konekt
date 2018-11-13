@@ -20,6 +20,10 @@
 
 </head>
 <body>
+	<h1>
+		<font color="red">${message} </font>
+		<!-- use to let user know they made an error. -->
+	</h1>
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -93,19 +97,20 @@
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
 More than likely we can simplify it by sending email or uploading a file top the cluster -->
-		<h3>Upload New Cluster</h3>
-		<form action="#">
+		<h3>Upload New Cluster IP</h3>
+		<form:form action="uploadClusterConfirmation" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
-			<div class="form-group">
-				<label for="cluster">IP address:</label> <input type="text"
-					class="form-control" id="cluster">
+			<div class="form-group row">
+				<label> IP Address: </label>
+				<form:input class="form-control" path="clusterIp" />
+				<form:errors path="clusterIp" cssClass="error" />
 			</div>
-		</form>
-
-
-		<!-- Submit Button -->
-		<a href="#"><button type="button" class="btn btn-info btn-lg">Submit</button></a>
-	</div>
+			<div class="form-group row">
+				<input class="btn btn-primary text-center" type="submit"
+					value="Submit" />
+			</div>
+		</form:form>
+</div>
 
 </body>
 </html>
