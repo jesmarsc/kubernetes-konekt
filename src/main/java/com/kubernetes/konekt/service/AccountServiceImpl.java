@@ -81,6 +81,11 @@ public class AccountServiceImpl implements AccountService {
 		return account;
 	}
 
+	@Override
+	public void updateAccountTables(Account uAccount) {
+		accountDAO.updateAccountTables(uAccount);
+	}
+
 
 	
 }

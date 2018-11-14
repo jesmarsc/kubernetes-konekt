@@ -10,6 +10,7 @@ public interface ClusterService  {
 	public boolean doesClusterExist(String ClusterIp);
 
 	public List<Cluster> getAllClusters();
-
+	
+	public boolean saveCluster(Cluster newCluster);
 
 }

@@ -83,5 +83,16 @@ public class AccountDAOImpl implements AccountDAO {
 
 
 
+	@Override
+	public void updateAccountTables(Account uAccount) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		currentSession.saveOrUpdate(uAccount) ;
+	
+	}
+	
+	
+
+
 
 }

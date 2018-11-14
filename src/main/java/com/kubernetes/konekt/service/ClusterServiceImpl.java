@@ -32,5 +32,12 @@ public class ClusterServiceImpl implements ClusterService{
 	}
 
 
+	@Override
+	public boolean saveCluster(Cluster newCluster) {
+		
+		return clusterDAO.saveCluster(newCluster);
+	}
+
+
 	
 }

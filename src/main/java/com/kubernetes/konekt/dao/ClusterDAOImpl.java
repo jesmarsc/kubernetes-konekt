@@ -45,4 +45,24 @@ Session currentSession = factory.unwrap(Session.class);
 		return false;
 	}
 
+	@Override
+	public boolean saveCluster(Cluster newCluster) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Cluster> theQuery = 
+				currentSession.createQuery("FROM Cluster where ip = :ip ", Cluster.class);
+		
+		theQuery.setParameter("ip", newCluster.getId());
+		
+		List<Cluster> matchingClusterIps = theQuery.getResultList();
+		
+		if(!matchingClusterIps.isEmpty()) {
+			return false;
+		}
+		
+		currentSession.save(newCluster);
+		return true;
+
+	}
+
 }

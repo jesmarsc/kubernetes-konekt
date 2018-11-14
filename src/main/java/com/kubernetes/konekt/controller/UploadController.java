@@ -1,7 +1,5 @@
 package com.kubernetes.konekt.controller;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ public class UploadController {
 	@Autowired
 	AccountService accountService;
 	@Autowired
-	ClusterService clusterSevice;
+	ClusterService clusterService;
 	
 	@RequestMapping(value = "/uploadContainerToClusterConfirmation")
 	public String uploadContainerToCluster( @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
@@ -42,23 +40,22 @@ public class UploadController {
 			return "provider/provider-dashboard";
 		}
 		
-		if(clusterSevice.doesClusterExist(uploadClusterForm.getClusterIp())){
-			System.out.println("\n\n\n\n ip already exist \n\n\n\n");
+		// create new cluster from information in form
+		Cluster newCluster = new Cluster(uploadClusterForm.getClusterIp());	
+
+		
+		// push new cluster to cluster table
+		if(!clusterService.saveCluster(newCluster)){
 			String message = "Invalid IP address. IP address is already in the database";
 			model.addAttribute("message",message);
 			return "redirect:/provider";
 		}
+		
+		// get current user 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
-		
-		Cluster newCluster = new Cluster(uploadClusterForm.getClusterIp());
-		System.out.println("\n\n\n\\n\n\n"+"|" + newCluster + "|" + "\n\n\n\n\n");
+		// add new cluster to current user so 
 		currentAccount.addCluster(newCluster);
-		
-		// For some reason if database is not accessed after cluster is added to 
-		// user the cluster is not saved to the user.
-		List<Account> accounts = accountService.getAccounts();
-		accounts.contains(currentAccount);
 		
 		model.addAttribute("clusterIp", uploadClusterForm.getClusterIp());
 		return "provider/cluster-upload-confirmation";
