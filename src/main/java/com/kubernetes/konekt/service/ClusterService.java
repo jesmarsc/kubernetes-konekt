@@ -12,5 +12,9 @@ public interface ClusterService  {
 	public List<Cluster> getAllClusters();
 	
 	public boolean saveCluster(Cluster newCluster);
+	
+	public Cluster getCluster(String ClusterIp);
+	
+	public void deleteCluster(Cluster cluster);
 
 }

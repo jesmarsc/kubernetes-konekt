@@ -80,13 +80,15 @@
 			</thead>
 			<tbody>
 				<c:forEach var="cluster" items="${currentAccount.clusters}">
+					<c:url var="removeLink" value="deleteConfirmation">
+						<c:param name="clusterIp" value="${cluster.ip}" />
+					</c:url>
+					
 					<tr>
 						<td>${cluster.ip}</td>
 						<td>
-							<button type="button" class="btn btn-secondary btn-sm">Option
-								1</button>
-							<button type="button" class="btn btn-secondary btn-sm">Option
-								2</button>
+							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
+							<a class="btn btn-primary" href="#" role="button">another option</a>
 						</td>
 					</tr>
 				</c:forEach>

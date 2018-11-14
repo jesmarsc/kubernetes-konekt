@@ -27,15 +27,30 @@ public class ClusterServiceImpl implements ClusterService{
 
 
 	@Override
+	@Transactional
 	public boolean doesClusterExist(String ClusterIp) {
 		return clusterDAO.doesClusterExist(ClusterIp);
 	}
 
 
 	@Override
+	@Transactional
 	public boolean saveCluster(Cluster newCluster) {
 		
 		return clusterDAO.saveCluster(newCluster);
+	}
+
+
+	@Override
+	public void deleteCluster(Cluster cluster) {
+		clusterDAO.deleteCluster(cluster);
+	}
+
+
+	@Override
+	public Cluster getCluster(String ClusterIp) {
+		
+		return clusterDAO.getCluster(ClusterIp);
 	}
 
 

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
@@ -33,6 +34,16 @@ public class UploadController {
 		return "user/container-to-cluster-upload-confirmation";
 	}
 	
+	
+	@RequestMapping(value = "/deleteConfirmation")
+	public String deleteCluster( @RequestParam("clusterIp") String clusterIp,Model model) {
+		
+		Cluster TBDeletedCluster = clusterService.getCluster(clusterIp);
+		clusterService.deleteCluster(TBDeletedCluster);
+		model.addAttribute("clusterIp", clusterIp);
+		return "provider/cluster-deleted-confirmation";
+	}
+	
 	@RequestMapping(value = "/uploadClusterConfirmation")
 	public String uploadNewCluster(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm,BindingResult theBindingResult, Model model) {
 		
@@ -43,7 +54,11 @@ public class UploadController {
 		// create new cluster from information in form
 		Cluster newCluster = new Cluster(uploadClusterForm.getClusterIp());	
 
-		
+		// get current user 
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		// add new cluster to current user so 
+		currentAccount.addCluster(newCluster);
 		// push new cluster to cluster table
 		if(!clusterService.saveCluster(newCluster)){
 			String message = "Invalid IP address. IP address is already in the database";
@@ -51,11 +66,7 @@ public class UploadController {
 			return "redirect:/provider";
 		}
 		
-		// get current user 
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Account currentAccount = accountService.findByUserName(username);
-		// add new cluster to current user so 
-		currentAccount.addCluster(newCluster);
+
 		
 		model.addAttribute("clusterIp", uploadClusterForm.getClusterIp());
 		return "provider/cluster-upload-confirmation";
