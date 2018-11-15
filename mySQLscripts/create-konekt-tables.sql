@@ -1,11 +1,8 @@
-#DROP DATABASE IF EXISTS `spring_security_custom_user_demo`;
-#CREATE DATABASE  IF NOT EXISTS `spring_security_custom_user_demo`;
-USE `spring_security_custom_user_demo`;
 
 --
 -- Table structure for table `user`
 --
-
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
@@ -99,10 +96,12 @@ CREATE TABLE `cluster_info` (
   
   CONSTRAINT `FK_PROVIDER_ACCOUNT` 
   FOREIGN KEY (`provider_account_id`) 
-  REFERENCES `user_account` (`id`) 
+  REFERENCES `user` (`id`) 
   ON DELETE CASCADE
   ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `container_info`;
 
 CREATE TABLE `container_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -118,13 +117,13 @@ CREATE TABLE `container_info` (
   
   CONSTRAINT `FK_USER_ACCOUNT` 
   FOREIGN KEY (`user_account_id`) 
-  REFERENCES `user_account` (`id`) 
+  REFERENCES `user` (`id`) 
   ON DELETE CASCADE
   ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 
-SET FOREIGN_KEY_CHECKS = 1;
+
 
 INSERT INTO `users_roles` (user_id,role_id)
 VALUES 
@@ -132,4 +131,6 @@ VALUES
 (2, 1),
 (2, 2),
 (3, 1),
-(3, 3)
+(3, 3);
+
+SET FOREIGN_KEY_CHECKS = 1;

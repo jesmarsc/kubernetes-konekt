@@ -39,9 +39,21 @@ public class UploadController {
 	
 	@RequestMapping(value = "/uploadContainerToClusterConfirmation")
 	public String uploadContainerToCluster( @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
-		
-		model.addAttribute("containerName", uploadForm.getContainerName());
-		model.addAttribute("clusterIp", uploadForm.getClusterIp());
+		String titleMessage;
+		String bodyMessage;
+		//if cluster ip or container name fields are empty throw error
+		if(uploadForm.getClusterIp().isEmpty() || uploadForm.getContainerName().isEmpty()) {
+			titleMessage = " Upload Failed";
+			bodyMessage = "Cluster or Container was not selected";
+			model.addAttribute("bodyMessage", bodyMessage);
+			model.addAttribute("titleMessage",titleMessage);
+			return "user/container-to-cluster-upload-confirmation";
+		}
+		titleMessage = "Uploaded Successfully";
+		bodyMessage = "You have successfully uploaded " + uploadForm.getContainerName()  + 
+				" to cluster with IP address:" +  uploadForm.getClusterIp();
+		model.addAttribute("titleMessage", titleMessage);
+		model.addAttribute("bodyMessage",bodyMessage);
 		return "user/container-to-cluster-upload-confirmation";
 	}
 	

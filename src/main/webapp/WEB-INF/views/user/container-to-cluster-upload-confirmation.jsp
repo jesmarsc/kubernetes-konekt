@@ -32,7 +32,7 @@
 	</div>
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 		<div class="jumbotron">
-			<h1 class="display-3">Upload Successful</h1>
+			<h1 class="display-3">${status}l</h1>
 			<p class="lead">You have successfully uploaded ${containerName}
 				to cluster with IP address: ${clusterIp}</p>
 		</div>
