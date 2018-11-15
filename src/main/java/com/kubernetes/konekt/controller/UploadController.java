@@ -84,6 +84,49 @@ public class UploadController {
 	}
 	
 	
+	@RequestMapping(value = "/deleteContainerConfirmation")
+	public String deleteContainer( @RequestParam("containerName")String containerName, Model model) {
+		
+		String titleMessage;
+		String bodyMessage;
+		
+		try {
+		// get current user 
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		
+		// convert account id to string
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("");
+		stringBuilder.append(currentAccount.getId());
+		String stringId = stringBuilder.toString();
+		
+		//Path for container to be deleted
+	    String UPLOADED_CONTAINER_PATH = "containers/" + stringId + "/" + containerName;
+        Path path = Paths.get(UPLOADED_CONTAINER_PATH);
+        
+		//delete container from container folder add userid to path
+		Files.delete(path);
+		
+		// delete container information from database
+		Container containerTBD = containerService.getContainerByContainerPath(UPLOADED_CONTAINER_PATH);
+		containerService.deleteContainer(containerTBD);
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			titleMessage = "Container Delete Failed";
+            bodyMessage = "The container: '" + containerName + "' could not be deleted. Container not found in system";
+            model.addAttribute("titleMessage", titleMessage);
+            model.addAttribute("bodyMessage", bodyMessage);
+            return "user/container-delete-confirmation";
+		}
+		titleMessage = "Container Deleted Successfully";
+        bodyMessage = "The container: '" + containerName + "' was successfully deleted from system ";
+        model.addAttribute("titleMessage", titleMessage);
+        model.addAttribute("bodyMessage", bodyMessage);
+		return "user/container-delete-confirmation";
+	}
+	
 	@RequestMapping(value = "/uploadContainerConfirmation")
 	public String uploadContainer( @RequestParam("containerFile")MultipartFile file, Model model) {
 		
@@ -130,7 +173,7 @@ public class UploadController {
 			//Save the uploaded file to this folder
     	    String UPLOADED_CONTAINER_PATH = "containers/" + stringId + "/" + file.getOriginalFilename();
 
-    	    // write container to user folder
+    	    // write container content to user folder
             Path path = Paths.get(UPLOADED_CONTAINER_PATH);
             Files.write(path, bytes);
 

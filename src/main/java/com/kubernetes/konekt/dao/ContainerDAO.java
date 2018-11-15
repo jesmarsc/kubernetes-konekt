@@ -6,4 +6,10 @@ public interface ContainerDAO {
 	
 	public boolean saveContainer(Container newContainer);
 
+	public Container getContainerByContainerPath(String containerPath);
+
+	public void deleteContainer(Container containerTBD);
+	
+	
+
 }

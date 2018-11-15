@@ -20,5 +20,18 @@ public class ContainerServiceImpl implements ContainerService{
 		return containerDAO.saveContainer(newContainer);
 	}
 
+	@Override
+	@Transactional
+	public Container getContainerByContainerPath(String containerPath) {
+		return containerDAO.getContainerByContainerPath(containerPath);
+	}
+
+	@Override
+	@Transactional
+	public void deleteContainer(Container containerTBD) {
+		containerDAO.deleteContainer(containerTBD);
+		
+	}
+
 	
 }

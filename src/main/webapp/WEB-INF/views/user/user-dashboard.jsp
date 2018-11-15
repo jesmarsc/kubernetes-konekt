@@ -21,7 +21,7 @@
 		on the website.
 	-->
 <body>
-	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
@@ -97,36 +97,68 @@
 		</table>
 	</div>
 
+		<!-- Drop down menu to choose a container to delete -->
+	<div
+		class=" form-group container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+		<label> Delete A Container:</label>
+		<div class="dropdown">
+			<button class="btn btn-danger dropdown-toggle" type="button"
+				id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
+				aria-expanded="false">Select Container To Delete</button>
+			<div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				<c:forEach var="container" items="${currentAccount.containers}">
+					<c:url var="removeLink" value="deleteContainerConfirmation">
+						<c:param name="containerName" value="${container.containerName}" />
+					</c:url>
+					<a class=" dropdown-item btn btn-primary " href="${removeLink}"
+						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
+						role="button">Delete ${container.containerName} Container</a>
+				</c:forEach>
+			</div>
+		</div>
+	</div>
 
 	<!--  probably will want to wrap the next three containers into with <form:form>...</form:form> -->
 
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-	<div class="container custom-file  mx-4 my-4 col-sm-10 col-md-10 col-lg-10">
-		<form:form method="POST" action="/uploadContainerConfirmation"
-			enctype="multipart/form-data">
-			<input type="file" class="custom-file-input" id="customFile"
-				name="containerFile">
-			<div class="form-group mx-4 my-4">
-				<input class="btn btn-primary text-center" type="submit"
+
+	<div
+		class="  container  dropdown mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+		<form:form class="custom-file form-inline" method="POST"
+			action="/uploadContainerConfirmation" enctype="multipart/form-data">
+
+			<div class="form-group  mb-2">
+				<input type="file" class="custom-file-input" id="customFile"
+					name="containerFile">
+			</div>
+
+			<div class="form-group  mb-2">
+				<input class="btn btn-primary custom-file text-center" type="submit"
 					value="Upload" /> <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+
 		</form:form>
 	</div>
 
 
 
+
+	<!--  Form to upload -->
+<br></br>
+
+
 	<form:form
-		class=" border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10"
+		class=" border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12"
 		action="uploadContainerToClusterConfirmation" modelAttribute="uploadContainerClusterForm">
 
 
 		<!-- Uploaded containers -->
 
 
-		<div class="form-group row">
+		<div class="form-group row  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 			<label> Select An Uploaded Containers: </label>
 			<form:select class="form-control" path="containerName">
 				<form:options items="${currentAccount.containers}" />
@@ -136,7 +168,7 @@
 
 			<!-- table Available cluster  -->
 
-		<div class="form-group row">
+		<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 			<label> Select An Available Cluster: </label>
 			<form:select class="form-control" path="clusterIp">
 				<form:options items="${availableClusters}" />
