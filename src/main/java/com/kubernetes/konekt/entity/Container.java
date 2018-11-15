@@ -26,14 +26,20 @@ public class Container {
 	private String containerPath;
 	
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
-			 CascadeType.PERSIST, CascadeType.REFRESH})
+			 			CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="user_account_id")
 	private Account account;
 
 	public Container() {
 		
 	}
-
+	
+	public Container(String containerName, String containerPath) {
+		super();
+		this.containerName = containerName;
+		this.containerPath = containerPath;
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -70,7 +76,8 @@ public class Container {
 	public String toString() {
 		return containerName;
 	}
-	
+
+
 	
 	
 }

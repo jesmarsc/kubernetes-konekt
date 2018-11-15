@@ -79,7 +79,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="cluster" items="${currentAccount.clusters}">
-					<c:url var="removeLink" value="deleteConfirmation">
+					<c:url var="removeLink" value="deleteClusterConfirmation">
 						<c:param name="clusterIp" value="${cluster.ip}" />
 					</c:url>
 					

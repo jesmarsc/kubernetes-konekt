@@ -42,12 +42,14 @@ public class ClusterServiceImpl implements ClusterService{
 
 
 	@Override
+	@Transactional
 	public void deleteCluster(Cluster cluster) {
 		clusterDAO.deleteCluster(cluster);
 	}
 
 
 	@Override
+	@Transactional
 	public Cluster getCluster(String ClusterIp) {
 		
 		return clusterDAO.getCluster(ClusterIp);

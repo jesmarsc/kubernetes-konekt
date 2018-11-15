@@ -129,6 +129,17 @@ public class Account {
 		clusters.add(tempCluster);
 		tempCluster.setAccount(this);
 	}
+	
+	
+	public void addContainer(Container newContainer) {
+		
+		if(containers == null) {
+			containers = new ArrayList<Container>();
+		}
+		
+		containers.add(newContainer);
+		newContainer.setAccount(this);
+	}
 
 	public List<Container> getContainers() {
 		return containers;

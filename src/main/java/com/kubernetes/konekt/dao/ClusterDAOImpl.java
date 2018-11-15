@@ -4,9 +4,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -70,8 +68,8 @@ public class ClusterDAOImpl implements ClusterDAO {
 	@Override
 	public void deleteCluster(Cluster cluster) {
 		Session currentSession = factory.unwrap(Session.class);
-		Transaction currentTransaction = currentSession.getTransaction();
-		currentTransaction.begin();
+		//Transaction currentTransaction = currentSession.getTransaction();
+		//currentTransaction.begin();
 		
 		
 		// cannot specify query type because query created is native thats why warning is being surpressed
@@ -81,8 +79,8 @@ public class ClusterDAOImpl implements ClusterDAO {
 		
 		int result = query.executeUpdate();
 		System.out.println("\n\n\n\n\n" + result + "\n\n\n\n\n");
-		currentTransaction.commit();
-		
+		//currentTransaction.commit();
+
 		currentSession.close();
 	}
 

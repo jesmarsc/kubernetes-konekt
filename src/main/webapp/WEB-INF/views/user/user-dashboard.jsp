@@ -103,11 +103,19 @@
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-	<div class="custom-file  mx-4 my-4 col-sm-10 col-md-10 col-lg-10">
-		<input type="file" class="custom-file-input" id="customFile">
-		<label class="custom-file-label" for="customFile">Upload New
-			Container</label>
+	<div class="container custom-file  mx-4 my-4 col-sm-10 col-md-10 col-lg-10">
+		<form:form method="POST" action="/uploadContainerConfirmation"
+			enctype="multipart/form-data">
+			<input type="file" class="custom-file-input" id="customFile"
+				name="containerFile">
+			<div class="form-group mx-4 my-4">
+				<input class="btn btn-primary text-center" type="submit"
+					value="Upload" /> <label class="custom-file-label"
+					for="customFile">Upload New Container</label>
+			</div>
+		</form:form>
 	</div>
+
 
 
 	<form:form
