@@ -33,5 +33,12 @@ public class ContainerServiceImpl implements ContainerService{
 		
 	}
 
+	@Override
+	@Transactional
+	public boolean containerExists(String containerPath) {
+		containerDAO.containerExists(containerPath);
+		return false;
+	}
+
 	
 }

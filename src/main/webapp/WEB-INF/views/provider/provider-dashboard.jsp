@@ -20,10 +20,7 @@
 
 </head>
 <body>
-	<h1>
-		<font color="red">${message} </font>
-		<!-- use to let user know they made an error. -->
-	</h1>
+
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -65,6 +62,35 @@
 			</div>
 		</nav>
 	</div>
+
+<c:choose>
+    <c:when test="${not empty uploadClusterFailStatus}">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+        <div class="alert alert-danger" role="alert">
+		<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
+		</div>
+		</div>
+    </c:when>
+    <c:when test="${not empty uploadClusterSuccessStatus}">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+      	<div class="alert alert-success" role="alert">
+		<strong>${uploadClusterSuccessStatus}</strong> ${uploadClusterSuccessMessage}
+		</div>
+		</div>
+    </c:when>
+        <c:when test="${not empty deleteClusterSuccessStatus}">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+      	<div class="alert alert-danger" role="alert">
+		<strong>${deleteClusterSuccessStatus}</strong> ${deleteClusterSuccessMessage}
+		</div>
+		</div>
+    </c:when>
+    <c:otherwise>
+
+    </c:otherwise>
+</c:choose>
+
+
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 

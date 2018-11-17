@@ -9,6 +9,8 @@ public interface ContainerDAO {
 	public Container getContainerByContainerPath(String containerPath);
 
 	public void deleteContainer(Container containerTBD);
+
+	public boolean containerExists(String containerPath);
 	
 	
 

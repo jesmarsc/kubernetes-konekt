@@ -78,10 +78,7 @@ public class ClusterDAOImpl implements ClusterDAO {
 		query.setParameter("id",cluster.getId());
 		
 		query.executeUpdate();
-		
-		//currentTransaction.commit();
 
-		currentSession.close();
 	}
 
 	@Override

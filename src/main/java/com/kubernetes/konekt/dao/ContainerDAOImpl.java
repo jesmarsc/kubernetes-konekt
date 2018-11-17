@@ -29,7 +29,6 @@ public class ContainerDAOImpl implements ContainerDAO {
 		List<Container> matchingContainerPaths = theQuery.getResultList();
 		
 		if(!matchingContainerPaths.isEmpty()) {
-			System.out.println("\n\n\n\n\n\n" + matchingContainerPaths + "\n\n\n\n\n");
 			return false;
 		}
 		
@@ -62,6 +61,25 @@ public class ContainerDAOImpl implements ContainerDAO {
 		query.setParameter("id",containerTBD.getId());
 		query.executeUpdate();
 		
+	}
+
+	@Override
+	public boolean containerExists(String containerPath) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Container> theQuery = 
+				currentSession.createQuery("FROM Container WHERE containerPath = :containerPath ", Container.class);
+		
+		theQuery.setParameter("containerPath", containerPath);
+		
+		List<Container> matchingContainerPaths = theQuery.getResultList();
+		
+		if(!matchingContainerPaths.isEmpty()) {
+			return true;
+		}
+		else {
+			return false;
+		}		
 	}
 
 	
