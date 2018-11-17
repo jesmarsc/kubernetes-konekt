@@ -13,6 +13,7 @@ public interface AccountDAO {
 	public boolean saveAccount(Account newAccount);
 	
 	Account getAccount(int accountId);
+	
 	public void updateAccountTables(Account uAccount);
 
 	

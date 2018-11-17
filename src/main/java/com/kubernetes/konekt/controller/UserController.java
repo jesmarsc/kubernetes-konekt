@@ -54,18 +54,16 @@ public class UserController {
 
 		//if cluster ip or container name fields are empty throw error
 		if(uploadForm.getClusterIp() == null || uploadForm.getContainerName() == null) {
-			String uploadContainerToClusterFailStatus;
-			String uploadContainerToClusterFailMessage;
-			uploadContainerToClusterFailStatus = " Upload Failed";
-			uploadContainerToClusterFailMessage = "Cluster or Container was not selected";
+
+			String uploadContainerToClusterFailStatus = " Upload Failed";
+			String uploadContainerToClusterFailMessage = "Cluster or Container was not selected";
 			model.addAttribute("uploadContainerToClusterFailStatus", uploadContainerToClusterFailStatus);
 			model.addAttribute("uploadContainerToClusterFailMessage",uploadContainerToClusterFailMessage);
 			return this.showUserDashboard(model);
 		}
-		String uploadContainerToClusterSuccessStatus;
-		String uploadContainerToClusterSuccessMessage;
-		uploadContainerToClusterSuccessStatus = "Uploaded Successfully";
-		uploadContainerToClusterSuccessMessage = "You have successfully uploaded " + uploadForm.getContainerName()  + 
+
+		String uploadContainerToClusterSuccessStatus = "Uploaded Successfully";
+		String uploadContainerToClusterSuccessMessage = "You have successfully uploaded " + uploadForm.getContainerName()  + 
 				" to cluster with IP address:" +  uploadForm.getClusterIp();
 		model.addAttribute("uploadContainerToClusterSuccessStatus", uploadContainerToClusterSuccessStatus);
 		model.addAttribute("uploadContainerToClusterSuccessMessage",uploadContainerToClusterSuccessMessage);
@@ -104,20 +102,17 @@ public class UserController {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			
-			String deleteContainerToClusterStatus;
-			String deleteContainerToClusterMessage;
-			deleteContainerToClusterStatus = "Container Delete Failed";
-			deleteContainerToClusterMessage = "The container: '" + containerName + "' could not be deleted. Container not found in system";
+
+			String deleteContainerToClusterStatus = "Container Delete Failed";
+			String deleteContainerToClusterMessage = "The container: '" + containerName + "' could not be deleted. Container not found in system";
             model.addAttribute("deleteContainerToClusterStatus", deleteContainerToClusterStatus);
             model.addAttribute("deleteContainerToClusterMessage", deleteContainerToClusterMessage);
             return this.showUserDashboard(model);
 		}
 		
-		String deleteContainerToClusterStatus;
-		String deleteContainerToClusterMessage;
-		deleteContainerToClusterStatus = "Container Deleted Successfully";
-		deleteContainerToClusterMessage = "The container: '" + containerName + "' was successfully deleted from system ";
+		
+		String deleteContainerToClusterStatus = "Container Deleted Successfully";
+		String deleteContainerToClusterMessage = "The container: '" + containerName + "' was successfully deleted from system ";
         model.addAttribute("deleteContainerToClusterStatus", deleteContainerToClusterStatus);
         model.addAttribute("deleteContainerToClusterMessage", deleteContainerToClusterMessage);
 		return this.showUserDashboard(model);
@@ -132,10 +127,9 @@ public class UserController {
 
 		// file is empty
 		if (file.isEmpty()) {
-			String uploadContainerFailStatus;
-			String uploadContainerFailMessage;
-			uploadContainerFailStatus = "Container Upload Failed";
-			uploadContainerFailMessage = "The container: '" + file.getOriginalFilename() + "' could not be uploaded, chosen file was empty";
+
+			String uploadContainerFailStatus = "Container Upload Failed";
+			String uploadContainerFailMessage = "The container: '" + file.getOriginalFilename() + "' could not be uploaded, chosen file was empty";
             model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
@@ -159,10 +153,9 @@ public class UserController {
     	    String UPLOADED_CONTAINER_PATH = "containers/" + stringId + "/" + file.getOriginalFilename();
     	    //check if container is already on database before you write the the container to containers folder
             if(containerService.containerExists(UPLOADED_CONTAINER_PATH)) {
-    			String uploadContainerFailStatus;
-    			String uploadContainerFailMessage;
-    			uploadContainerFailStatus = "Container Upload Failed";
-    			uploadContainerFailMessage = "The container: '" + file.getOriginalFilename() + "' could not be uploaded because container with that name already exist";
+
+    			String uploadContainerFailStatus = "Container Upload Failed";
+    			String uploadContainerFailMessage = "The container: '" + file.getOriginalFilename() + "' could not be uploaded because container with that name already exist";
 				model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
                 model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
                 return this.showUserDashboard(model);
@@ -189,19 +182,15 @@ public class UserController {
         	
             e.printStackTrace();
             
-			String uploadContainerFailStatus;
-			String uploadContainerFailMessage;
-			uploadContainerFailStatus = "Container Upload Failed";
-			uploadContainerFailMessage =  "The container: '" + file.getOriginalFilename() + "' could not be uploaded. There was an error uploading the file content";
+			String uploadContainerFailStatus = "Container Upload Failed";
+			String uploadContainerFailMessage =  "The container: '" + file.getOriginalFilename() + "' could not be uploaded. There was an error uploading the file content";
 			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
 			model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
         }
-		
-		String uploadContainerSuccessStatus;
-		String uploadContainerSuccessMessage;
-		uploadContainerSuccessStatus = "Container Uploaded Succesfully";
-		uploadContainerSuccessMessage = "You successfully uploaded container: '" + file.getOriginalFilename() + "'";
+
+		String uploadContainerSuccessStatus = "Container Uploaded Succesfully";
+		String uploadContainerSuccessMessage = "You successfully uploaded container: '" + file.getOriginalFilename() + "'";
 		model.addAttribute("uploadContainerSuccessStatus", uploadContainerSuccessStatus);
 		model.addAttribute("uploadContainerSuccessMessage", uploadContainerSuccessMessage);
 		
