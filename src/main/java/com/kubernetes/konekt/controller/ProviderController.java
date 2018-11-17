@@ -27,11 +27,16 @@ public class ProviderController {
 	
 	@RequestMapping(value = "/provider")
 	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, BindingResult theBindingResult, Model model) {
-		System.out.println("\n provider dashboard \n");
+		
+		boolean userRole =SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+		boolean providerRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_PROVIDER"));
+		model.addAttribute("userRole", userRole);
+		model.addAttribute("providerRole", providerRole);
+		
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
-		System.out.println("\n got user \n");
+		
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
 

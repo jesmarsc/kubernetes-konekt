@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <html>
 <head>
@@ -17,8 +18,15 @@
 	<div class="container-fluid col-md-12">
 		<input type="button" onclick="location.href='register'" value="Register" class="btn">
 		<input type="button" onclick="location.href='login'" value="Login" class="btn">
-		<input type="button" onclick="location.href='user'" value="User Login" class="btn">
-		<input type="button" onclick="location.href='provider'" value="Provider Login" class="btn">
+		<c:if test="${userRole == true}">
+			<input type="button" onclick="location.href='user'"
+				value="User Dashboard" class="btn">
+		</c:if>
+		<c:if test="${providerRole == true}">
+			<input type="button" onclick="location.href='provider'"
+				value="Provider Dashboard" class="btn">
+		</c:if>
+
 		<input type="button" onclick="location.href='user/list'" value="User List" class="btn">
 		<form:form action="${pageContext.request.contextPath}/logout" method="POST">
 			<input type="submit" value="Logout" class="btn btn-primary"/>

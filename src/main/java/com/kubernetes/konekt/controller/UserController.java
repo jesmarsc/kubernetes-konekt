@@ -36,6 +36,11 @@ public class UserController {
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
 		
+		boolean userRole =SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+		boolean providerRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_PROVIDER"));
+		model.addAttribute("userRole", userRole);
+		model.addAttribute("providerRole", providerRole);
+		
 		UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
 		model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
 		
