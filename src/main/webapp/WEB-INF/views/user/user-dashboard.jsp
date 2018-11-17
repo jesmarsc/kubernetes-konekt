@@ -36,7 +36,12 @@
 				<ul class="navbar-nav ml-auto">
 
 					<li class="nav-item"><a class="nav-link" href="/"> Home </a></li>
-
+					<c:if test="${userRole == true}">
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
+					</c:if>
+					<c:if test="${providerRole == true}">
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> Provider Dashboard </a></li>
+					</c:if>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
 

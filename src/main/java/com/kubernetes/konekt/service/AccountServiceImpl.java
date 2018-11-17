@@ -82,9 +82,11 @@ public class AccountServiceImpl implements AccountService {
 	}
 
 	@Override
+	@Transactional
 	public void updateAccountTables(Account uAccount) {
 		accountDAO.updateAccountTables(uAccount);
 	}
+
 
 
 	

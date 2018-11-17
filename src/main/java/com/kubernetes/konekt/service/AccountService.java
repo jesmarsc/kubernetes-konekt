@@ -18,5 +18,6 @@ public interface AccountService extends UserDetailsService {
 	public Account getAccount(int accountId);
 	
 	public void updateAccountTables(Account uAccount);
+
 	
 }

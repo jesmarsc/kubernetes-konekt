@@ -27,11 +27,16 @@ public class ProviderController {
 	
 	@RequestMapping(value = "/provider")
 	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, BindingResult theBindingResult, Model model) {
-		System.out.println("\n provider dashboard \n");
+		
+		boolean userRole =SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
+		boolean providerRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_PROVIDER"));
+		model.addAttribute("userRole", userRole);
+		model.addAttribute("providerRole", providerRole);
+		
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
-		System.out.println("\n got user \n");
+		
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
 
@@ -41,12 +46,12 @@ public class ProviderController {
 	@RequestMapping(value = "/deleteClusterConfirmation")
 	public String deleteCluster( @RequestParam("clusterIp") String clusterIp,Model model) {
 		
-		String deleteClusterSuccessStatus;
-		String deleteClusterSuccessMessage;
+
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterIp);
 		clusterService.deleteCluster(TBDeletedCluster);
-		deleteClusterSuccessStatus = "Deleted Cluster Success: ";
-		deleteClusterSuccessMessage = "Cluster with IP address: " + TBDeletedCluster.getIp() + " has been deleted";
+		
+		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
+		String deleteClusterSuccessMessage = "Cluster with IP address: " + TBDeletedCluster.getIp() + " has been deleted";
 		
 		model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
 		model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
@@ -58,10 +63,9 @@ public class ProviderController {
 	public String uploadNewCluster(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm,BindingResult theBindingResult, Model model) {
 
 		if(theBindingResult.hasErrors()) {
-			String uploadClusterFailStatus;
-			String uploadClusterFailMessage;
-			uploadClusterFailStatus = "Cluster Upload Failed:";
-			uploadClusterFailMessage = "IP address enter is invalid";
+			String uploadClusterFailStatus = "Cluster Upload Failed:";
+			String uploadClusterFailMessage= "IP address enter is invalid";
+	
 			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
 			model.addAttribute("uploadClusterFailMessage", uploadClusterFailMessage);
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
@@ -75,22 +79,10 @@ public class ProviderController {
 		Account currentAccount = accountService.findByUserName(username);
 		// add new cluster to current user so 
 		currentAccount.addCluster(newCluster);
-		// push new cluster to cluster table
-		if(!clusterService.saveCluster(newCluster)){
-			String uploadClusterFailStatus;
-			String uploadClusterFailMessage;
-			uploadClusterFailStatus = "Cluster Upload Failed:";
-			uploadClusterFailMessage = "IP address enter is invalid. This IP address is already in the system";
-			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
-			model.addAttribute("uploadClusterMessage", uploadClusterFailMessage);
-			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
-		}
-		
-		String uploadClusterSuccessStatus;
-		String uploadClusterSuccessMessage;
-		
-		uploadClusterSuccessStatus = "Cluster Upload Success:";
-		uploadClusterSuccessMessage = "Cluster with IP address: "+newCluster.getIp() + " has been successfully uploaded";
+		// updates database to sync up with changes
+		accountService.updateAccountTables(currentAccount);
+		String uploadClusterSuccessStatus ="Cluster Upload Success:";
+		String uploadClusterSuccessMessage = "Cluster with IP address: "+newCluster.getIp() + " has been successfully uploaded";
 		
 		model.addAttribute("uploadClusterSuccessStatus", uploadClusterSuccessStatus);
 		model.addAttribute("uploadClusterSuccessMessage", uploadClusterSuccessMessage);
