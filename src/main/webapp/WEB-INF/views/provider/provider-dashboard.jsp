@@ -20,11 +20,12 @@
 
 </head>
 <body>
-	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+
+	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
-
+  
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent">
 				<span class="navbar-toggler-icon"></span>
@@ -51,17 +52,45 @@
 
 					<li class="nav-item"><a class="nav-link" href="#">Profile</a>
 					</li>
-
+				 
 					<li class="nav-item">
-						<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-							<input type="submit" value="Logout" class="btn btn-primary"/>
-						</form:form>
+						<a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a>
 					</li>
+				
 
 				</ul>
 			</div>
 		</nav>
 	</div>
+
+<c:choose>
+    <c:when test="${not empty uploadClusterFailStatus}">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+        <div class="alert alert-danger" role="alert">
+		<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
+		</div>
+		</div>
+    </c:when>
+    <c:when test="${not empty uploadClusterSuccessStatus}">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+      	<div class="alert alert-success" role="alert">
+		<strong>${uploadClusterSuccessStatus}</strong> ${uploadClusterSuccessMessage}
+		</div>
+		</div>
+    </c:when>
+        <c:when test="${not empty deleteClusterSuccessStatus}">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+      	<div class="alert alert-danger" role="alert">
+		<strong>${deleteClusterSuccessStatus}</strong> ${deleteClusterSuccessMessage}
+		</div>
+		</div>
+    </c:when>
+    <c:otherwise>
+
+    </c:otherwise>
+</c:choose>
+
+
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 
@@ -70,42 +99,24 @@
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th>Cluster Name</th>
 					<th>Cluster IP</th>
 					<th>Options</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>Best cluster</td>
-					<td>125.114.112.1</td>
-					<td>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							1</button>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							2</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Bad cluster</td>
-					<td>128.111.22.31</td>
-					<td>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							1</button>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							2</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Okay cluster</td>
-					<td>123.456.78.9</td>
-					<td>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							1</button>
-						<button type="button" class="btn btn-secondary btn-sm">Option
-							2</button>
-					</td>
-				</tr>
+				<c:forEach var="cluster" items="${currentAccount.clusters}">
+					<c:url var="removeLink" value="deleteClusterConfirmation">
+						<c:param name="clusterIp" value="${cluster.ip}" />
+					</c:url>
+					
+					<tr>
+						<td>${cluster.ip}</td>
+						<td>
+							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
+							<a class="btn btn-primary" href="#" role="button">another option</a>
+						</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 		<!-- End of Table -->
@@ -113,19 +124,25 @@
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
 More than likely we can simplify it by sending email or uploading a file top the cluster -->
-		<h3>Upload New Cluster</h3>
-		<form action="#">
+		<h3>Upload New Cluster IP</h3>
+		<form:form action="uploadClusterConfirmation" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
-			<div class="form-group">
-				<label for="cluster">IP address:</label> <input type="text"
-					class="form-control" id="cluster">
+			<div class="form-group row">
+				<label> IP Address: </label>
+				<form:input class="form-control" path="clusterIp" />
+				<form:errors path="clusterIp" cssClass="error" />
 			</div>
-		</form>
-
-
-		<!-- Submit Button -->
-		<a href="#"><button type="button" class="btn btn-info btn-lg">Submit</button></a>
-	</div>
+			<div class="form-group row">
+				<input class="btn btn-primary text-center" type="submit"
+					value="Submit" />
+			</div>
+		</form:form>
+</div>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 </body>
 </html>

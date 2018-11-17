@@ -16,10 +16,11 @@ public class AccountListController {
 
 	@Autowired
 	private AccountService accountService;
+
 	
 	@RequestMapping("/list")
 	public String listUserAccounts(Model theModel) {
-		
+
 		List<Account> accounts = accountService.getAccounts();
 		
 		theModel.addAttribute("accounts", accounts);

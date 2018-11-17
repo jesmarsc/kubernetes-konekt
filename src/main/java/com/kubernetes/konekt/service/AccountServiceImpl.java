@@ -72,5 +72,20 @@ public class AccountServiceImpl implements AccountService {
 	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
 		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
+
+	@Override
+	@Transactional
+	public Account getAccount(int accountId) {
+		Account account = accountDAO.getAccount(accountId);
+		
+		return account;
+	}
+
+	@Override
+	public void updateAccountTables(Account uAccount) {
+		accountDAO.updateAccountTables(uAccount);
+	}
+
+
 	
 }

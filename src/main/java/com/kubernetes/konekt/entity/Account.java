@@ -1,15 +1,28 @@
 package com.kubernetes.konekt.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Table(name="user")
 public class Account {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+ 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private int id;
 	
@@ -27,6 +40,12 @@ public class Account {
 
 	@Column(name = "email")
 	private String email;
+	
+	@OneToMany(mappedBy="account",cascade= {CascadeType.ALL})
+	private List<Cluster> clusters;
+
+	@OneToMany(mappedBy="account",cascade= {CascadeType.ALL})
+	private List<Container> containers;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinTable(name = "users_roles", 
@@ -92,5 +111,43 @@ public class Account {
 	public void setRoles(Collection<Role> roles) {
 		this.roles = roles;
 	}
+
+	public List<Cluster> getClusters() {
+		return clusters;
+	}
+
+	public void setClusters(List<Cluster> clusters) {
+		this.clusters = clusters;
+	}
 	
+	public void addCluster(Cluster tempCluster) {
+		
+		if(clusters == null) {
+			clusters = new ArrayList<Cluster>();
+		}
+		
+		clusters.add(tempCluster);
+		tempCluster.setAccount(this);
+	}
+	
+	
+	public void addContainer(Container newContainer) {
+		
+		if(containers == null) {
+			containers = new ArrayList<Container>();
+		}
+		
+		containers.add(newContainer);
+		newContainer.setAccount(this);
+	}
+
+	public List<Container> getContainers() {
+		return containers;
+	}
+
+	public void setContainers(List<Container> containers) {
+		this.containers = containers;
+	}
+
+
 }
