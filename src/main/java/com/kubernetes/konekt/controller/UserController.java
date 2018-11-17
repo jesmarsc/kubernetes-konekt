@@ -179,20 +179,12 @@ public class UserController {
 			// create container object
 			Container newContainer = new Container(containerName,UPLOADED_CONTAINER_PATH);
 			// add container object to container list of currentAccount
-			currentAccount.addContainer(newContainer);			
-			// save container to database call container service
-			try {
-				containerService.saveContainer(newContainer);
-			}
-			catch(Exception e) {
-    			String uploadContainerFailStatus;
-    			String uploadContainerFailMessage;
-    			uploadContainerFailStatus = "Container Upload Failed";
-    			uploadContainerFailMessage = "The container: '" + file.getOriginalFilename() + "' could not be uploaded because container with that name already exist";
-				model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
-				model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
-		        return this.showUserDashboard(model);
-			}
+			currentAccount.addContainer(newContainer);
+			
+			
+			// sync database with program. add container to database
+			accountService.updateAccountTables(currentAccount);
+
         } catch (IOException e) {
         	
             e.printStackTrace();

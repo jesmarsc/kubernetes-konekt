@@ -75,17 +75,8 @@ public class ProviderController {
 		Account currentAccount = accountService.findByUserName(username);
 		// add new cluster to current user so 
 		currentAccount.addCluster(newCluster);
-		// push new cluster to cluster table
-		if(!clusterService.saveCluster(newCluster)){
-			String uploadClusterFailStatus;
-			String uploadClusterFailMessage;
-			uploadClusterFailStatus = "Cluster Upload Failed:";
-			uploadClusterFailMessage = "IP address enter is invalid. This IP address is already in the system";
-			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
-			model.addAttribute("uploadClusterMessage", uploadClusterFailMessage);
-			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
-		}
-		
+		// updates database to sync up with changes
+		accountService.updateAccountTables(currentAccount);
 		String uploadClusterSuccessStatus;
 		String uploadClusterSuccessMessage;
 		
