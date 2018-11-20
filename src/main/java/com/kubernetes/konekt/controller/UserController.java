@@ -27,11 +27,11 @@ import com.kubernetes.konekt.service.ContainerService;
 public class UserController {
 	
 	@Autowired
-	AccountService accountService;
+	private AccountService accountService;
 	@Autowired 
-	ClusterService clusterService;
+	private ClusterService clusterService;
 	@Autowired
-	ContainerService containerService;
+	private ContainerService containerService;
 	
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
@@ -48,7 +48,7 @@ public class UserController {
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		
-		List<Cluster> availableClusters = clusterService.getAllClusters();
+		List<Cluster> availableClusters = clusterService.getAllAvailableClusters();
 		model.addAttribute("availableClusters", availableClusters);
 		
 		return "user/user-dashboard";
@@ -66,7 +66,28 @@ public class UserController {
 			model.addAttribute("uploadContainerToClusterFailMessage",uploadContainerToClusterFailMessage);
 			return this.showUserDashboard(model);
 		}
-
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		//set container status to running
+		Container updateContainer = currentAccount.getContainers().stream()
+				  .filter(container -> uploadForm.getContainerName().equals(container.getContainerName()))
+				  .findAny()
+				  .orElse(null);
+		Integer index = currentAccount.getContainers().indexOf(updateContainer);
+		updateContainer.setIpAddress(uploadForm.getClusterIp());
+		updateContainer.setStatus("Running");
+		currentAccount.updateContainer(index, updateContainer);
+		
+		//get cluster from database
+		Cluster updateCluster = clusterService.getCluster(uploadForm.getClusterIp());
+		// set cluster status to running 
+		updateCluster.setContainerName(uploadForm.getContainerName());
+		// set cluster container name
+		updateCluster.setStatus("Running");
+		// sync with database
+		clusterService.updateEntry(updateCluster);
+		
 		String uploadContainerToClusterSuccessStatus = "Uploaded Successfully";
 		String uploadContainerToClusterSuccessMessage = "You have successfully uploaded " + uploadForm.getContainerName()  + 
 				" to cluster with IP address:" +  uploadForm.getClusterIp();
@@ -103,6 +124,14 @@ public class UserController {
 		
 		// delete container information from database
 		Container containerTBD = containerService.getContainerByContainerPath(UPLOADED_CONTAINER_PATH);
+		// If container was running on cluster remove from cluster and free cluster so another user can use it
+		if(!containerTBD.getIpAddress().equals("N/A")) {
+			System.out.println("\n\n\n\n\n\n\n" + !containerTBD.getIpAddress().equals("N/A")  +"\n\n\n\n\n\n");
+			Cluster updateCluster = clusterService.getCluster(containerTBD.getIpAddress());
+			updateCluster.setContainerName("N/A");
+			updateCluster.setStatus("Stopped");
+			clusterService.updateEntry(updateCluster);
+		}
 		containerService.deleteContainer(containerTBD);
 		}
 		catch(Exception e) {
@@ -175,7 +204,9 @@ public class UserController {
             // write container content to user folder
             Files.write(path, bytes);
 			// create container object
-			Container newContainer = new Container(containerName,UPLOADED_CONTAINER_PATH);
+            String containerStatus = "Stopped";
+            String clusterIp = "N/A";
+			Container newContainer = new Container(containerName,UPLOADED_CONTAINER_PATH,containerStatus,clusterIp);
 			// add container object to container list of currentAccount
 			currentAccount.addContainer(newContainer);
 			

@@ -40,7 +40,7 @@
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
 					</c:if>
 					<c:if test="${providerRole == true}">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> Provider Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
 					</c:if>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
@@ -126,24 +126,23 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<th scope="row">Container 1</th>
-					<td>196.12.186.145</td>
-					<td>Running</td>
-					<td>
-					<button type="button" class="btn btn-primary m-1">Start</button>
-					<button type="button" class="btn btn-primary m-1">Stop</button>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">Container 2</th>
-					<td>193.123.146.155</td>
-					<td>Running</td>
-					<td>
-					<button  type="button" class="btn btn-primary m-1">Start</button>
-					<button type="button" class="btn btn-primary m-1">Stop</button>
-					</td>
-				</tr>
+			
+			
+				<c:forEach var="container" items="${currentAccount.containers}">
+					<c:url var="removeLink" value="deleteContainerConfirmation">
+						<c:param name="containerName" value="${container.containerName}" />
+					</c:url>
+					
+					<tr>
+						<td>${container.containerName}</td>
+						<td>${container.ipAddress}</td>
+						<td>${container.status}</td>
+						<td>
+							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-primary" href="#" role="button">another option</a>
+						</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 	</div>
@@ -162,7 +161,7 @@
 						<c:param name="containerName" value="${container.containerName}" />
 					</c:url>
 					<a class=" dropdown-item btn btn-primary " href="${removeLink}"
-						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
+						onclick="if(!(confirm('Are you sure you want to delete container')))return false"
 						role="button">Delete ${container.containerName} Container</a>
 				</c:forEach>
 			</div>
@@ -183,13 +182,14 @@
 			<div class="form-group  mb-2">
 				<input type="file" class="custom-file-input" id="customFile"
 					name="containerFile">
-			</div>
 
+			</div>
 			<div class="form-group  mb-2">
 				<input class="btn btn-primary custom-file text-center" type="submit"
 					value="Upload" /> <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+			
 
 		</form:form>
 	</div>

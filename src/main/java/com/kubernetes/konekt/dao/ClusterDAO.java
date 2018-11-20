@@ -17,4 +17,8 @@ public interface ClusterDAO {
 	
 	public void deleteCluster(Cluster cluster);
 
+	public List<Cluster> getAllAvailableClusters();
+
+	public void updateEntry(Cluster updateCluster);
+
 }

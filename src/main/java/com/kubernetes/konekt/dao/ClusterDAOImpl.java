@@ -95,6 +95,26 @@ public class ClusterDAOImpl implements ClusterDAO {
 
 	}
 
+	@Override
+	public List<Cluster> getAllAvailableClusters() {
+		Session currentSession = factory.unwrap(Session.class);
+		String containerName ="N/A";
+		Query<Cluster> theQuery = 
+				currentSession.createQuery("FROM Cluster WHERE containerName = :containerName ", Cluster.class);
+		theQuery.setParameter("containerName",containerName);
+		List<Cluster> clusters = theQuery.getResultList();
+
+		return clusters;
+	}
+
+	@Override
+	public void updateEntry(Cluster updateCluster) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		currentSession.saveOrUpdate(updateCluster) ;
+		
+	}
+
 	
 
 }

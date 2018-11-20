@@ -140,6 +140,11 @@ public class Account {
 		containers.add(newContainer);
 		newContainer.setAccount(this);
 	}
+	
+	public void updateContainer(Integer index, Container updatedContainer) {
+		
+		containers.set(index, updatedContainer);
+	}
 
 	public List<Container> getContainers() {
 		return containers;
