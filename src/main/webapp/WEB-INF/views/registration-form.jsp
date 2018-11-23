@@ -54,7 +54,7 @@
 			<div class="form-group row">
 				<label> Username: </label>
 				<form:input class="form-control" path="userName" />
-				<form:errors path="firstName" cssClass="error" />
+				<form:errors path="userName" cssClass="error" />
 			</div>
 			
 			<div class="form-group row">

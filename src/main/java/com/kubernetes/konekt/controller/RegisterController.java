@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.kubernetes.konekt.entity.Account;
-import com.kubernetes.konekt.entity.RegistrationForm;
+import com.kubernetes.konekt.form.RegistrationForm;
 import com.kubernetes.konekt.service.AccountService;
 
 
@@ -38,7 +38,6 @@ public class RegisterController {
 		theModel.addAttribute("registrationForm", newForm);
 		return "registration-form";
 	}
-
 
 	@PostMapping(value="/accountConfirmation")
 	public String details(@Valid @ModelAttribute("registrationForm") RegistrationForm form,
@@ -69,12 +68,12 @@ public class RegisterController {
         }
 		
 		boolean didAdd = accountService.saveAccount(form);
-		
 		if(!didAdd) {
 			String message = "Account with email provided already exists";
 			model.addAttribute("message", message);
 			return "registration-form";	
 		}
+		
 		model.addAttribute("userRegistration", form);
 		return "registration-confirmation";
 	}

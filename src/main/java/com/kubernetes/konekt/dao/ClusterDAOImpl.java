@@ -16,6 +16,24 @@ public class ClusterDAOImpl implements ClusterDAO {
 	
 	@Autowired
 	private EntityManager factory;
+	
+	@Override
+	public Cluster getCluster(String ClusterIp) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Cluster> theQuery = 
+				currentSession.createQuery("FROM Cluster WHERE ip = :ip ", Cluster.class);
+		theQuery.setParameter("ip",ClusterIp);
+		Cluster cluster = null;
+		
+		try {
+			cluster = theQuery.getSingleResult();
+		} catch (Exception e) {
+			cluster = null;
+		}
+		
+		return cluster;
+	}
 
 	@Override
 	public List<Cluster> getAllClusters() {
@@ -23,26 +41,9 @@ public class ClusterDAOImpl implements ClusterDAO {
 
 		Query<Cluster> theQuery = 
 				currentSession.createQuery("FROM Cluster", Cluster.class);
-		
 		List<Cluster> clusters = theQuery.getResultList();
 		
 		return clusters;
-	}
-
-	@Override
-	public boolean doesClusterExist(String ClusterIp) {
-		Session currentSession = factory.unwrap(Session.class);
-		
-		Query<Cluster> theQuery = 
-				currentSession.createQuery("FROM Cluster WHERE ip = :ip ", Cluster.class);
-		theQuery.setParameter("ip",ClusterIp);
-		List<Cluster> clusters = theQuery.getResultList();
-		
-		if(!clusters.isEmpty()) {
-			return true;
-		}
-	
-		return false;
 	}
 
 	@Override
@@ -62,7 +63,6 @@ public class ClusterDAOImpl implements ClusterDAO {
 		
 		currentSession.save(newCluster);
 		return true;
-
 	}
 
 	@Override
@@ -75,26 +75,9 @@ public class ClusterDAOImpl implements ClusterDAO {
 		// cannot specify query type because query created is native thats why warning is being surpressed
 		@SuppressWarnings("rawtypes")
 		Query query = currentSession.createNativeQuery("DELETE FROM cluster_info WHERE id = :id ");
-		query.setParameter("id",cluster.getId());
+		query.setParameter("id", cluster.getId());
 		
 		query.executeUpdate();
-
 	}
-
-	@Override
-	public Cluster getCluster(String ClusterIp) {
-		Session currentSession = factory.unwrap(Session.class);
-		
-		Query<Cluster> theQuery = 
-				currentSession.createQuery("FROM Cluster WHERE ip = :ip ", Cluster.class);
-		theQuery.setParameter("ip",ClusterIp);
-		Cluster cluster = theQuery.getSingleResult();
-		
-		return cluster;
-		
-
-	}
-
-	
 
 }

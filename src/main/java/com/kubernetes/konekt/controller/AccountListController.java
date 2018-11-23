@@ -16,7 +16,6 @@ public class AccountListController {
 
 	@Autowired
 	private AccountService accountService;
-
 	
 	@RequestMapping("/list")
 	public String listUserAccounts(Model theModel) {
