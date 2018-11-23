@@ -6,16 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,12 +36,6 @@ public class UserController {
 	@Autowired
 	ContainerService containerService;
 	
-	@InitBinder
-	public void initBinder(WebDataBinder dataBinder) {
-		StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
-		dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
-	}
-	
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
 		
@@ -64,10 +53,15 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/uploadContainerToClusterConfirmation")
-	public String uploadContainerToCluster(@Valid @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, 
+	public String uploadContainerToCluster(@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, 
 			BindingResult theBindingResult, Model model) {
 
-		if(theBindingResult.hasErrors()) {
+		//if cluster ip or container name fields are empty throw error
+		if(uploadForm.getClusterIp() == null || uploadForm.getContainerName() == null) {
+ 			String uploadContainerToClusterFailStatus = " Upload Failed";
+			String uploadContainerToClusterFailMessage = "Cluster or Container was not selected";
+			model.addAttribute("uploadContainerToClusterFailStatus", uploadContainerToClusterFailStatus);
+			model.addAttribute("uploadContainerToClusterFailMessage",uploadContainerToClusterFailMessage);
 			return this.showUserDashboard(model);
 		}
 
