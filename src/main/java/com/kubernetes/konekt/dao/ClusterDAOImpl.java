@@ -60,7 +60,6 @@ public class ClusterDAOImpl implements ClusterDAO {
 		if(!matchingClusterIps.isEmpty()) {
 			return false;
 		}
-		
 		currentSession.save(newCluster);
 		return true;
 	}
@@ -68,16 +67,27 @@ public class ClusterDAOImpl implements ClusterDAO {
 	@Override
 	public void deleteCluster(Cluster cluster) {
 		Session currentSession = factory.unwrap(Session.class);
-		//Transaction currentTransaction = currentSession.getTransaction();
-		//currentTransaction.begin();
-		
-		
-		// cannot specify query type because query created is native thats why warning is being surpressed
 		@SuppressWarnings("rawtypes")
 		Query query = currentSession.createNativeQuery("DELETE FROM cluster_info WHERE id = :id ");
 		query.setParameter("id", cluster.getId());
-		
 		query.executeUpdate();
 	}
+  
+	@Override
+	public List<Cluster> getAllAvailableClusters() {
+		Session currentSession = factory.unwrap(Session.class);
+		String containerName ="N/A";
+		Query<Cluster> theQuery = 
+				currentSession.createQuery("FROM Cluster WHERE containerName = :containerName ", Cluster.class);
+		theQuery.setParameter("containerName",containerName);
+		List<Cluster> clusters = theQuery.getResultList();
+		return clusters;
+	}
 
+	@Override
+	public void updateEntry(Cluster updateCluster) {
+		Session currentSession = factory.unwrap(Session.class);
+		currentSession.saveOrUpdate(updateCluster) ;
+	}
+  
 }

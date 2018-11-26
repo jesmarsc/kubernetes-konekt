@@ -14,4 +14,8 @@ public interface ClusterService  {
 	
 	public void deleteCluster(Cluster cluster);
 
+	public List<Cluster> getAllAvailableClusters();
+
+	public void updateEntry(Cluster updateCluster);
+
 }

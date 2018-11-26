@@ -105,6 +105,8 @@
 			<thead>
 				<tr>
 					<th>Cluster IP</th>
+					<th>Container</th>
+					<th>Status</th>
 					<th>Options</th>
 				</tr>
 			</thead>
@@ -116,6 +118,8 @@
 					
 					<tr>
 						<td>${cluster.ip}</td>
+						<td>${cluster.containerName}</td>
+						<td>${cluster.status}</td>
 						<td>
 							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
 							<a class="btn btn-primary" href="#" role="button">another option</a>

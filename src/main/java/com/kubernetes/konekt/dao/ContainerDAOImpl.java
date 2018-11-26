@@ -82,6 +82,28 @@ public class ContainerDAOImpl implements ContainerDAO {
 		}		
 	}
 
+	@Override
+	public Container getContainerByContainerIp(String clusterIp) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Container> theQuery = 
+				currentSession.createQuery("FROM Container WHERE ipAddress = :clusterIp ", Container.class);
+		
+		theQuery.setParameter("clusterIp", clusterIp);
+		
+		Container container = theQuery.getSingleResult();
+		
+		return container;		
+	}
+
+	@Override
+	public void updateEntry(Container updateContainer) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		currentSession.saveOrUpdate(updateContainer) ;
+		
+	}
+
 	
 	
 

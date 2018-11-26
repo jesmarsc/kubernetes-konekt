@@ -10,7 +10,10 @@ public interface ContainerService {
 	public void deleteContainer(Container containerTBD);
 
 	public boolean containerExists(String containerPath);
-	
-	
 
+	public Container getContainerByContainerIp(String clusterIp);
+
+	public void updateEntry(Container updateContainer);
+	
+	
 }

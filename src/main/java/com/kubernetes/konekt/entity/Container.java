@@ -25,6 +25,12 @@ public class Container {
 	@Column(name="container_path")
 	private String containerPath;
 	
+	@Column(name="container_status")
+	private String status;
+	
+	@Column(name="container_ip")
+	private String ipAddress;
+	
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
 			 			CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="user_account_id")
@@ -34,8 +40,10 @@ public class Container {
 		
 	}
 	
-	public Container(String containerName, String containerPath) {
+	public Container(String containerName, String containerPath,String status, String ipAddress) {
 		super();
+		this.status = status;
+		this.ipAddress = ipAddress;
 		this.containerName = containerName;
 		this.containerPath = containerPath;
 	}
@@ -70,6 +78,22 @@ public class Container {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
 
 	@Override

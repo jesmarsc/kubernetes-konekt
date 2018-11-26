@@ -16,18 +16,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
+import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
+import com.kubernetes.konekt.service.ContainerService;
+
 
 @Controller
 public class ProviderController {
 	
 	@Autowired
-	AccountService accountService;
-	
+	private AccountService accountService;
+
 	@Autowired 
-	ClusterService clusterService;
+	private ClusterService clusterService;
+	@Autowired
+	private ContainerService containerService;
+	
+	
 	
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
@@ -48,11 +55,20 @@ public class ProviderController {
 
 		return "provider/provider-dashboard";
 	}
-	
+
 	@RequestMapping(value = "/provider/delete{clusterip}")
 	public String deleteCluster(@RequestParam("clusterIp") String clusterIp, Model model) {
-		
+
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterIp);
+		//check if cluster was running container if so set container status to stopped
+		// 		set container cluster ip to "N/A"
+		if((TBDeletedCluster.getContainerName() != null) && !TBDeletedCluster.getContainerName().equals("N/A")) {
+			Container updateContainer = containerService.getContainerByContainerIp(clusterIp);
+			updateContainer.setIpAddress("N/A");
+			updateContainer.setStatus("Stopped");
+			containerService.updateEntry(updateContainer);
+		}
+		
 		clusterService.deleteCluster(TBDeletedCluster);
 		
 		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
@@ -60,7 +76,7 @@ public class ProviderController {
 		
 		model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
 		model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
-
+		
 		return this.showProviderDashboard(null, null, model);
 	}
 	
@@ -76,23 +92,34 @@ public class ProviderController {
 			model.addAttribute("uploadClusterFailMessage", uploadClusterFailMessage);
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 		}
-		
-		// create new cluster from information in form
-		Cluster newCluster = new Cluster(uploadClusterForm.getClusterIp());	
-
-		// get current user 
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Account currentAccount = accountService.findByUserName(username);
-		// add new cluster to current user so 
-		currentAccount.addCluster(newCluster);
-		// updates database to sync up with changes
-		accountService.updateAccountTables(currentAccount);
-		String uploadClusterSuccessStatus ="Cluster Upload Success:";
-		String uploadClusterSuccessMessage = "Cluster with IP address: "+newCluster.getIp() + " has been successfully uploaded";
-		
-		model.addAttribute("uploadClusterSuccessStatus", uploadClusterSuccessStatus);
-		model.addAttribute("uploadClusterSuccessMessage", uploadClusterSuccessMessage);
-		return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
+		try {
+			// create new cluster from information in form
+			String clusterStatus = "Stopped";
+			String containerName = "N/A";
+			Cluster newCluster = new Cluster(uploadClusterForm.getClusterIp(), clusterStatus, containerName);	
+	
+			// get current user 
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			Account currentAccount = accountService.findByUserName(username);
+			// add new cluster to current user so 
+			currentAccount.addCluster(newCluster);
+			// updates database to sync up with changes
+			accountService.updateAccountTables(currentAccount);
+			String uploadClusterSuccessStatus ="Cluster Upload Success:";
+			String uploadClusterSuccessMessage = "Cluster with IP address: "+newCluster.getIp() + " has been successfully uploaded";
+			
+			model.addAttribute("uploadClusterSuccessStatus", uploadClusterSuccessStatus);
+			model.addAttribute("uploadClusterSuccessMessage", uploadClusterSuccessMessage);
+			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
+			}
+			catch(Exception e) {
+				System.out.println( "\n" + e + "\n");
+				String uploadClusterFailStatus = "Cluster Upload Failed:";
+				String uploadClusterFailMessage= "IP address enter is already registered to another cluster";
+				model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
+				model.addAttribute("uploadClusterFailMessage", uploadClusterFailMessage);
+				return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
+		}
 	}
 	
 }

@@ -11,7 +11,7 @@ import com.kubernetes.konekt.entity.Container;
 public class ContainerServiceImpl implements ContainerService{
 	
 	@Autowired 
-	ContainerDAO containerDAO;
+	private ContainerDAO containerDAO;
 	
 	@Override
 	@Transactional
@@ -36,8 +36,21 @@ public class ContainerServiceImpl implements ContainerService{
 	@Override
 	@Transactional
 	public boolean containerExists(String containerPath) {
-		containerDAO.containerExists(containerPath);
-		return false;
+		return containerDAO.containerExists(containerPath);
+		
+	}
+
+	@Override
+	@Transactional
+	public Container getContainerByContainerIp(String clusterIp) {
+		return containerDAO. getContainerByContainerIp(clusterIp);
+	}
+
+	@Override
+	@Transactional
+	public void updateEntry(Container updateContainer) {
+		containerDAO.updateEntry(updateContainer);
+		
 	}
 
 	

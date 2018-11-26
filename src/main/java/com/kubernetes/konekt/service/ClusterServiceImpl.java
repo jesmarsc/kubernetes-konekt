@@ -39,4 +39,16 @@ public class ClusterServiceImpl implements ClusterService{
 		clusterDAO.deleteCluster(cluster);
 	}
 
+	@Override
+	@Transactional
+	public List<Cluster> getAllAvailableClusters() {
+		return clusterDAO.getAllAvailableClusters();
+	}
+
+	@Override
+	@Transactional
+	public void updateEntry(Cluster updateCluster) {
+		clusterDAO.updateEntry(updateCluster);		
+	}
+
 }
