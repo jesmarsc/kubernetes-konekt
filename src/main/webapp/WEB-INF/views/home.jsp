@@ -23,7 +23,7 @@
 			<input type="button" onclick="location.href='user'"
 				value="User Dashboard" class="btn">
 		</sec:authorize>
-		<sec:authorize access="hasRole('USER')">
+		<sec:authorize access="hasRole('PROVIDER')">
 			<input type="button" onclick="location.href='provider'"
 				value="Provider Dashboard" class="btn">
 		</sec:authorize>
