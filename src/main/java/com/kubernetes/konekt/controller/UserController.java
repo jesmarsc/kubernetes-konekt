@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,19 +28,15 @@ import com.kubernetes.konekt.service.ContainerService;
 public class UserController {
 	
 	@Autowired
-	AccountService accountService;
+	private AccountService accountService;
 	@Autowired 
-	ClusterService clusterService;
+	private ClusterService clusterService;
+
 	@Autowired
-	ContainerService containerService;
+	private ContainerService containerService;
 	
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
-		
-		boolean userRole =SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
-		boolean providerRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_PROVIDER"));
-		model.addAttribute("userRole", userRole);
-		model.addAttribute("providerRole", providerRole);
 		
 		UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
 		model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
@@ -48,25 +45,46 @@ public class UserController {
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		
-		List<Cluster> availableClusters = clusterService.getAllClusters();
+		List<Cluster> availableClusters = clusterService.getAllAvailableClusters();
 		model.addAttribute("availableClusters", availableClusters);
 		
 		return "user/user-dashboard";
 	}
 	
 	@RequestMapping(value = "/uploadContainerToClusterConfirmation")
-	public String uploadContainerToCluster( @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
+	public String uploadContainerToCluster(@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, 
+			BindingResult theBindingResult, Model model) {
 
 		//if cluster ip or container name fields are empty throw error
 		if(uploadForm.getClusterIp() == null || uploadForm.getContainerName() == null) {
-
-			String uploadContainerToClusterFailStatus = " Upload Failed";
+ 			String uploadContainerToClusterFailStatus = " Upload Failed";
 			String uploadContainerToClusterFailMessage = "Cluster or Container was not selected";
 			model.addAttribute("uploadContainerToClusterFailStatus", uploadContainerToClusterFailStatus);
 			model.addAttribute("uploadContainerToClusterFailMessage",uploadContainerToClusterFailMessage);
 			return this.showUserDashboard(model);
 		}
-
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		//set container status to running
+		Container updateContainer = currentAccount.getContainers().stream()
+				  .filter(container -> uploadForm.getContainerName().equals(container.getContainerName()))
+				  .findAny()
+				  .orElse(null);
+		Integer index = currentAccount.getContainers().indexOf(updateContainer);
+		updateContainer.setIpAddress(uploadForm.getClusterIp());
+		updateContainer.setStatus("Running");
+		currentAccount.updateContainer(index, updateContainer);
+		
+		//get cluster from database
+		Cluster updateCluster = clusterService.getCluster(uploadForm.getClusterIp());
+		// set cluster status to running 
+		updateCluster.setContainerName(uploadForm.getContainerName());
+		// set cluster container name
+		updateCluster.setStatus("Running");
+		// sync with database
+		clusterService.updateEntry(updateCluster);
+		
 		String uploadContainerToClusterSuccessStatus = "Uploaded Successfully";
 		String uploadContainerToClusterSuccessMessage = "You have successfully uploaded " + uploadForm.getContainerName()  + 
 				" to cluster with IP address:" +  uploadForm.getClusterIp();
@@ -75,14 +93,9 @@ public class UserController {
 		return this.showUserDashboard(model);
 	}
 	
-
-	
-	
 	@RequestMapping(value = "/deleteContainerConfirmation")
 	public String deleteContainer( @RequestParam("containerName")String containerName, Model model) {
 
-		
-		
 		try {
 		// get current user 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -103,6 +116,14 @@ public class UserController {
 		
 		// delete container information from database
 		Container containerTBD = containerService.getContainerByContainerPath(UPLOADED_CONTAINER_PATH);
+		// If container was running on cluster remove from cluster and free cluster so another user can use it
+		if(!containerTBD.getIpAddress().equals("N/A")) {
+			System.out.println("\n\n\n\n\n\n\n" + !containerTBD.getIpAddress().equals("N/A")  +"\n\n\n\n\n\n");
+			Cluster updateCluster = clusterService.getCluster(containerTBD.getIpAddress());
+			updateCluster.setContainerName("N/A");
+			updateCluster.setStatus("Stopped");
+			clusterService.updateEntry(updateCluster);
+		}
 		containerService.deleteContainer(containerTBD);
 		}
 		catch(Exception e) {
@@ -175,7 +196,9 @@ public class UserController {
             // write container content to user folder
             Files.write(path, bytes);
 			// create container object
-			Container newContainer = new Container(containerName,UPLOADED_CONTAINER_PATH);
+            String containerStatus = "Stopped";
+            String clusterIp = "N/A";
+			Container newContainer = new Container(containerName,UPLOADED_CONTAINER_PATH,containerStatus,clusterIp);
 			// add container object to container list of currentAccount
 			currentAccount.addContainer(newContainer);
 			
