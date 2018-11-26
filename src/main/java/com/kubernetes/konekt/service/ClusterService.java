@@ -6,14 +6,11 @@ import com.kubernetes.konekt.entity.Cluster;
 
 public interface ClusterService  {
 	
+	public Cluster getCluster(String ClusterIp);
 	
-	public boolean doesClusterExist(String ClusterIp);
-
 	public List<Cluster> getAllClusters();
 	
 	public boolean saveCluster(Cluster newCluster);
-	
-	public Cluster getCluster(String ClusterIp);
 	
 	public void deleteCluster(Cluster cluster);
 

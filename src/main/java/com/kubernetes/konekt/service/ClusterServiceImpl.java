@@ -12,34 +12,26 @@ import com.kubernetes.konekt.entity.Cluster;
 @Service
 public class ClusterServiceImpl implements ClusterService{
 
-
 	@Autowired
 	private ClusterDAO clusterDAO;
 	
-
+	@Override
+	@Transactional
+	public Cluster getCluster(String ClusterIp) {
+		return clusterDAO.getCluster(ClusterIp);
+	}
+	
 	@Override
 	@Transactional
 	public List<Cluster> getAllClusters() {
-		
 		return clusterDAO.getAllClusters();
-
 	}
-
-
-	@Override
-	@Transactional
-	public boolean doesClusterExist(String ClusterIp) {
-		return clusterDAO.doesClusterExist(ClusterIp);
-	}
-
 
 	@Override
 	@Transactional
 	public boolean saveCluster(Cluster newCluster) {
-		
 		return clusterDAO.saveCluster(newCluster);
 	}
-
 
 	@Override
 	@Transactional
@@ -47,30 +39,16 @@ public class ClusterServiceImpl implements ClusterService{
 		clusterDAO.deleteCluster(cluster);
 	}
 
-
-	@Override
-	@Transactional
-	public Cluster getCluster(String ClusterIp) {
-		
-		return clusterDAO.getCluster(ClusterIp);
-	}
-
-
 	@Override
 	@Transactional
 	public List<Cluster> getAllAvailableClusters() {
-		
 		return clusterDAO.getAllAvailableClusters();
 	}
-
 
 	@Override
 	@Transactional
 	public void updateEntry(Cluster updateCluster) {
-		clusterDAO.updateEntry(updateCluster);
-		
+		clusterDAO.updateEntry(updateCluster);		
 	}
 
-
-	
 }

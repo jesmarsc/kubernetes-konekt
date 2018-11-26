@@ -3,10 +3,13 @@ package com.kubernetes.konekt.controller;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +28,7 @@ public class ProviderController {
 	
 	@Autowired
 	private AccountService accountService;
+
 	@Autowired 
 	private ClusterService clusterService;
 	@Autowired
@@ -32,13 +36,15 @@ public class ProviderController {
 	
 	
 	
+	@InitBinder
+	public void initBinder(WebDataBinder dataBinder) {
+		StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
+		dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+	}
+	
 	@RequestMapping(value = "/provider")
-	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, BindingResult theBindingResult, Model model) {
-		
-		boolean userRole =SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
-		boolean providerRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_PROVIDER"));
-		model.addAttribute("userRole", userRole);
-		model.addAttribute("providerRole", providerRole);
+	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, 
+			BindingResult theBindingResult, Model model) {
 		
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
@@ -50,11 +56,9 @@ public class ProviderController {
 		return "provider/provider-dashboard";
 	}
 
-	@RequestMapping(value = "/deleteClusterConfirmation")
-	public String deleteCluster( @RequestParam("clusterIp") String clusterIp,Model model) {
-		
+	@RequestMapping(value = "/provider/delete{clusterip}")
+	public String deleteCluster(@RequestParam("clusterIp") String clusterIp, Model model) {
 
-		
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterIp);
 		//check if cluster was running container if so set container status to stopped
 		// 		set container cluster ip to "N/A"
@@ -76,8 +80,9 @@ public class ProviderController {
 		return this.showProviderDashboard(null, null, model);
 	}
 	
-	@RequestMapping(value = "/uploadClusterConfirmation")
-	public String uploadNewCluster(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm,BindingResult theBindingResult, Model model) {
+	@RequestMapping(value = "/provider/upload")
+	public String uploadNewCluster(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm,
+			BindingResult theBindingResult, Model model) {
 
 		if(theBindingResult.hasErrors()) {
 			String uploadClusterFailStatus = "Cluster Upload Failed:";
@@ -116,8 +121,5 @@ public class ProviderController {
 				return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 		}
 	}
-	
-	
-	
 	
 }

@@ -2,6 +2,7 @@
 <%@ page session="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Begin HTML Document -->
 <!DOCTYPE html>
@@ -36,12 +37,13 @@
 				<ul class="navbar-nav ml-auto">
 
 					<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/"> Home </a></li>
-					<c:if test="${userRole == true}">
+					
+					<sec:authorize access="hasRole('USER')">
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
-					</c:if>
-					<c:if test="${providerRole == true}">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
-					</c:if>
+					</sec:authorize>
+					<sec:authorize access="hasRole('PROVIDER')">
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> Provider Dashboard </a></li>
+					</sec:authorize>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
 
@@ -68,34 +70,32 @@
 		</nav>
 	</div>
 
-<c:choose>
-    <c:when test="${not empty uploadClusterFailStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
-        <div class="alert alert-danger" role="alert">
-		<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
-		</div>
-		</div>
-    </c:when>
-    <c:when test="${not empty uploadClusterSuccessStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
-      	<div class="alert alert-success" role="alert">
-		<strong>${uploadClusterSuccessStatus}</strong> ${uploadClusterSuccessMessage}
-		</div>
-		</div>
-    </c:when>
-        <c:when test="${not empty deleteClusterSuccessStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
-      	<div class="alert alert-danger" role="alert">
-		<strong>${deleteClusterSuccessStatus}</strong> ${deleteClusterSuccessMessage}
-		</div>
-		</div>
-    </c:when>
-    <c:otherwise>
-
-    </c:otherwise>
-</c:choose>
-
-
+	<c:choose>
+	    <c:when test="${not empty uploadClusterFailStatus}">
+	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	        <div class="alert alert-danger" role="alert">
+			<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
+			</div>
+			</div>
+	    </c:when>
+	    <c:when test="${not empty uploadClusterSuccessStatus}">
+	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	      	<div class="alert alert-success" role="alert">
+			<strong>${uploadClusterSuccessStatus}</strong> ${uploadClusterSuccessMessage}
+			</div>
+			</div>
+	    </c:when>
+	        <c:when test="${not empty deleteClusterSuccessStatus}">
+	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	      	<div class="alert alert-danger" role="alert">
+			<strong>${deleteClusterSuccessStatus}</strong> ${deleteClusterSuccessMessage}
+			</div>
+			</div>
+	    </c:when>
+	    <c:otherwise>
+	
+	    </c:otherwise>
+	</c:choose>
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 
@@ -112,7 +112,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="cluster" items="${currentAccount.clusters}">
-					<c:url var="removeLink" value="deleteClusterConfirmation">
+					<c:url var="removeLink" value="/provider/delete">
 						<c:param name="clusterIp" value="${cluster.ip}" />
 					</c:url>
 					
@@ -132,9 +132,9 @@
 
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
-More than likely we can simplify it by sending email or uploading a file top the cluster -->
+		More than likely we can simplify it by sending email or uploading a file top the cluster -->
 		<h3>Upload New Cluster IP</h3>
-		<form:form action="uploadClusterConfirmation" modelAttribute="newClusterForm">
+		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
 			<div class="form-group row">
 				<label> IP Address: </label>
@@ -146,12 +146,10 @@ More than likely we can simplify it by sending email or uploading a file top the
 					value="Submit" />
 			</div>
 		</form:form>
-</div>
+	</div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </body>
 </html>

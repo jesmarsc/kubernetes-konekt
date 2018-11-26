@@ -1,4 +1,4 @@
-package com.kubernetes.konekt.entity;
+package com.kubernetes.konekt.form;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -8,8 +8,8 @@ import java.util.LinkedHashMap;
 
 public class RegistrationForm {
 	
-	@NotNull(message = "is required")
-	@Size(min = 3, message = "is required")
+	@NotNull(message = "Required Field")
+	@Size(min = 3, message = "Required Field")
 	private String userName;
 	
 	@NotNull(message="Required Field")

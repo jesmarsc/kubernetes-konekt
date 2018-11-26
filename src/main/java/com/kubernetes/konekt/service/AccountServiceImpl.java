@@ -17,8 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kubernetes.konekt.dao.AccountDAO;
 import com.kubernetes.konekt.dao.RoleDao;
 import com.kubernetes.konekt.entity.Account;
-import com.kubernetes.konekt.entity.RegistrationForm;
 import com.kubernetes.konekt.entity.Role;
+import com.kubernetes.konekt.form.RegistrationForm;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -34,14 +34,29 @@ public class AccountServiceImpl implements AccountService {
 	
 	@Override
 	@Transactional
-	public List<Account> getAccounts() {
-		return accountDAO.getAccounts();
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+		Account account = accountDAO.findByUserName(userName);
+		if (account == null) {
+			throw new UsernameNotFoundException("Invalid username or password.");
+		}
+		return new org.springframework.security.core.userdetails.User(account.getUserName(), account.getPassword(),
+				mapRolesToAuthorities(account.getRoles()));
+	}
+	
+	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
 	}
 	
 	@Override
 	@Transactional
 	public Account findByUserName(String userName) {
 		return accountDAO.findByUserName(userName);
+	}
+	
+	@Override
+	@Transactional
+	public List<Account> getAccounts() {
+		return accountDAO.getAccounts();
 	}
 	
 	@Override
@@ -57,37 +72,11 @@ public class AccountServiceImpl implements AccountService {
 		
 		return accountDAO.saveAccount(newAccount);
 	}
-	
-	@Override
-	@Transactional
-	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		Account account = accountDAO.findByUserName(userName);
-		if (account == null) {
-			throw new UsernameNotFoundException("Invalid username or password.");
-		}
-		return new org.springframework.security.core.userdetails.User(account.getUserName(), account.getPassword(),
-				mapRolesToAuthorities(account.getRoles()));
-	}
-	
-	private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-		return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
-	}
-
-	@Override
-	@Transactional
-	public Account getAccount(int accountId) {
-		Account account = accountDAO.getAccount(accountId);
-		
-		return account;
-	}
 
 	@Override
 	@Transactional
 	public void updateAccountTables(Account uAccount) {
 		accountDAO.updateAccountTables(uAccount);
 	}
-
-
-
 	
 }

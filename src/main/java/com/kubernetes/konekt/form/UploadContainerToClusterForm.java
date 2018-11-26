@@ -1,14 +1,17 @@
 package com.kubernetes.konekt.form;
 
+import javax.validation.constraints.NotNull;
+
 public class UploadContainerToClusterForm {
+	
+	@NotNull(message = "Required Field")
 	private String containerName;
+	
+	@NotNull(message = "Required Field")
 	private String clusterIp;
 	
+	public UploadContainerToClusterForm() {}
 	
-	
-	public UploadContainerToClusterForm() {
-
-	}
 	public String getContainerName() {
 		return containerName;
 	}

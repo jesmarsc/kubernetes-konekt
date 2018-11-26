@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,16 +31,12 @@ public class UserController {
 	private AccountService accountService;
 	@Autowired 
 	private ClusterService clusterService;
+
 	@Autowired
 	private ContainerService containerService;
 	
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
-		
-		boolean userRole =SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_USER"));
-		boolean providerRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(r -> r.getAuthority().equals("ROLE_PROVIDER"));
-		model.addAttribute("userRole", userRole);
-		model.addAttribute("providerRole", providerRole);
 		
 		UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
 		model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
@@ -55,12 +52,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(value = "/uploadContainerToClusterConfirmation")
-	public String uploadContainerToCluster( @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
+	public String uploadContainerToCluster(@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, 
+			BindingResult theBindingResult, Model model) {
 
 		//if cluster ip or container name fields are empty throw error
 		if(uploadForm.getClusterIp() == null || uploadForm.getContainerName() == null) {
-
-			String uploadContainerToClusterFailStatus = " Upload Failed";
+ 			String uploadContainerToClusterFailStatus = " Upload Failed";
 			String uploadContainerToClusterFailMessage = "Cluster or Container was not selected";
 			model.addAttribute("uploadContainerToClusterFailStatus", uploadContainerToClusterFailStatus);
 			model.addAttribute("uploadContainerToClusterFailMessage",uploadContainerToClusterFailMessage);
@@ -96,14 +93,9 @@ public class UserController {
 		return this.showUserDashboard(model);
 	}
 	
-
-	
-	
 	@RequestMapping(value = "/deleteContainerConfirmation")
 	public String deleteContainer( @RequestParam("containerName")String containerName, Model model) {
 
-		
-		
 		try {
 		// get current user 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
