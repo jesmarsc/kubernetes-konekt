@@ -58,7 +58,7 @@ public class ProviderController {
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterIp);
 		//check if cluster was running container if so set container status to stopped
 		// 		set container cluster ip to "N/A"
-		if(!TBDeletedCluster.getContainerName().equals("N/A")) {
+		if((TBDeletedCluster.getContainerName() != null) && !TBDeletedCluster.getContainerName().equals("N/A")) {
 			Container updateContainer = containerService.getContainerByContainerIp(clusterIp);
 			updateContainer.setIpAddress("N/A");
 			updateContainer.setStatus("Stopped");
