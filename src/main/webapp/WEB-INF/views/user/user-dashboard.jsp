@@ -149,35 +149,15 @@
 		</table>
 	</div>
 
-		<!-- Drop down menu to choose a container to delete -->
-	<div
-		class=" form-group container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-		<label> Delete A Container:</label>
-		<div class="dropdown">
-			<button class="btn btn-danger dropdown-toggle" type="button"
-				id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
-				aria-expanded="false">Select Container To Delete</button>
-			<div class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				<c:forEach var="container" items="${currentAccount.containers}">
-					<c:url var="removeLink" value="deleteContainerConfirmation">
-						<c:param name="containerName" value="${container.containerName}" />
-					</c:url>
-					<a class=" dropdown-item btn btn-primary " href="${removeLink}"
-						onclick="if(!(confirm('Are you sure you want to delete container')))return false"
-						role="button">Delete ${container.containerName} Container</a>
-				</c:forEach>
-			</div>
-		</div>
-	</div>
 
-	<!--  probably will want to wrap the next three containers into with <form:form>...</form:form> -->
+
 
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
 
 	<div
-		class="  container  dropdown mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+		class="  container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 		<form:form class="custom-file form-inline" method="POST"
 			action="/uploadContainerConfirmation" enctype="multipart/form-data">
 
@@ -196,7 +176,7 @@
 		</form:form>
 	</div>
 
-
+	
 
 
 	<!--  Form to upload -->
@@ -234,13 +214,19 @@
 				value="Submit" />
 		</div>
 	</form:form>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-		></script>
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+	<script type="application/javascript">
+		
+   			 $('input[type="file"]').change(function(e){
+       		 var fileName = e.target.files[0].name;
+        	$('.custom-file-label').html(fileName);
+   		 });
+		
+	</script>
 </body>
 </html>
