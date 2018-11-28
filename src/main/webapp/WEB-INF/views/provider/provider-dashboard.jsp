@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page session="false"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Begin HTML Document -->
@@ -22,7 +22,7 @@
 </head>
 <body>
 
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
@@ -72,21 +72,21 @@
 
 	<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
-	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 	        <div class="alert alert-danger" role="alert">
 			<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
 			</div>
 			</div>
 	    </c:when>
 	    <c:when test="${not empty uploadClusterSuccessStatus}">
-	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 	      	<div class="alert alert-success" role="alert">
 			<strong>${uploadClusterSuccessStatus}</strong> ${uploadClusterSuccessMessage}
 			</div>
 			</div>
 	    </c:when>
 	        <c:when test="${not empty deleteClusterSuccessStatus}">
-	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 	      	<div class="alert alert-danger" role="alert">
 			<strong>${deleteClusterSuccessStatus}</strong> ${deleteClusterSuccessMessage}
 			</div>
@@ -97,7 +97,7 @@
 	    </c:otherwise>
 	</c:choose>
 
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
