@@ -18,33 +18,6 @@ public class AccountDAOImpl implements AccountDAO {
 	private EntityManager factory;
 	
 	@Override
-	public List<Account> getAccounts() {
-		Session currentSession = factory.unwrap(Session.class);
-		
-		Query<Account> theQuery = 
-				currentSession.createQuery("FROM Account", Account.class);
-		
-		List<Account> accounts = theQuery.getResultList();
-		
-		return accounts;
-	}
-	
-	
-	
-	@Override
-	public Account getAccount(int accountId) {
-		Session currentSession = factory.unwrap(Session.class);
-		
-		Query<Account> theQuery = 
-				currentSession.createQuery("FROM Account WHERE id = :id", Account.class);
-				theQuery.setParameter("id", accountId);
-		Account account = theQuery.getSingleResult();
-		
-		return account;
-	}
-	
-	
-	@Override
 	public Account findByUserName(String userName) {
 		Session currentSession = factory.unwrap(Session.class);
 
@@ -59,6 +32,18 @@ public class AccountDAOImpl implements AccountDAO {
 		}
 
 		return account;
+	}
+	
+	@Override
+	public List<Account> getAccounts() {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Account> theQuery = 
+				currentSession.createQuery("FROM Account", Account.class);
+		
+		List<Account> accounts = theQuery.getResultList();
+		
+		return accounts;
 	}
 
 	@Override
@@ -81,18 +66,10 @@ public class AccountDAOImpl implements AccountDAO {
 		return true;
 	}
 
-
-
 	@Override
 	public void updateAccountTables(Account uAccount) {
 		Session currentSession = factory.unwrap(Session.class);
-		
 		currentSession.saveOrUpdate(uAccount) ;
-	
 	}
-	
-	
-
-
 
 }

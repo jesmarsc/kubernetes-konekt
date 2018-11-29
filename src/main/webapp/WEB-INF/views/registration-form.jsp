@@ -54,7 +54,7 @@
 			<div class="form-group row">
 				<label> Username: </label>
 				<form:input class="form-control" path="userName" />
-				<form:errors path="firstName" cssClass="error" />
+				<form:errors path="userName" cssClass="error" />
 			</div>
 			
 			<div class="form-group row">
@@ -106,13 +106,9 @@
 			</div>
 		</form:form>
 	</div>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-		></script>
+	
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>
 </html>

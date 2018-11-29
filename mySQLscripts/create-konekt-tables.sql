@@ -86,6 +86,8 @@ DROP TABLE IF EXISTS `cluster_info`;
 CREATE TABLE `cluster_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(128) DEFAULT NULL,
+  `container_name` 	varchar(100) DEFAULT NULL,
+  `cluster_statususers_roles` 	varchar(100) DEFAULT NULL,
   `provider_account_id` int(11) DEFAULT NULL,
   
   PRIMARY KEY (`id`),
@@ -105,7 +107,9 @@ DROP TABLE IF EXISTS `container_info`;
 
 CREATE TABLE `container_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `container_name` 	varchar(45) DEFAULT NULL,
+  `container_name` 	varchar(100) DEFAULT NULL,
+  `container_status` 	varchar(100) DEFAULT NULL,
+  `container_ip` 	varchar(100) DEFAULT NULL,
   `container_path`  LONGBLOB ,
   `user_account_id` int(11) DEFAULT NULL,
   
@@ -123,7 +127,7 @@ CREATE TABLE `container_info` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 
-
+/*
 
 INSERT INTO `users_roles` (user_id,role_id)
 VALUES 
@@ -132,5 +136,5 @@ VALUES
 (2, 2),
 (3, 1),
 (3, 3);
-
+*/
 SET FOREIGN_KEY_CHECKS = 1;

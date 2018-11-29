@@ -21,6 +21,12 @@ public class Cluster {
 
 	@Column(name = "ip")
 	private String ip;
+	
+	@Column(name = "container_name")
+	private String containerName;
+	
+	@Column(name = "cluster_status")
+	private String status;
 
 
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
@@ -33,7 +39,9 @@ public class Cluster {
 	public Cluster() {
 	}
 	
-	public Cluster(String ip) {
+	public Cluster(String ip, String status, String containerName) {
+		this.containerName = containerName;
+		this.status = status;
 		this.ip = ip;
 	}
 
@@ -74,6 +82,22 @@ public class Cluster {
 	}
 
 
+
+	public String getContainerName() {
+		return containerName;
+	}
+
+	public void setContainerName(String containerName) {
+		this.containerName = containerName;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	@Override
 	public String toString() {

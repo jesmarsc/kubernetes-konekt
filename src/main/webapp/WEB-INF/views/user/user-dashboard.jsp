@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page session="false" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -36,12 +37,13 @@
 				<ul class="navbar-nav ml-auto">
 
 					<li class="nav-item"><a class="nav-link" href="/"> Home </a></li>
-					<c:if test="${userRole == true}">
+					<sec:authorize access="hasRole('USER')">
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
-					</c:if>
-					<c:if test="${providerRole == true}">
+
+					</sec:authorize>
+					<sec:authorize access="hasRole('PROVIDER')">
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> Provider Dashboard </a></li>
-					</c:if>
+					</sec:authorize>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
 
@@ -126,75 +128,55 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<th scope="row">Container 1</th>
-					<td>196.12.186.145</td>
-					<td>Running</td>
-					<td>
-					<button type="button" class="btn btn-primary m-1">Start</button>
-					<button type="button" class="btn btn-primary m-1">Stop</button>
-					</td>
-				</tr>
-				<tr>
-					<th scope="row">Container 2</th>
-					<td>193.123.146.155</td>
-					<td>Running</td>
-					<td>
-					<button  type="button" class="btn btn-primary m-1">Start</button>
-					<button type="button" class="btn btn-primary m-1">Stop</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-
-		<!-- Drop down menu to choose a container to delete -->
-	<div
-		class=" form-group container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-		<label> Delete A Container:</label>
-		<div class="dropdown">
-			<button class="btn btn-danger dropdown-toggle" type="button"
-				id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true"
-				aria-expanded="false">Select Container To Delete</button>
-			<div class="dropdown-menu" aria-labelledby="dropdownMenu1">
+			
+			
 				<c:forEach var="container" items="${currentAccount.containers}">
 					<c:url var="removeLink" value="deleteContainerConfirmation">
 						<c:param name="containerName" value="${container.containerName}" />
 					</c:url>
-					<a class=" dropdown-item btn btn-primary " href="${removeLink}"
-						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
-						role="button">Delete ${container.containerName} Container</a>
+					
+					<tr>
+						<td>${container.containerName}</td>
+						<td>${container.ipAddress}</td>
+						<td>${container.status}</td>
+						<td>
+							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-primary" href="#" role="button">another option</a>
+						</td>
+					</tr>
 				</c:forEach>
-			</div>
-		</div>
+			</tbody>
+		</table>
 	</div>
 
-	<!--  probably will want to wrap the next three containers into with <form:form>...</form:form> -->
+
+
 
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
 
 	<div
-		class="  container  dropdown mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+		class="  container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
 		<form:form class="custom-file form-inline" method="POST"
 			action="/uploadContainerConfirmation" enctype="multipart/form-data">
 
 			<div class="form-group  mb-2">
 				<input type="file" class="custom-file-input" id="customFile"
 					name="containerFile">
-			</div>
 
+			</div>
 			<div class="form-group  mb-2">
 				<input class="btn btn-primary custom-file text-center" type="submit"
 					value="Upload" /> <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+			
 
 		</form:form>
 	</div>
 
-
+	
 
 
 	<!--  Form to upload -->
@@ -232,13 +214,19 @@
 				value="Submit" />
 		</div>
 	</form:form>
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-		></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-		></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-		></script>
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+	<script type="application/javascript">
+		
+   			 $('input[type="file"]').change(function(e){
+       		 var fileName = e.target.files[0].name;
+        	$('.custom-file-label').html(fileName);
+   		 });
+		
+	</script>
 </body>
 </html>
