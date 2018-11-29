@@ -33,6 +33,8 @@
 
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			
+				<input type="button" onclick="location.href='schedule'" value="Scheduling" class="btn">
 				<ul class="navbar-nav ml-auto">
 
 					<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/"> Home </a></li>
