@@ -17,8 +17,10 @@
 	<h1>Welcome to Kubernetes Konekt!</h1>
 	
 	<div class="container-fluid col-md-12">
-		<input type="button" onclick="location.href='register'" value="Register" class="btn">
-		<input type="button" onclick="location.href='login'" value="Login" class="btn">
+		<sec:authorize access="isAnonymous()">
+			<input type="button" onclick="location.href='register'" value="Register" class="btn">
+			<input type="button" onclick="location.href='login'" value="Login" class="btn">
+		</sec:authorize>
 		<sec:authorize access="hasRole('USER')">
 			<input type="button" onclick="location.href='user'"
 				value="User Dashboard" class="btn">
@@ -29,10 +31,14 @@
 		</sec:authorize>
 
 		<input type="button" onclick="location.href='user/list'" value="User List" class="btn">
-		<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-			<input type="submit" value="Logout" class="btn btn-primary"/>
-		</form:form>
+		
+		<sec:authorize access="isAuthenticated()">
+			<form:form action="${pageContext.request.contextPath}/logout" method="POST">
+				<input type="submit" value="Logout" class="btn btn-primary"/>
+			</form:form>
+		</sec:authorize>
 	</div>
+	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
