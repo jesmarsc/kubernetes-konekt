@@ -53,11 +53,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
 			<artifactId>tomcat-embed-jasper</artifactId>
 		</dependency>
-		
+	
+
 		<!-- Servlet, JSP, and JSTL support -->
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
@@ -82,11 +84,33 @@
 		    <groupId>org.springframework.security</groupId>
 		    <artifactId>spring-security-taglibs</artifactId>
 		    </dependency>
-				
+		<dependency>
+        	<groupId>javax.xml.bind</groupId>
+        	<artifactId>jaxb-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+		<plugin>
+			  <artifactId>maven-surefire-plugin</artifactId>
+			  <configuration>
+			    <excludes>
+			      <exclude>DataTest.java</exclude>
+			    </excludes>
+			    <includes>
+			      <include>DataCheck.java</include>
+			    </includes>
+			  </configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
