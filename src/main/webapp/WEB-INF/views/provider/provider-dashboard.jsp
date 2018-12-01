@@ -42,7 +42,7 @@
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
 					</sec:authorize>
 					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> Provider Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
 					</sec:authorize>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>

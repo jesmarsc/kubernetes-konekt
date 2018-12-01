@@ -31,10 +31,9 @@ public class ProviderController {
 
 	@Autowired 
 	private ClusterService clusterService;
+	
 	@Autowired
 	private ContainerService containerService;
-	
-	
 	
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
@@ -81,7 +80,7 @@ public class ProviderController {
 	}
 	
 	@RequestMapping(value = "/provider/upload")
-	public String uploadNewCluster(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm,
+	public String uploadCluster(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm,
 			BindingResult theBindingResult, Model model) {
 
 		if(theBindingResult.hasErrors()) {
