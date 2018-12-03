@@ -73,21 +73,21 @@
 
 <c:choose>
     <c:when test="${not empty uploadContainerToClusterFailStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
         <div class="alert alert-danger" role="alert">
 		<strong>${uploadContainerToClusterFailStatus}</strong> ${uploadContainerToClusterFailMessage}
 		</div>
 		</div>
     </c:when>
     <c:when test="${not empty uploadContainerToClusterSuccessStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
       	<div class="alert alert-success" role="alert">
 		<strong>${uploadContainerToClusterSuccessStatus}</strong> ${uploadContainerToClusterSuccessMessage}
 		</div>
 		</div>
     </c:when>
         <c:when test="${not empty uploadContainerFailStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
       	<div class="alert alert-danger" role="alert">
 		<strong>${uploadContainerFailStatus}</strong> ${uploadContainerFailMessage}
 		</div>
@@ -95,7 +95,7 @@
     </c:when>
 
         <c:when test="${not empty uploadContainerSuccessStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
       	<div class="alert alert-success" role="alert">
 		<strong>${uploadContainerSuccessStatus}</strong> ${uploadContainerSuccessMessage}
 		</div>
@@ -103,7 +103,7 @@
     </c:when>
   
         <c:when test="${not empty deleteContainerToClusterStatus}">
-    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
       	<div class="alert alert-danger" role="alert">
 		<strong>${deleteContainerToClusterStatus}</strong> ${deleteContainerToClusterMessage}
 		</div>
@@ -116,7 +116,7 @@
 </c:choose>
 
 
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 		<table class="table table-hover table-bordered">
 			<caption>Container/Cluster Status</caption>
 			<thead>
@@ -157,7 +157,7 @@
 
 
 	<div
-		class="  container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+		class="  container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 		<form:form class="custom-file form-inline" method="POST"
 			action="/uploadContainerConfirmation" enctype="multipart/form-data">
 
