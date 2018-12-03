@@ -16,7 +16,7 @@
 </head>
 
 <body>
-	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
@@ -36,7 +36,7 @@
 		</nav>
 	</div>
 
-	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-10">
+	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<div id="wrapper">
 			<div id="header">

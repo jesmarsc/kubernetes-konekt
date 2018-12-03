@@ -12,14 +12,14 @@
 	
 	<title>Home</title>
 </head>
-<body class="text-center">
+<body>
 	
 	<div class="jumbotron text-center">
 		<h1>Welcome to Kubernetes Konekt!</h1><br>
 		<img src="images/kubernetes.png" style="height:60px;">
 		
 		<p> </p>
-		<div class="container-fluid col-md-12">
+		<div class="container-fluid col-md-4">
 			<sec:authorize access="isAnonymous()">
 				<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary">
 				<input type="button" onclick="location.href='login'" value="Login" class="btn btn-primary">
@@ -35,9 +35,10 @@
 	
 			<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
 			
+			<p> </p>
 			<sec:authorize access="isAuthenticated()">
 				<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-					<input type="submit" value="Logout" class="btn btn-primary"/>
+					<input type="submit" value="Logout" class="btn btn-danger"/>
 				</form:form>
 			</sec:authorize>
 		</div>
@@ -51,7 +52,7 @@
           		<div class="card h-45">
           			<h4 class="card-header" align="center">Seamless Cluster Integration</h4>
           			<div class="card-body">
-              			<p class="card-text">Kubernetes Konekt allows for multiple connections with multiple purchases. No more need to connect with different clients to support large apps!</p>
+              			<p class="card-text" align="center">Kubernetes Konekt allows for multiple connections with multiple purchases. No more need to connect with different clients to support large apps!</p>
             		</div>
           		</div>
         	</div>
@@ -59,7 +60,7 @@
           		<div class="card h-45">
           			<h4 class="card-header" align="center">Command-less Interface</h4>
           			<div class="card-body">
-              			<p class="card-text">No need for users to upload their image through multiple command-line arguments. Easily upload a user container and let us do the rest!</p>
+              			<p class="card-text" align="center">No need for users to upload their image through multiple command-line arguments. Easily upload a user container and let us do the rest!</p>
             		</div>
           		</div>
         	</div>
@@ -67,7 +68,7 @@
           		<div class="card h-45">
           			<h4 class="card-header" align="center">Easy Payment</h4>
           			<div class="card-body">
-              			<p class="card-text">With most major credit cards accepted and PayPal being set up, easy payment is only minutes away! *Soon to Accept Venmo, etc.</p>
+              			<p class="card-text" align="center">With most major credit cards accepted and PayPal being set up, easy payment is only minutes away! *Soon to Accept Venmo, etc.</p>
             		</div>
           		</div>
         	</div>
