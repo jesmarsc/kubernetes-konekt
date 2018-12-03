@@ -11,13 +11,6 @@
 	<link href="css/bootstrap.min.css" rel="stylesheet"/>
 	
 	<title>Home</title>
-	<style>
-	/* Make the image fully responsive */
-	.carousel-inner img {
-	    width: 100%;
-	    height: 100%;
-	}
-	</style>
 </head>
 <body class="text-center">
 	
