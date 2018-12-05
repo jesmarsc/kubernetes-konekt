@@ -149,8 +149,7 @@
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-	<div
-		class="  border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
+	<div class="  border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
 		<!-- Form to upload deployment yaml file to cluster -->
 		<form:form class="custom-file " method="POST"
 			action="/user/upload" enctype="multipart/form-data" modelAttribute="uploadContainerClusterForm">
