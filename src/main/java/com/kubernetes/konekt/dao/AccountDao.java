@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.kubernetes.konekt.entity.Account;
 
-public interface AccountDAO {
+public interface AccountDao {
 	
 	public Account findByUserName(String userName);
 	

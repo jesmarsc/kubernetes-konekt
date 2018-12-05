@@ -104,8 +104,7 @@
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th>Cluster IP</th>
-					<th>Container</th>
+					<th>Cluster URL</th>
 					<th>Status</th>
 					<th>Options</th>
 				</tr>
@@ -113,16 +112,15 @@
 			<tbody>
 				<c:forEach var="cluster" items="${currentAccount.clusters}">
 					<c:url var="removeLink" value="/provider/delete">
-						<c:param name="clusterIp" value="${cluster.ip}" />
+						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
 					</c:url>
 					
 					<tr>
-						<td>${cluster.ip}</td>
-						<td>${cluster.containerName}</td>
+						<td>${cluster.clusterUrl}</td>
 						<td>${cluster.status}</td>
 						<td>
 							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-primary" href="#" role="button">another option</a>
+							<a class="btn btn-primary" href="#" role="button">Another Option</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -133,13 +131,23 @@
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
 		More than likely we can simplify it by sending email or uploading a file top the cluster -->
-		<h3>Upload New Cluster IP</h3>
+		<h3>Upload New Cluster URL</h3>
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
 			<div class="form-group row">
-				<label> IP Address: </label>
-				<form:input class="form-control" path="clusterIp" />
-				<form:errors path="clusterIp" cssClass="error" />
+				<label> Cluster URL (i.e. https://122.198.122.166): </label>
+				<form:input class="form-control" path="clusterUrl" />
+				<form:errors path="clusterUrl" cssClass="error" />
+			</div>
+			<div class="form-group row">
+				<label> Cluster Username (must have admin privileges): </label>
+				<form:input class="form-control" path="clusterUsername" />
+				<form:errors path="clusterUsername" cssClass="error" />
+			</div>
+			<div class="form-group row">
+				<label> Cluster Password: </label>
+				<form:password class="form-control" path="clusterPassword" />
+				<form:errors path="clusterPassword" cssClass="error" />
 			</div>
 			<div class="form-group row">
 				<input class="btn btn-primary text-center" type="submit"

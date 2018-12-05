@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kubernetes.konekt.dao.AccountDAO;
+import com.kubernetes.konekt.dao.AccountDao;
 import com.kubernetes.konekt.dao.RoleDao;
 import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Role;
@@ -24,10 +24,10 @@ import com.kubernetes.konekt.form.RegistrationForm;
 public class AccountServiceImpl implements AccountService {
 	
 	@Autowired
-	private AccountDAO accountDAO;
+	private AccountDao accountDao;
 	
 	@Autowired
-	private RoleDao roleDAO;
+	private RoleDao roleDao;
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -35,7 +35,7 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	@Transactional
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
-		Account account = accountDAO.findByUserName(userName);
+		Account account = accountDao.findByUserName(userName);
 		if (account == null) {
 			throw new UsernameNotFoundException("Invalid username or password.");
 		}
@@ -50,13 +50,13 @@ public class AccountServiceImpl implements AccountService {
 	@Override
 	@Transactional
 	public Account findByUserName(String userName) {
-		return accountDAO.findByUserName(userName);
+		return accountDao.findByUserName(userName);
 	}
 	
 	@Override
 	@Transactional
 	public List<Account> getAccounts() {
-		return accountDAO.getAccounts();
+		return accountDao.getAccounts();
 	}
 	
 	@Override
@@ -68,15 +68,15 @@ public class AccountServiceImpl implements AccountService {
 		newAccount.setLastName(form.getLastName());
 		newAccount.setEmail(form.getEmail());
 		newAccount.setPassword(passwordEncoder.encode(form.getPassword()));
-		newAccount.setRoles(Arrays.asList(roleDAO.findRoleByName(form.getRole())));
+		newAccount.setRoles(Arrays.asList(roleDao.findRoleByName(form.getRole())));
 		
-		return accountDAO.saveAccount(newAccount);
+		return accountDao.saveAccount(newAccount);
 	}
 
 	@Override
 	@Transactional
 	public void updateAccountTables(Account uAccount) {
-		accountDAO.updateAccountTables(uAccount);
+		accountDao.updateAccountTables(uAccount);
 	}
 	
 }

@@ -2,17 +2,15 @@ package com.kubernetes.konekt.dao;
 
 import com.kubernetes.konekt.entity.Container;
 
-public interface ContainerDAO {
+public interface ContainerDao {
+	
+	public Container getContainerByName(String name);
 	
 	public boolean saveContainer(Container newContainer);
 
-	public Container getContainerByContainerPath(String containerPath);
-
 	public void deleteContainer(Container containerTBD);
 
-	public boolean containerExists(String containerPath);
-
-	public Container getContainerByContainerIp(String clusterIp);
+	public boolean containerExists(String name);
 
 	public void updateEntry(Container updateContainer);
 	

@@ -5,24 +5,29 @@ import javax.validation.constraints.NotNull;
 public class UploadContainerToClusterForm {
 	
 	@NotNull(message = "Required Field")
-	private String containerName;
+	private String yaml;
 	
 	@NotNull(message = "Required Field")
-	private String clusterIp;
+	private String clusterUrl;
 	
-	public UploadContainerToClusterForm() {}
-	
-	public String getContainerName() {
-		return containerName;
+	public UploadContainerToClusterForm() {
+		
 	}
-	public void setContainerName(String containerName) {
-		this.containerName = containerName;
+
+	public String getYaml() {
+		return yaml;
 	}
-	public String getClusterIp() {
-		return clusterIp;
+
+	public void setYaml(String yaml) {
+		this.yaml = yaml;
 	}
-	public void setClusterIp(String clusterIp) {
-		this.clusterIp = clusterIp;
+
+	public String getClusterUrl() {
+		return clusterUrl;
+	}
+
+	public void setClusterUrl(String clusterUrl) {
+		this.clusterUrl = clusterUrl;
 	}
 	
 }

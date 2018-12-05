@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.kubernetes.konekt.entity.Account;
 
 @Repository
-public class AccountDAOImpl implements AccountDAO {
+public class AccountDaoImpl implements AccountDao {
 
 	@Autowired
 	private EntityManager factory;
