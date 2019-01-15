@@ -120,6 +120,7 @@
 		<table class="table table-hover table-bordered">
 			<thead>
 				<tr>
+					<th>Id</th>
 					<th>Container</th>
 					<th>Cluster URL</th>
 					<th>Status</th>
@@ -129,10 +130,11 @@
 			<tbody>
 				<c:forEach var="container" items="${currentAccount.containers}">
 					<c:url var="removeLink" value="/user/delete">
-						<c:param name="containerName" value="${container.containerName}" />
+						<c:param name="containerId" value="${container.id}" />
 					</c:url>
 					
 					<tr>
+						<td>${container.id}</td>
 						<td>${container.containerName}</td>
 						<td>${container.clusterUrl}</td>
 						<td>${container.status}</td>

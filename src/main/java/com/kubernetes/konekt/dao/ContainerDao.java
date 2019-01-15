@@ -13,6 +13,8 @@ public interface ContainerDao {
 	public boolean containerExists(String name);
 
 	public void updateEntry(Container updateContainer);
+
+	public Container getContainerById(Long id);
 	
 
 }

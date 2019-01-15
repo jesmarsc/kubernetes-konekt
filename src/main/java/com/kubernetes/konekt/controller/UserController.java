@@ -64,15 +64,28 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 		
+ 
+		// getting username to retrieve account and to use as namespace.
+		String username = SecurityContextHolder.getContext().getAuthentication().getName(); 
+		Account currentAccount = accountService.findByUserName(username);
 		String clusterUrl = uploadForm.getClusterUrl();
 		Cluster cluster = clusterService.getCluster(clusterUrl);
 		String userName = cluster.getClusterUsername();
 		String passWord = cluster.getClusterPassword();
 		String deployment = null;
-		
+
+		// check if namespace already exist 
+		Boolean doesExist = clusterApi.CheckNamespaceAlreadyExist(username,clusterUrl, userName, passWord);
+		// if namespace does not exist create it
+		if(!doesExist) {
+			clusterApi.createNamespace(username,clusterUrl, userName, passWord);
+
+		}
+
+
 		try {
-			deployment = clusterApi.execYaml(file, clusterUrl, userName, passWord);
-		} catch (IOException e) {
+			deployment = clusterApi.execYaml(file, clusterUrl, userName, passWord, username);
+		} catch (IOException e) { 
             e.printStackTrace();
 			String uploadContainerFailStatus = "Deployment Failed";
 			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was an error uploading the file content";
@@ -81,8 +94,13 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 		
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Account currentAccount = accountService.findByUserName(username);
+		if(deployment == null) {
+			String uploadContainerFailStatus = "Deployment Failed";
+			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name)";
+			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
+			model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
+            return this.showUserDashboard(model);
+		}
 		
 		Container newContainer = new Container(deployment, clusterUrl, "Running");
 		
@@ -98,43 +116,29 @@ public class UserController {
 		return this.showUserDashboard(model);
 	}
 	
-	/*
+	
 	@RequestMapping(value = "/user/delete")
-	public String deleteContainer( @RequestParam("containerName")String containerName, Model model) {
-
+	public String deleteContainer( @RequestParam("containerId")Long id, Model model) {
+		
+		Container containerTBD = containerService.getContainerById(id);
+		String containerName = containerTBD.getContainerName();
 		try {
 		// get current user 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
-		
-		// convert account id to string
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("");
-		stringBuilder.append(currentAccount.getId());
-		String stringId = stringBuilder.toString();
-		
-		//Path for container to be deleted
-	    String UPLOADED_CONTAINER_PATH = "containers/" + stringId + "/" + containerName;
-        Path path = Paths.get(UPLOADED_CONTAINER_PATH);
-        
-		//delete container from container folder add userid to path
-		Files.delete(path);
-		
-		// delete container information from database
-		Container containerTBD = containerService.getContainerByContainerPath(UPLOADED_CONTAINER_PATH);
-		// If container was running on cluster remove from cluster and free cluster so another user can use it
-		if(!containerTBD.getIpAddress().equals("N/A")) {
-			System.out.println("\n\n\n\n\n\n\n" + !containerTBD.getIpAddress().equals("N/A")  +"\n\n\n\n\n\n");
-			Cluster updateCluster = clusterService.getCluster(containerTBD.getIpAddress());
-			updateCluster.setContainerName("N/A");
-			updateCluster.setStatus("Stopped");
-			clusterService.updateEntry(updateCluster);
-		}
+
+		// Deleting Deployment from cluster
+		String deploymentName = containerTBD.getContainerName();
+		String clusterUrl = containerTBD.getClusterUrl();
+		Cluster cluster = clusterService.getCluster(clusterUrl);
+		String userName = cluster.getClusterUsername();
+		String passWord = cluster.getClusterPassword();
+		clusterApi.deleteDeployment(deploymentName, clusterUrl, userName, passWord, username);
+		// Deleting Deployment from database 
 		containerService.deleteContainer(containerTBD);
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-
 			String deleteContainerToClusterStatus = "Container Delete Failed";
 			String deleteContainerToClusterMessage = "The container: '" + containerName + "' could not be deleted. Container not found in system";
             model.addAttribute("deleteContainerToClusterStatus", deleteContainerToClusterStatus);
@@ -150,6 +154,6 @@ public class UserController {
 		return this.showUserDashboard(model);
 		
 	}
-	*/
+
 	
 }

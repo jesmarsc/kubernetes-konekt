@@ -88,4 +88,18 @@ public class ContainerDaoImpl implements ContainerDao {
 		currentSession.saveOrUpdate(updateContainer) ;		
 	}
 
+	@Override
+	public Container getContainerById(Long id) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Container> theQuery = 
+				currentSession.createQuery("FROM Container WHERE id = :id ", Container.class);
+		
+		theQuery.setParameter("id", id);
+		
+		Container container = theQuery.getSingleResult();
+		
+		return container;
+	}
+
 }
