@@ -46,4 +46,10 @@ public class ContainerServiceImpl implements ContainerService{
 		
 	}
 
+	@Override
+	@Transactional
+	public Container getContainerById(Long id) {
+		return containerDao.getContainerById(id);
+	}
+
 }

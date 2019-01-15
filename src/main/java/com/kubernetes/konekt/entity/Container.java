@@ -27,11 +27,15 @@ public class Container {
 	
 	@Column(name="container_status")
 	private String status;
-	
+	/*
+	 Add mapping for each container back to the cluster that it running on to 
+	 ease populating provider table that show what is running on their clusters
+	 */
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
 			 			CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="user_account_id")
 	private Account account;
+	
 
 	public Container() {
 		

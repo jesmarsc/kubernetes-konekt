@@ -4,6 +4,8 @@ import com.kubernetes.konekt.entity.Container;
 
 public interface ContainerService {
 	
+	public Container getContainerById(Long id);
+	
 	public Container getContainerByName(String name);
 	
 	public boolean saveContainer(Container newContainer);

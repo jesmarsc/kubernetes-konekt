@@ -27,9 +27,6 @@ public class Cluster {
 	
 	@Column(name = "cluster_password")
 	private String clusterPassword;
-	
-	@Column(name = "cluster_status")
-	private String status;
 
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
 						 CascadeType.PERSIST, CascadeType.REFRESH})
@@ -43,7 +40,7 @@ public class Cluster {
 		this.clusterUrl = clusterUrl;
 		this.clusterUsername = clusterUsername;
 		this.clusterPassword = clusterPassword;
-		this.status = status;
+
 	}
 
 	public Long getId() {
@@ -78,13 +75,6 @@ public class Cluster {
 		this.clusterPassword = clusterPassword;
 	}
 
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
 
 	public Account getAccount() {
 		return account;
