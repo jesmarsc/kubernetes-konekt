@@ -1,3 +1,9 @@
+/*
+DROP DATABASE IF EXISTS `spring_security_custom_user_demo`;
+CREATE DATABASE  IF NOT EXISTS `spring_security_custom_user_demo`;
+*/
+USE `ad_31df549ae981810`;
+
 
 --
 -- Table structure for table `user`
@@ -25,11 +31,11 @@ CREATE TABLE `user` (
 -- Default passwords here are: fun123
 --
 
-INSERT INTO `user` (username,password,first_name,last_name,email)
+INSERT INTO `user` (id,username,password,first_name,last_name,email)
 VALUES 
-('john','$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K','John','Doe','john@luv2code.com'),
-('mary','$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K','Mary','Public','mary@luv2code.com'),
-('susan','user$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K','Susan','Adams','susan@luv2code.com');
+(1,'john','$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K','John','Doe','john@luv2code.com'),
+(2,'mary','$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K','Mary','Public','mary@luv2code.com'),
+(3,'susan','user$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K','Susan','Adams','susan@luv2code.com');
 
 
 --
@@ -48,9 +54,9 @@ CREATE TABLE `role` (
 -- Dumping data for table `roles`
 --
 
-INSERT INTO `role` (name)
+INSERT INTO `role` (id,name)
 VALUES 
-('ROLE_USER'),('ROLE_PROVIDER'),('ROLE_ADMIN');
+(1,'ROLE_USER'),(2,'ROLE_PROVIDER');
 
 --
 -- Table structure for table `users_roles`
@@ -85,14 +91,14 @@ DROP TABLE IF EXISTS `cluster_info`;
 
 CREATE TABLE `cluster_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ip` varchar(128) DEFAULT NULL,
-  `container_name` 	varchar(100) DEFAULT NULL,
-  `cluster_statususers_roles` 	varchar(100) DEFAULT NULL,
+  `cluster_url` varchar(128) DEFAULT NULL,
+  `cluster_username` 	varchar(100) DEFAULT NULL,
+  `cluster_password` 	varchar(100) DEFAULT NULL,
   `provider_account_id` int(11) DEFAULT NULL,
   
   PRIMARY KEY (`id`),
   
-  UNIQUE KEY `TITLE_UNIQUE` (`ip`),
+  UNIQUE KEY `TITLE_UNIQUE` (`cluster_url`),
   
   KEY `FK_PROVIDER_ACCOUNT_idx` (`provider_account_id`),
   
@@ -109,13 +115,10 @@ CREATE TABLE `container_info` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `container_name` 	varchar(100) DEFAULT NULL,
   `container_status` 	varchar(100) DEFAULT NULL,
-  `container_ip` 	varchar(100) DEFAULT NULL,
-  `container_path`  LONGBLOB ,
+  `cluster_url` 	varchar(100) DEFAULT NULL,
   `user_account_id` int(11) DEFAULT NULL,
   
   PRIMARY KEY (`id`),
-
-  UNIQUE KEY `TITLE_UNIQUE` (`container_path`(255)),
   
   KEY `FK_USER_ACCOUNT_idx` (`user_account_id`),
   
@@ -127,7 +130,7 @@ CREATE TABLE `container_info` (
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 
 
-/*
+
 
 INSERT INTO `users_roles` (user_id,role_id)
 VALUES 
@@ -136,5 +139,5 @@ VALUES
 (2, 2),
 (3, 1),
 (3, 3);
-*/
+
 SET FOREIGN_KEY_CHECKS = 1;

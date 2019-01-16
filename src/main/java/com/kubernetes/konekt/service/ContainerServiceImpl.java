@@ -4,54 +4,52 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kubernetes.konekt.dao.ContainerDAO;
+import com.kubernetes.konekt.dao.ContainerDao;
 import com.kubernetes.konekt.entity.Container;
 
 @Service
 public class ContainerServiceImpl implements ContainerService{
 	
 	@Autowired 
-	private ContainerDAO containerDAO;
+	private ContainerDao containerDao;
+	
+	@Override
+	@Transactional
+	public Container getContainerByName(String name) {
+		return containerDao.getContainerByName(name);
+	}
 	
 	@Override
 	@Transactional
 	public boolean saveContainer(Container newContainer) {
-	
-		return containerDAO.saveContainer(newContainer);
-	}
-
-	@Override
-	@Transactional
-	public Container getContainerByContainerPath(String containerPath) {
-		return containerDAO.getContainerByContainerPath(containerPath);
+		return containerDao.saveContainer(newContainer);
 	}
 
 	@Override
 	@Transactional
 	public void deleteContainer(Container containerTBD) {
-		containerDAO.deleteContainer(containerTBD);
+		containerDao.deleteContainer(containerTBD);
 		
 	}
 
 	@Override
 	@Transactional
-	public boolean containerExists(String containerPath) {
-		return containerDAO.containerExists(containerPath);
+	public boolean containerExists(String name) {
+		return containerDao.containerExists(name);
 		
-	}
-
-	@Override
-	@Transactional
-	public Container getContainerByContainerIp(String clusterIp) {
-		return containerDAO. getContainerByContainerIp(clusterIp);
 	}
 
 	@Override
 	@Transactional
 	public void updateEntry(Container updateContainer) {
-		containerDAO.updateEntry(updateContainer);
+		containerDao.updateEntry(updateContainer);
 		
 	}
 
-	
+	@Override
+	@Transactional
+	public Container getContainerById(Long id) {
+		return containerDao.getContainerById(id);
+	}
+
 }

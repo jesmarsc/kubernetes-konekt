@@ -1,26 +1,47 @@
 package com.kubernetes.konekt.form;
 
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.URL;
 
 public class UploadClusterForm {
 	
-	@Pattern(regexp="^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-					"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-					"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
-					"([01]?\\d\\d?|2[0-4]\\d|25[0-5])$",
-					message = "Must be valid IPv4 address")
-	private String clusterIp;
-
+	@URL
+	private String clusterUrl;
 	
+	@NotNull(message="Required Field")
+	private String clusterUsername;
+	
+	@NotNull(message="Required Field")
+	private String clusterPassword;
+	
+	public String getClusterUrl() {
+		return clusterUrl;
+	}
+
+	public void setClusterUrl(String clusterUrl) {
+		this.clusterUrl = clusterUrl;
+	}
+
+	public String getClusterUsername() {
+		return clusterUsername;
+	}
+
+	public void setClusterUsername(String clusterUsername) {
+		this.clusterUsername = clusterUsername;
+	}
+
+	public String getClusterPassword() {
+		return clusterPassword;
+	}
+
+	public void setClusterPassword(String clusterPassword) {
+		this.clusterPassword = clusterPassword;
+	}
+
 	public UploadClusterForm() {
 		
 	}
-
-	public String getClusterIp() {
-		return clusterIp;
-	}
-
-	public void setClusterIp(String clusterIp) {
-		this.clusterIp = clusterIp;
-	}
+	
+	
 }
