@@ -85,8 +85,8 @@ public class ProviderController {
 			String clusterUrl = uploadClusterForm.getClusterUrl();
 			String clusterUsername = uploadClusterForm.getClusterUsername();
 			String clusterPassword = uploadClusterForm.getClusterPassword();
-			String clusterStatus = "Ready";
-			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, clusterStatus);	
+			
+			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword);	
 	
 			// Get current user 
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();

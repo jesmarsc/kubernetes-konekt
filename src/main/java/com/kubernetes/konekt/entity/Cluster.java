@@ -36,7 +36,7 @@ public class Cluster {
 	public Cluster() {
 	}
 	
-	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, String status) {
+	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword) {
 		this.clusterUrl = clusterUrl;
 		this.clusterUsername = clusterUsername;
 		this.clusterPassword = clusterPassword;

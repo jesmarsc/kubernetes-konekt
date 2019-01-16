@@ -102,7 +102,7 @@ public class UserController {
             return this.showUserDashboard(model);
 		}
 		
-		Container newContainer = new Container(deployment, clusterUrl, "Running");
+		Container newContainer = new Container(deployment, "Running", clusterUrl);
 		
 		currentAccount.addContainer(newContainer);
 		containerService.saveContainer(newContainer);
@@ -130,7 +130,9 @@ public class UserController {
 		// Deleting Deployment from cluster
 		String deploymentName = containerTBD.getContainerName();
 		String clusterUrl = containerTBD.getClusterUrl();
+		System.out.println("\n\n\n\n\n\n\n\n\n " + clusterUrl + "\n\n\n\n\n\n\n" );
 		Cluster cluster = clusterService.getCluster(clusterUrl);
+
 		String userName = cluster.getClusterUsername();
 		String passWord = cluster.getClusterPassword();
 		clusterApi.deleteDeployment(deploymentName, clusterUrl, userName, passWord, username);

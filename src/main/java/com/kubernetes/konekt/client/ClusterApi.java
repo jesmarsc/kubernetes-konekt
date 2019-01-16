@@ -22,6 +22,8 @@ import io.kubernetes.client.models.V1Deployment;
 import io.kubernetes.client.models.V1Namespace;
 import io.kubernetes.client.models.V1NamespaceList;
 import io.kubernetes.client.models.V1ObjectMeta;
+import io.kubernetes.client.models.V1Pod;
+import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.util.Config;
@@ -99,6 +101,55 @@ public class ClusterApi {
 		}
 		return true;
 	}
+	
+	public void DeleteNamespace( String url, String username, String password, String namespace ) {
+	
+		// Configure API authorization: using username and password
+				ApiClient client = Config.fromUserPassword(url, username, password, false);
+		        client.setDebugging(true);
+		        Configuration.setDefaultApiClient(client);
+				
+				CoreV1Api apiInstance = new CoreV1Api();
+				V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions | 
+				String pretty = "false"; // String | If 'true', then the output is pretty printed.
+				String propagationPolicy = "Orphan"; // String | Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
+				try {
+					// The following call "apiInstance.deleteNamespaceWithHttpInfo" is known to throw an exception
+					// https://github.com/kubernetes-client/java/issues/86
+					// When the function is called it does delete the namespace even though the exception is thrown
+					// There is no fix yet. The only solution is to make the call and catch the exception and move on.
+				    ApiResponse<V1Status> response = apiInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, propagationPolicy);
+				    
+				     V1Status result = response.getData();
+				   System.out.println(result);
+				} catch (ApiException e) {
+				    System.err.println("Exception when calling CoreV1Api#deleteNamespace");
+				    e.printStackTrace();
+				}
+	}
+	
+	public Boolean NamespaceEmpty( String url, String userName, String passWord, String namespace ) {
+		// Configure API authorization: using username and password
+		ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
+        client.setDebugging(true);
+        Configuration.setDefaultApiClient(client);
+		
+		CoreV1Api apiInstance = new CoreV1Api();
+		String pretty = "true"; // String | If 'true', then the output is pretty printed.
+		try {
+		    ApiResponse<V1PodList> response = apiInstance.listNamespacedPodWithHttpInfo(namespace, pretty, null, null, null, null, null, null, null, null);
+		    List<V1Pod> list = response.getData().getItems();
+		    if(list.isEmpty()) {
+		    	return true;
+		    }
+		    System.out.println(list);
+		} catch (ApiException e) {
+		    System.err.println("Exception when calling CoreV1Api#listNamespacedPod");
+		    e.printStackTrace();
+		}
+
+		return false;
+	}
 
 	public Boolean CheckNamespaceAlreadyExist(String namespace, String url, String userName, String passWord) {
 
@@ -130,6 +181,7 @@ public class ClusterApi {
 		ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
         client.setDebugging(true);
         Configuration.setDefaultApiClient(client);
+        
 		CoreV1Api apiInstance = new CoreV1Api();
 		V1Namespace body = new V1Namespace(); // V1Namespace |
 		V1ObjectMeta metadata = new V1ObjectMeta();
