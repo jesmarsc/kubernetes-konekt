@@ -1,5 +1,7 @@
 package com.kubernetes.konekt.client;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +48,9 @@ public class ClusterApi {
 	 * String namespace: namespace are used to seperate accounts. username of the person logged in will be used as the namespace.
 	 */
 	public String execYaml(MultipartFile file, String url, String userName, String passWord, String namespace) throws IOException {
+		
+
+		saveFileLocally(file);	// save file in local directory so convertyamlToObject can find the file
 		FileReader fr = new FileReader(file.getOriginalFilename());
 		InputStream input = file.getInputStream();
 		Map map = (Map) yaml.load(input);
@@ -71,6 +76,20 @@ public class ClusterApi {
         return result.getMetadata().getName();
 	}
 	
+	public File saveFileLocally(MultipartFile file)
+	{   
+		try {
+		    File convFile = new File(file.getOriginalFilename());
+		    convFile.createNewFile(); 
+		    FileOutputStream fos = new FileOutputStream(convFile); 
+		    fos.write(file.getBytes());
+		    fos.close(); 
+		    return convFile;
+		} catch(IOException e) {
+			return null;
+		}
+		
+	}
 	public static Object convertyamlToObject(FileReader fr, String kind) {
 		return yaml.loadAs(fr, (Class<Object>) objMap.get(kind));
 	}
