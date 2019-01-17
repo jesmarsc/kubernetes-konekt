@@ -39,6 +39,7 @@ public class ClusterApi {
 		objMap.put("Namespace",V1Namespace.class);
 		objMap.put("Service", V1Service.class);
 	}
+	
 	/*
 	 * Parameters
 	 * MultipartFile file: deployment file 
@@ -132,9 +133,8 @@ public class ClusterApi {
         return result;
 	}
 	
-	
-	public Boolean deleteDeployment(String deploymentName, 
-			String clusterUrl, String clusterUser, String clusterPass, String username) {
+	public Boolean deleteDeployment(String deploymentName, String namespace, 
+			String clusterUrl, String clusterUser, String clusterPass) throws ApiException {
 
 		// Configure API authorization: using username and password
 		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
@@ -143,7 +143,6 @@ public class ClusterApi {
         Configuration.setDefaultApiClient(client);
 		AppsV1Api apiInstance = new AppsV1Api();
 		
-		String namespace = username; // String | object name and auth scope, such as for teams and projects
 		V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions | 
 		String pretty = "true"; // String | If 'true', then the output is pretty printed.
 		Integer gracePeriodSeconds = 56; // Integer | The duration in seconds before the object should be deleted. Value must be non-negative integer. The value zero indicates delete immediately. If this value is nil, the default grace period for the specified type will be used. Defaults to a per object value if not specified. zero means delete immediately.
@@ -160,7 +159,27 @@ public class ClusterApi {
 		return true;
 	}
 	
-	public void deleteNamespace(String clusterUrl, String clusterUser, String clusterPass, String namespace) {
+	public void deleteService(String serviceName, String namespace, 
+			String clusterUrl, String clusterUser, String clusterPass) throws ApiException{
+		
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+        client.setDebugging(true);
+        
+        Configuration.setDefaultApiClient(client);
+		CoreV1Api apiInstance = new CoreV1Api();
+		
+		V1DeleteOptions body = new V1DeleteOptions();
+		String pretty = "true";
+		
+		try {
+			apiInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
+		} catch (ApiException e) {
+			System.err.println("Exception when calling CoreV1Api#deleteNamespacedService");
+		    e.printStackTrace();
+		}
+	}
+	
+	public void deleteNamespace(String namespace, String clusterUrl, String clusterUser, String clusterPass) {
 	
 		// Configure API authorization: using username and password
 		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
@@ -185,7 +204,7 @@ public class ClusterApi {
 		}
 	}
 	
-	public Boolean namespaceEmpty(String clusterUrl, String clusterUser, String clusterPass, String namespace) {
+	public Boolean namespaceEmpty(String namespace, String clusterUrl, String clusterUser, String clusterPass) {
 		
 		// Configure API authorization: using username and password
 		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);

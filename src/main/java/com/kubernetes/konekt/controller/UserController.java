@@ -136,7 +136,7 @@ public class UserController {
 
 		String userName = cluster.getClusterUsername();
 		String passWord = cluster.getClusterPassword();
-		clusterApi.deleteDeployment(deploymentName, clusterUrl, userName, passWord, username);
+		clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
 		// Deleting Deployment from database 
 		containerService.deleteContainer(containerTBD);
 		}
