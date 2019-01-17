@@ -21,6 +21,8 @@ import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
+import io.kubernetes.client.ApiException;
+
 @Controller
 public class UserController {
 	
@@ -54,7 +56,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/user/upload")
 	public String uploadContainer(@RequestParam("containerFile") MultipartFile file, 
-			@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
+			@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) throws ApiException {
 		
 		if (file.isEmpty()) {
 			String uploadContainerFailStatus = "Container Upload Failed";
@@ -70,21 +72,20 @@ public class UserController {
 		Account currentAccount = accountService.findByUserName(username);
 		String clusterUrl = uploadForm.getClusterUrl();
 		Cluster cluster = clusterService.getCluster(clusterUrl);
-		String userName = cluster.getClusterUsername();
-		String passWord = cluster.getClusterPassword();
+		String clusterUser = cluster.getClusterUsername();
+		String clusterPass = cluster.getClusterPassword();
 		String deployment = null;
 
 		// check if namespace already exist 
-		Boolean doesExist = clusterApi.CheckNamespaceAlreadyExist(username,clusterUrl, userName, passWord);
+		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
 		// if namespace does not exist create it
 		if(!doesExist) {
-			clusterApi.createNamespace(username,clusterUrl, userName, passWord);
-
+			clusterApi.createNamespace(username,clusterUrl, clusterUser, clusterPass);
 		}
 
 
 		try {
-			deployment = clusterApi.execYaml(file, clusterUrl, userName, passWord, username);
+			deployment = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username);
 		} catch (IOException e) { 
             e.printStackTrace();
 			String uploadContainerFailStatus = "Deployment Failed";

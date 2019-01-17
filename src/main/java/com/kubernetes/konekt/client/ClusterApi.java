@@ -47,37 +47,33 @@ public class ClusterApi {
 	 * String passWord: password for username provided
 	 * String namespace: namespace are used to seperate accounts. username of the person logged in will be used as the namespace.
 	 */
-	public String execYaml(MultipartFile file, String url, String userName, String passWord, String namespace) throws IOException {
+	public String parseYaml(MultipartFile file, String clusterUrl, 
+			String clusterUser, String clusterPass, String namespace) throws IOException, ApiException {
 		
-
 		saveFileLocally(file);	// save file in local directory so convertyamlToObject can find the file
 		FileReader fr = new FileReader(file.getOriginalFilename());
 		InputStream input = file.getInputStream();
 		Map map = (Map) yaml.load(input);
-	    V1Deployment body = (V1Deployment) convertyamlToObject(fr, (String) map.get("kind"));
+		String kind = (String) map.get("kind");
+		String result = null;
 		
-        ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
-        client.setDebugging(true);
-        
-        Configuration.setDefaultApiClient(client);
-        AppsV1Api apiInstance = new AppsV1Api(client);
-        
-        String pretty = "true";
-        V1Deployment result = null;
-        
-        try {
-            result = apiInstance.createNamespacedDeployment(namespace, body, pretty);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling AppsV1Api#createNamespacedDeployment");
-            e.printStackTrace();
-            return null;
-        }
-        return result.getMetadata().getName();
+		if(kind.equals("Deployment")) {
+			V1Deployment body = (V1Deployment) convertYamlToObject(fr, kind);
+			result = createDeployment(body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName();
+		}
+		else if(kind.equals("Service")) {
+			V1Service body = (V1Service) convertYamlToObject(fr, kind);
+			result = createService(body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName();
+		}
+		
+        return result;
 	}
 	
-	public File saveFileLocally(MultipartFile file)
-	{   
+	public static Object convertYamlToObject(FileReader fr, String kind) {
+		return yaml.loadAs(fr, (Class<Object>) objMap.get(kind));
+	}
+	
+	public File saveFileLocally(MultipartFile file) throws IOException{   
 		try {
 		    File convFile = new File(file.getOriginalFilename());
 		    convFile.createNewFile(); 
@@ -88,20 +84,65 @@ public class ClusterApi {
 		} catch(IOException e) {
 			return null;
 		}
-		
-	}
-	public static Object convertyamlToObject(FileReader fr, String kind) {
-		return yaml.loadAs(fr, (Class<Object>) objMap.get(kind));
 	}
 	
-	public Boolean deleteDeployment(String deploymentName, String url, String userName, String passWord, String username ) {
+	public V1Deployment createDeployment(V1Deployment body, String clusterUrl, 
+			String clusterUser, String clusterPass, String namespace) throws ApiException {
+		
+        ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+        client.setDebugging(true);
+        
+        Configuration.setDefaultApiClient(client);
+        AppsV1Api apiInstance = new AppsV1Api(client);
+        
+        String pretty = "true";
+        V1Deployment result = null;
+        
+        try {
+            result = apiInstance.createNamespacedDeployment(namespace, body, pretty);
+            System.out.println(result);	
+        } catch (ApiException e) {
+            System.err.println("Exception when calling AppsV1Api#createNamespacedDeployment");
+            e.printStackTrace();
+        }
+        
+        return result;
+	}
+	
+	public V1Service createService(V1Service body, String clusterUrl, 
+			String clusterUser, String clusterPass, String namespace) throws ApiException {
+		
+        ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+        client.setDebugging(true);
+        
+        Configuration.setDefaultApiClient(client);
+        CoreV1Api apiInstance = new CoreV1Api(client);
+        
+        String pretty = "true";
+        V1Service result = null;
+        
+        try {
+            result = apiInstance.createNamespacedService(namespace, body, pretty);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CoreV1Api#createNamespacedService");
+            e.printStackTrace();
+        }
+        
+        return result;
+	}
+	
+	
+	public Boolean deleteDeployment(String deploymentName, 
+			String clusterUrl, String clusterUser, String clusterPass, String username) {
 
 		// Configure API authorization: using username and password
-		ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
         client.setDebugging(true);
+        
         Configuration.setDefaultApiClient(client);
-
 		AppsV1Api apiInstance = new AppsV1Api();
+		
 		String namespace = username; // String | object name and auth scope, such as for teams and projects
 		V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions | 
 		String pretty = "true"; // String | If 'true', then the output is pretty printed.
@@ -109,47 +150,45 @@ public class ClusterApi {
 		Boolean orphanDependents = true; // Boolean | Deprecated: please use the PropagationPolicy, this field will be deprecated in 1.7. Should the dependent objects be orphaned. If true/false, the \"orphan\" finalizer will be added to/removed from the object's finalizers list. Either this field or PropagationPolicy may be set, but not both.
 		String propagationPolicy = "Orphan"; // String | Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
 		try {
-		
-		    //V1Status result = 	// use to debug
 		    apiInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, gracePeriodSeconds, orphanDependents, propagationPolicy);
-		    //System.out.println(result);	// use to debug
 		} catch (ApiException e) {
 		    System.err.println("Exception when calling AppsV1Api#deleteNamespacedDeployment");
 		    e.printStackTrace();
 		    return false;
 		}
+		
 		return true;
 	}
 	
-	public void DeleteNamespace( String url, String username, String password, String namespace ) {
+	public void deleteNamespace(String clusterUrl, String clusterUser, String clusterPass, String namespace) {
 	
 		// Configure API authorization: using username and password
-				ApiClient client = Config.fromUserPassword(url, username, password, false);
-		        client.setDebugging(true);
-		        Configuration.setDefaultApiClient(client);
-				
-				CoreV1Api apiInstance = new CoreV1Api();
-				V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions | 
-				String pretty = "false"; // String | If 'true', then the output is pretty printed.
-				String propagationPolicy = "Orphan"; // String | Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
-				try {
-					// The following call "apiInstance.deleteNamespaceWithHttpInfo" is known to throw an exception
-					// https://github.com/kubernetes-client/java/issues/86
-					// When the function is called it does delete the namespace even though the exception is thrown
-					// There is no fix yet. The only solution is to make the call and catch the exception and move on.
-				    ApiResponse<V1Status> response = apiInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, propagationPolicy);
-				    
-				     V1Status result = response.getData();
-				   System.out.println(result);
-				} catch (ApiException e) {
-				    System.err.println("Exception when calling CoreV1Api#deleteNamespace");
-				    e.printStackTrace();
-				}
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+	    client.setDebugging(true);
+	    Configuration.setDefaultApiClient(client);
+		
+		CoreV1Api apiInstance = new CoreV1Api();
+		V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions | 
+		String pretty = "false"; // String | If 'true', then the output is pretty printed.
+		String propagationPolicy = "Orphan"; // String | Whether and how garbage collection will be performed. Either this field or OrphanDependents may be set, but not both. The default policy is decided by the existing finalizer set in the metadata.finalizers and the resource-specific default policy. Acceptable values are: 'Orphan' - orphan the dependents; 'Background' - allow the garbage collector to delete the dependents in the background; 'Foreground' - a cascading policy that deletes all dependents in the foreground.
+		try {
+			// The following call "apiInstance.deleteNamespaceWithHttpInfo" is known to throw an exception
+			// https://github.com/kubernetes-client/java/issues/86
+			// When the function is called it does delete the namespace even though the exception is thrown
+			// There is no fix yet. The only solution is to make the call and catch the exception and move on.
+		    ApiResponse<V1Status> response = apiInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, propagationPolicy);
+		    V1Status result = response.getData();
+		    System.out.println(result);
+		} catch (ApiException e) {
+		    System.err.println("Exception when calling CoreV1Api#deleteNamespace");
+		    e.printStackTrace();
+		}
 	}
 	
-	public Boolean NamespaceEmpty( String url, String userName, String passWord, String namespace ) {
+	public Boolean namespaceEmpty(String clusterUrl, String clusterUser, String clusterPass, String namespace) {
+		
 		// Configure API authorization: using username and password
-		ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
         client.setDebugging(true);
         Configuration.setDefaultApiClient(client);
 		
@@ -170,11 +209,11 @@ public class ClusterApi {
 		return false;
 	}
 
-	public Boolean CheckNamespaceAlreadyExist(String namespace, String url, String userName, String passWord) {
+	public Boolean checkNamespaceAlreadyExist(String namespace, String clusterUrl, String clusterUser, String clusterPass) {
 
 		// Configure API authorization: using username and password
 
-		ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
         client.setDebugging(true);
         Configuration.setDefaultApiClient(client);
 		CoreV1Api apiInstance = new CoreV1Api();
@@ -195,9 +234,9 @@ public class ClusterApi {
 		return false; // reached end of list without finding namespace
 	}
 
-	public void createNamespace(String namespace, String url, String userName, String passWord) {
+	public void createNamespace(String namespace, String clusterUrl, String clusterUser, String clusterPass) {
 		// Configure API authorization: using username and password
-		ApiClient client = Config.fromUserPassword(url, userName, passWord, false);
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
         client.setDebugging(true);
         Configuration.setDefaultApiClient(client);
         
