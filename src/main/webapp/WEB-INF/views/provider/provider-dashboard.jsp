@@ -125,32 +125,7 @@
 			</tbody>
 		</table>
 		<!-- End of Table -->
-		<!-- Current deployments on your clusters -->
-				<h3>Deployments Running on Your Clusters</h3>
-		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th>Container Name</th>
-					<th>Options</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="cluster" items="${currentAccount.clusters}">
-					<c:url var="removeLink" value="/provider/delete">
-						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
-					</c:url>
-					
-					<tr>
-						<td>HelloWorld (This is a STUB)</td>
-						<td>
-							<a class="btn btn-primary" href="#" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Remove Container</a>
-							<a class="btn btn-primary" href="#" role="button">Another Option</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
+
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
 		More than likely we can simplify it by sending email or uploading a file top the cluster -->

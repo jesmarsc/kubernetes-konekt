@@ -19,16 +19,7 @@ public class TestDeleteNamespace {
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 		
 		
 		/*
