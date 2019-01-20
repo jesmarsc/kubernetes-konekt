@@ -16,5 +16,6 @@
 
 ### TODO:
 - Launch ~~Deployments~~ AND Services
+- Delete ~~Deployments~~ AND Services
 - Integrate Prometheus for loadbalancer
 - Integrate YAML builder
