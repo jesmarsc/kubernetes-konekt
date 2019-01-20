@@ -25,6 +25,8 @@ import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
+import io.kubernetes.client.ApiException;
+
 @Controller
 public class UserController {
 	
@@ -84,7 +86,7 @@ public class UserController {
 	
 	@RequestMapping(value = "/user/upload")
 	public String uploadContainer(@RequestParam("containerFile") MultipartFile file, 
-			@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
+			@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) throws ApiException {
 		
 		if (file.isEmpty()) {
 			String uploadContainerFailStatus = "Container Upload Failed";
@@ -100,22 +102,21 @@ public class UserController {
 		Account currentAccount = accountService.findByUserName(username);
 		String clusterUrl = uploadForm.getClusterUrl();
 		Cluster cluster = clusterService.getCluster(clusterUrl);
-		String userName = cluster.getClusterUsername();
-		String passWord = cluster.getClusterPassword();
-		String deployment = null;
+		String clusterUser = cluster.getClusterUsername();
+		String clusterPass = cluster.getClusterPassword();
+		List<String> deploymentNames = null;
 
 		// check if namespace already exist 
-		Boolean doesExist = clusterApi.CheckNamespaceAlreadyExist(username,clusterUrl, userName, passWord);
+		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
 		// if namespace does not exist create it
 		if(!doesExist) {
-			clusterApi.createNamespace(username,clusterUrl, userName, passWord);
-
+			clusterApi.createNamespace(username,clusterUrl, clusterUser, clusterPass);
 		}
 
 
 		try {
-			deployment = clusterApi.execYaml(file, clusterUrl, userName, passWord, username);
-		} catch (IOException e) { 
+			deploymentNames = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username);
+		} catch (IOException | ApiException e) { 
             e.printStackTrace();
 			String uploadContainerFailStatus = "Deployment Failed";
 			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was an error uploading the file content";
@@ -124,7 +125,7 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 		
-		if(deployment == null) {
+		if(deploymentNames.isEmpty()) {
 			String uploadContainerFailStatus = "Deployment Failed";
 			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name)";
 			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
@@ -132,11 +133,12 @@ public class UserController {
             return this.showUserDashboard(model);
 		}
 		
-		Container newContainer = new Container(deployment, "Running", clusterUrl);
-		
-		currentAccount.addContainer(newContainer);
-		containerService.saveContainer(newContainer);
-		accountService.updateAccountTables(currentAccount);
+		for(String name : deploymentNames) {
+			Container newContainer = new Container(name, "Running", clusterUrl);
+			currentAccount.addContainer(newContainer);
+			containerService.saveContainer(newContainer);
+			accountService.updateAccountTables(currentAccount);
+		}
 		
 		String uploadContainerSuccessStatus = "Deployment Succesful";
 		String uploadContainerSuccessMessage = "You successfully deployed: '" + file.getOriginalFilename() + "'";
@@ -164,7 +166,7 @@ public class UserController {
 
 		String userName = cluster.getClusterUsername();
 		String passWord = cluster.getClusterPassword();
-		clusterApi.deleteDeployment(deploymentName, clusterUrl, userName, passWord, username);
+		clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
 		// Deleting Deployment from database 
 		containerService.deleteContainer(containerTBD);
 		}
