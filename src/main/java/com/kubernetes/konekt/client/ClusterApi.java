@@ -4,11 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +16,7 @@ import io.kubernetes.client.ApiResponse;
 import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.AppsV1Api;
 import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1DeleteOptions;
 import io.kubernetes.client.models.V1Deployment;
 import io.kubernetes.client.models.V1Namespace;
@@ -56,6 +54,9 @@ public class ClusterApi {
 			}
 			else if(body instanceof V1Service) {
 				result.add(createService((V1Service) body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName());
+			}
+			else if(body instanceof V1ConfigMap) {
+				result.add(createConfigMap((V1ConfigMap) body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName());
 			}
 		}
 		
@@ -115,6 +116,29 @@ public class ClusterApi {
             System.out.println(result);
         } catch (ApiException e) {
             System.err.println("Exception when calling CoreV1Api#createNamespacedService");
+            e.printStackTrace();
+        }
+        
+        return result;
+	}
+	
+	public V1ConfigMap createConfigMap(V1ConfigMap body, String clusterUrl, 
+			String clusterUser, String clusterPass, String namespace) throws ApiException {
+		
+		ApiClient client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+        client.setDebugging(true);
+        
+        Configuration.setDefaultApiClient(client);
+        CoreV1Api apiInstance = new CoreV1Api(client);
+        
+        String pretty = "true";
+        V1ConfigMap result = null;
+        
+        try {
+            result = apiInstance.createNamespacedConfigMap(namespace, body, pretty);
+            System.out.println(result);
+        } catch (ApiException e) {
+            System.err.println("Exception when calling CoreV1Api#createNamespacedConfigMap");
             e.printStackTrace();
         }
         
