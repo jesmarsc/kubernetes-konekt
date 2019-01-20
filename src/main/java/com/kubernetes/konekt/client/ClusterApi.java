@@ -5,13 +5,13 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import org.yaml.snakeyaml.Yaml;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -29,16 +29,10 @@ import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.util.Config;
+import io.kubernetes.client.util.Yaml;
 
 @Component
 public class ClusterApi {
-	static Yaml yaml = new Yaml();
-	static Map<String,Object> objMap = new HashMap<>();
-	static {
-		objMap.put("Deployment", V1Deployment.class);
-		objMap.put("Namespace",V1Namespace.class);
-		objMap.put("Service", V1Service.class);
-	}
 	
 	/*
 	 * Parameters
@@ -48,30 +42,24 @@ public class ClusterApi {
 	 * String passWord: password for username provided
 	 * String namespace: namespace are used to seperate accounts. username of the person logged in will be used as the namespace.
 	 */
-	public String parseYaml(MultipartFile file, String clusterUrl, 
+	public List<String> parseYaml(MultipartFile file, String clusterUrl, 
 			String clusterUser, String clusterPass, String namespace) throws IOException, ApiException {
 		
 		saveFileLocally(file);	// save file in local directory so convertyamlToObject can find the file
 		FileReader fr = new FileReader(file.getOriginalFilename());
-		InputStream input = file.getInputStream();
-		Map map = (Map) yaml.load(input);
-		String kind = (String) map.get("kind");
-		String result = null;
+		List<Object> objects = Yaml.loadAll(fr);
+		List<String> result = new ArrayList<String>();
 		
-		if(kind.equals("Deployment")) {
-			V1Deployment body = (V1Deployment) convertYamlToObject(fr, kind);
-			result = createDeployment(body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName();
-		}
-		else if(kind.equals("Service")) {
-			V1Service body = (V1Service) convertYamlToObject(fr, kind);
-			result = createService(body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName();
+		for (Object body : objects) {
+			if(body instanceof V1Deployment) {
+				result.add(createDeployment((V1Deployment) body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName());
+			}
+			else if(body instanceof V1Service) {
+				result.add(createService((V1Service) body, clusterUrl, clusterUser, clusterPass, namespace).getMetadata().getName());
+			}
 		}
 		
         return result;
-	}
-	
-	public static Object convertYamlToObject(FileReader fr, String kind) {
-		return yaml.loadAs(fr, (Class<Object>) objMap.get(kind));
 	}
 	
 	public File saveFileLocally(MultipartFile file) throws IOException{   

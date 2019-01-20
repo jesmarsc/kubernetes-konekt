@@ -74,7 +74,7 @@ public class UserController {
 		Cluster cluster = clusterService.getCluster(clusterUrl);
 		String clusterUser = cluster.getClusterUsername();
 		String clusterPass = cluster.getClusterPassword();
-		String deployment = null;
+		List<String> deploymentNames = null;
 
 		// check if namespace already exist 
 		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
@@ -85,8 +85,8 @@ public class UserController {
 
 
 		try {
-			deployment = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username);
-		} catch (IOException e) { 
+			deploymentNames = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username);
+		} catch (IOException | ApiException e) { 
             e.printStackTrace();
 			String uploadContainerFailStatus = "Deployment Failed";
 			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was an error uploading the file content";
@@ -95,7 +95,7 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 		
-		if(deployment == null) {
+		if(deploymentNames.isEmpty()) {
 			String uploadContainerFailStatus = "Deployment Failed";
 			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name)";
 			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
@@ -103,11 +103,12 @@ public class UserController {
             return this.showUserDashboard(model);
 		}
 		
-		Container newContainer = new Container(deployment, "Running", clusterUrl);
-		
-		currentAccount.addContainer(newContainer);
-		containerService.saveContainer(newContainer);
-		accountService.updateAccountTables(currentAccount);
+		for(String name : deploymentNames) {
+			Container newContainer = new Container(name, "Running", clusterUrl);
+			currentAccount.addContainer(newContainer);
+			containerService.saveContainer(newContainer);
+			accountService.updateAccountTables(currentAccount);
+		}
 		
 		String uploadContainerSuccessStatus = "Deployment Succesful";
 		String uploadContainerSuccessMessage = "You successfully deployed: '" + file.getOriginalFilename() + "'";
