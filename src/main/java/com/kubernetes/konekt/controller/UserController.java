@@ -3,10 +3,13 @@ package com.kubernetes.konekt.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +20,7 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadContainerToClusterForm;
+import com.kubernetes.konekt.form.YamlBuilderForm;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
@@ -52,6 +56,32 @@ public class UserController {
 		model.addAttribute("availableClusters", availableClusters);
 		
 		return "user/user-dashboard";
+	}
+	
+	@RequestMapping(value = "/user/build-yaml")
+	public String yamlBuilder( @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm, Model model) {
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		model.addAttribute("currentAccount", currentAccount);
+		
+		return "user/yaml-builder-form";
+	}
+	
+	@RequestMapping(value = "/user/YamlBuildConfirmation")
+	public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm, BindingResult theBindingResult, Model model) {
+		
+		if(theBindingResult.hasErrors()) {
+			return "user/yaml-builder-form";
+		}
+		
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		model.addAttribute("currentAccount", currentAccount);
+		
+		System.out.println(yamlBuildForm.getKey());
+		System.out.println("here");
+		return ""; // call upload container function
 	}
 	
 	@RequestMapping(value = "/user/upload")
@@ -132,7 +162,6 @@ public class UserController {
 		// Deleting Deployment from cluster
 		String deploymentName = containerTBD.getContainerName();
 		String clusterUrl = containerTBD.getClusterUrl();
-		System.out.println("\n\n\n\n\n\n\n\n\n " + clusterUrl + "\n\n\n\n\n\n\n" );
 		Cluster cluster = clusterService.getCluster(clusterUrl);
 
 		String userName = cluster.getClusterUsername();
