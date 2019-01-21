@@ -294,22 +294,23 @@
 	<link rel="stylesheet" href="css/all.css">
 	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body >
 
 		
 	<header id="header">
 			<div class="container">
-				<div class="logo"><a href="#"><img src="images/kubernetes.png" style="height:60px;"></a></div>
-				<nav id="nav">
-					<div class="opener-holder">
+				<div class="logo"><a href="#"><img src="images/kubernetes.png" style="height:100px;"></a></div>
+				<nav id="nav" class="navbar">
+					 <div class="opener-holder">
 						<a href="#" class="nav-opener"><span></span></a>
 					</div>
 	
 					<div class="nav-drop">
-						<ul>
-							<li class="active visible-sm visible-xs"><a href="#">Home</a></li>
+						
+							
+							
 								<sec:authorize access="isAnonymous()">
-										<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary">
+										<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary"></li>
 										<input type="button" onclick="location.href='login'" value="Login" class="btn btn-primary">
 								</sec:authorize>
 								<sec:authorize access="hasRole('USER')">
@@ -322,7 +323,8 @@
 								</sec:authorize>
 	
 			<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
-						</ul>
+						
+						
 						<div class="drop-holder visible-sm visible-xs">
 							<span>Follow Us</span>
 							<ul class="social-networks">
@@ -331,7 +333,8 @@
 								<li><a class="fa fa-facebook" href="#"></a></li>
 							</ul>
 						</div>
-					</div>
+						
+					 </div>
 				</nav>
 			</div>
 		</header>
@@ -484,26 +487,43 @@
 	</div>
 	
 	
+	<footer id="footer">
+		<div class="container">
+			<div class="footer-holder">
+				<div class="row  text-center">
+					  
+				</div>
+       
+                <div class="row">
+                	<div class="col-md-6">
+                    	<h3>The Goodfellas</h3>
+                        
+                        <p>
+                        	UCSB Capstone 2018-19
+                        </p>
+                    </div>
+                    
+                    <div class="col-md-6 text-right">
+                    	<ul class="social">
+                        	<li><a href="javascript:"><i class="fa fa-facebook-f"></i></a></li>
+                            <li><a href="javascript:"><i class="fa fa-twitter"></i></a></li>
+                            <li><a href="javascript:"><i class="fa fa-dribbble"></i></a></li>
+                            <li><a href="javascript:"><i class="fa fa-pinterest"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+			</div>
+			
+		</div>
+	</footer>
 	
-	<a href='https://www.freepik.com/free-vector/abstract-global-technology-background-with-connecting-dots_1155692.htm'>Designed by Kjpargeter</a>
 	
-	
-	
-	<div>   Icons made by <a href="https://www.flaticon.com/authors/icongeek26" 
-	title="Icongeek26">Icongeek26</a> from 
-	<a href="https://www.flaticon.com/" 			    
-	title="Flaticon">www.flaticon.com</a> is licensed by 
-	<a href="http://creativecommons.org/licenses/by/3.0/" 			    
-	title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-	
-	<div>     Icons made by <a href="https://www.freepik.com/" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
-	
-	<div>   Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" 			    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 			    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </body>
 </html>

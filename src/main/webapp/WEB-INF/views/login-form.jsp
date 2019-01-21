@@ -11,14 +11,24 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet"
+<!--  <link rel="stylesheet"
 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16">-->
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/all.css">
+	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 </head>
 
-<body class="text-center">
-
-	<h1>Login</h1>
-	<div class="container-fluid col-md-4 col-md-offset-4">
+<body>
+<div class="image-widescreen margin-top-image">
+    <img src="images/5940.jpg" alt=""/>
+  </div>
+  <div class="container">
+	<h1 class="text-center">Login</h1>
+	
+	
+	<div class="container-fluid col-md-4 col-md-offset-4 text-center">
 		<form:form
 			action="${pageContext.request.contextPath}/login-confirmation"
 			method="POST">
@@ -59,5 +69,13 @@
 			value="Register" class="btn">
 
 	</div>
+	</div>
+	
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+	
 </body>
 </html>
