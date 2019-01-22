@@ -1,25 +1,22 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-<title>Login</title>
-<meta charset="utf-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="/css/login_caro.css" rel="stylesheet" >
+<link href="fonts/font-awesome-4.3.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<!-- Bootstrap CSS -->
-<link rel="stylesheet"
-	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-</head>
-
-<body class="text-center">
-
-	<h1>Login</h1>
-	<div class="container-fluid col-md-4 col-md-offset-4">
-		<form:form
+<section class="login-block">
+    <div class="container">
+	<div class="row">
+		<div class="col-md-4 login-sec">
+		    <h2 class="text-center">Login</h2>
+  
+  		<form:form
 			action="${pageContext.request.contextPath}/login-confirmation"
 			method="POST">
 
@@ -39,7 +36,7 @@
 			<div style="margin-bottom: 25px" class="input-group">
 				<span class="input-group-addon"><i
 					class="glyphicon glyphicon-user"></i></span> <input type="text"
-					name="username" placeholder="username" class="form-control">
+					name="username" placeholder="Username" class="form-control">
 			</div>
 
 			<!-- Password -->
@@ -49,15 +46,19 @@
 					name="password" placeholder="Password" class="form-control">
 			</div>
 
-			<div class="form-group row">
-				<input class="btn btn-primary" type="submit" value="Login" />
-			</div>
+			<input class="btn btn-primary float-right" type="submit" value="Login" />
 
 		</form:form>
+		
+		<input class="btn btn-primary" onclick="location.href='register'" type="submit" value="Register" />
+		
+  		</div>
 
-		<input type="button" onclick="location.href='register'"
-			value="Register" class="btn">
-
+	<!-- Insert Image here -->
+	<div class="col-md-8 banner-sec">
+    	<img class="d-block img-fluid" src="https://static.pexels.com/photos/33972/pexels-photo.jpg">
 	</div>
-</body>
-</html>
+	</div>
+</div>
+</section>
+ 
