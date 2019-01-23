@@ -203,7 +203,7 @@ public class UserController {
 		try {
 		// get current user 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Account currentAccount = accountService.findByUserName(username);
+		//Account currentAccount = accountService.findByUserName(username);
 
 		// Deleting Deployment from cluster
 		String deploymentName = containerTBD.getContainerName();
@@ -233,6 +233,4 @@ public class UserController {
 		return this.showUserDashboard(model);
 		
 	}
-
-	
 }
