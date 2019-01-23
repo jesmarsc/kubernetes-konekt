@@ -2,9 +2,11 @@ package com.kubernetes.konekt;
 
 import com.kubernetes.konekt.client.ClusterApi;
 
+import io.kubernetes.client.ApiException;
+
 public class TestNamespaceEmpty {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ApiException {
 		
 		String url = "https://35.230.93.241";
 		String username = "admin";

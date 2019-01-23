@@ -155,22 +155,21 @@ public class UserController {
 		Container containerTBD = containerService.getContainerById(id);
 		String containerName = containerTBD.getContainerName();
 		try {
-		// get current user 
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		//Account currentAccount = accountService.findByUserName(username);
-
-		// Deleting Deployment from cluster
-		String deploymentName = containerTBD.getContainerName();
-		String clusterUrl = containerTBD.getClusterUrl();
-		Cluster cluster = clusterService.getCluster(clusterUrl);
-
-		String userName = cluster.getClusterUsername();
-		String passWord = cluster.getClusterPassword();
-		clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
-		// Deleting Deployment from database 
-		containerService.deleteContainer(containerTBD);
-		}
-		catch(Exception e) {
+			// get current user 
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();
+			//Account currentAccount = accountService.findByUserName(username);
+	
+			// Deleting Deployment from cluster
+			String deploymentName = containerTBD.getContainerName();
+			String clusterUrl = containerTBD.getClusterUrl();
+			Cluster cluster = clusterService.getCluster(clusterUrl);
+	
+			String userName = cluster.getClusterUsername();
+			String passWord = cluster.getClusterPassword();
+			clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
+			// Deleting Deployment from database 
+			containerService.deleteContainer(containerTBD);
+		} catch(Exception e) {
 			e.printStackTrace();
 			String deleteContainerToClusterStatus = "Container Delete Failed";
 			String deleteContainerToClusterMessage = "The container: '" + containerName + "' could not be deleted. Container not found in system";
