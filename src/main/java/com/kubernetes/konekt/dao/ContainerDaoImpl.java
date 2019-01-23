@@ -102,4 +102,19 @@ public class ContainerDaoImpl implements ContainerDao {
 		return container;
 	}
 
+	@Override
+	public List<Container> getContainerByClusterUrl(String clusterUrl) {
+		
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Container> theQuery = 
+				currentSession.createQuery("FROM Container WHERE clusterUrl = :clusterUrl ", Container.class);
+		
+		theQuery.setParameter("clusterUrl", clusterUrl);
+		
+		List<Container> containers = theQuery.getResultList();
+				
+		return containers;
+	}
+
 }

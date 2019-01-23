@@ -4,20 +4,17 @@
 ```
 # Kubernetes Koneket
 
-### Lastest Instructions:
-- Download ZIP and unpack
-- Open file in cmd prompt
-- "mvn spring-boot:run"
-- Dependencies will download
-- Open browser to http://localhost:8080/
-- PROFIT???
+### Latest Instructions:
+- Visit https://kubernetes-konekt.cfapps.io/ to access latest working model.
+- Username: mary Password: fun123
 
 ### Current State:
-- User/Provider dashboard .jsp frontend
-- Register form .jsp frontend
-- Read ~~LOCAL~~ Database Table
-- LIMITED DB CONNECTIONS - ONLY 1 PERSON CAN TEST AT A TIME, NEED UPGRADE
+- Spring Security implemented
+- Migrated to latest database
+- Provider: can upload cluster URL and credentials
+- User: can launch deployment with a YAML file
 
 ### TODO:
-- ~~Setup PWS MySQL Database~~
-- Host on PWS
+- Launch ~~Deployments~~ AND Services
+- Integrate Prometheus for loadbalancer
+- Integrate YAML builder

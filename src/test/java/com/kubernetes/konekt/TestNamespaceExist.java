@@ -10,7 +10,7 @@ public class TestNamespaceExist {
 		String namespace = "bob";
 		ClusterApi clusterApi = new ClusterApi();
 		
-		Boolean doesExist = clusterApi.CheckNamespaceAlreadyExist(namespace, url, username, password);
+		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(namespace, url, username, password);
 		if(doesExist) {
 			System.out.println("\n\n Namespace exist \n\n");
 		}
