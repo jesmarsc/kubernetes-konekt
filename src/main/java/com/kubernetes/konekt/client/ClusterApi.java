@@ -3,12 +3,19 @@ package com.kubernetes.konekt.client;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.kubernetes.konekt.form.YamlBuilderForm;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -28,6 +35,7 @@ import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
+
 
 @Component
 public class ClusterApi {
@@ -64,6 +72,63 @@ public class ClusterApi {
 		
         return result;
 	}
+
+	public List<String> deploymentFromUserInput(String clusterUrl, 
+			String clusterUser, String clusterPass, String namespace, YamlBuilderForm form) throws IOException, ApiException{
+		
+		String tab = "  ";
+		List<String> keys = form.getKey();
+		List<String> values = form.getValue();
+		String app = "";
+		if(keys != null) {
+			app = values.get(keys.indexOf("app"));
+		}
+		
+		
+		
+		String fileContent =
+				  "apiVersion: apps/v1 \n" 
+				+ "kind: Deployment \n"
+				+ "metadata: \n"
+				+ tab + "name: " + form.getDeploymentName() + "\n"
+				+ tab + "labels: \n"
+				+ formatLabels(keys,values,tab+tab)
+				+ "spec: \n"
+				+ tab + "replicas: " + form.getReplicas() + "\n"
+				+ tab + "selector: \n"
+				+ tab + tab + "matchLabels: \n"
+				+ formatLabels(keys, values, tab+tab+tab)
+				+ tab +"template: \n"
+				+ tab + tab + "metadata: \n"
+				+ tab + tab + tab + "labels: \n"
+				+ formatLabels(keys,values,tab + tab + tab + tab)
+				+ tab + tab + "spec: \n"
+				+ tab + tab + tab + "containers: \n"
+				+ tab + tab + tab + "- name: " + app + "\n"
+				+ tab + tab + tab + tab + "image: " + form.getImage() + "\n"
+				+ tab + tab + tab + tab + "ports: \n"
+				+ tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
+		
+		String fileName = form.getDeploymentName() + ".yaml" ;
+		File file = new File(fileName);
+	    FileWriter fileWriter = new FileWriter(file);
+	    fileWriter.write(fileContent);
+	    fileWriter.close();
+		
+	    Path path = Paths.get(fileName);
+	    String contentType = "text/plain";
+	    byte[] content = null;
+	    try {
+	        content = Files.readAllBytes(path);
+	    } catch (final IOException e) {
+	    }
+	    MultipartFile readFile = new MockMultipartFile(fileName,
+	                         fileName, contentType, content);
+
+		
+		return parseYaml(readFile,  clusterUrl, 
+				clusterUser, clusterPass, namespace);
+	}
 	
 	public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
 		client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
@@ -74,7 +139,18 @@ public class ClusterApi {
         coreInstance = new CoreV1Api(client);
 	}
 	
-	public File saveFileLocally(MultipartFile file) throws IOException{   
+	private String formatLabels(List<String> keys, List<String> values, String tabs)  {
+		if(keys == null) {
+			return "";
+		}
+		String labels = new String();
+		for(Integer i = 0; i < keys.size(); i++) {
+			labels += tabs + keys.get(i) + ": " + values.get(i) + "\n";
+		}
+		return labels;
+	}
+
+	private File saveFileLocally(MultipartFile file) throws IOException{
 		try {
 		    File convFile = new File(file.getOriginalFilename());
 		    convFile.createNewFile(); 

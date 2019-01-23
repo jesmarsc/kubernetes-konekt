@@ -64,26 +64,72 @@ public class UserController {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
-		
+		List<Cluster> availableClusters = clusterService.getAllClusters();
+		model.addAttribute("availableClusters", availableClusters);
 		return "user/yaml-builder-form";
 	}
-	
+
 	@RequestMapping(value = "/user/YamlBuildConfirmation")
-	public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm, BindingResult theBindingResult, Model model) {
-		
-		if(theBindingResult.hasErrors()) {
-			return "user/yaml-builder-form";
+	public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm,
+			BindingResult theBindingResult, Model model) throws ApiException {
+
+		if (theBindingResult.hasErrors()) {
+
+			return yamlBuilder(yamlBuildForm,model);
 		}
-		
+		// getting username to retrieve account and to use as namespace.
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
-		model.addAttribute("currentAccount", currentAccount);
-		
-		System.out.println(yamlBuildForm.getKey());
-		System.out.println("here");
-		return ""; // call upload container function
+		String clusterUrl = yamlBuildForm.getClusterUrl();
+		Cluster cluster = clusterService.getCluster(clusterUrl);
+		String clusterUser = cluster.getClusterUsername();
+		String clusterPass = cluster.getClusterPassword();
+		List<String> deploymentNames = null;
+
+		// check if namespace already exist
+		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
+		// if namespace does not exist create it
+		if (!doesExist) {
+			clusterApi.createNamespace(username, clusterUrl, clusterUser, clusterPass);
+		}
+
+		try {
+			deploymentNames = clusterApi.deploymentFromUserInput(clusterUrl, clusterUser, clusterPass, username,
+					yamlBuildForm);
+		} catch (IOException | ApiException e) {
+			e.printStackTrace();
+			String uploadContainerFailStatus = "Deployment Failed";
+			String uploadContainerFailMessage = "The YAML: '" + yamlBuildForm.getDeploymentName()
+					+ "' could not be uploaded. There was an error uploading the file content";
+			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
+			model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
+			return this.showUserDashboard(model);
+		}
+
+		if (deploymentNames.isEmpty()) {
+			String uploadContainerFailStatus = "Deployment Failed";
+			String uploadContainerFailMessage = "The YAML: '" + yamlBuildForm.getDeploymentName()
+					+ "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name)";
+			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
+			model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
+			return this.showUserDashboard(model);
+		}
+
+		for (String name : deploymentNames) {
+			Container newContainer = new Container(name, "Running", clusterUrl);
+			currentAccount.addContainer(newContainer);
+			containerService.saveContainer(newContainer);
+			accountService.updateAccountTables(currentAccount);
+		}
+
+		String uploadContainerSuccessStatus = "Deployment Succesful";
+		String uploadContainerSuccessMessage = "You successfully deployed: '" + yamlBuildForm.getDeploymentName() + "'";
+		model.addAttribute("uploadContainerSuccessStatus", uploadContainerSuccessStatus);
+		model.addAttribute("uploadContainerSuccessMessage", uploadContainerSuccessMessage);
+
+		return this.showUserDashboard(model);
 	}
-	
+
 	@RequestMapping(value = "/user/upload")
 	public String uploadContainer(@RequestParam("containerFile") MultipartFile file, 
 			@ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) throws ApiException {
