@@ -66,14 +66,14 @@
 				<form:errors path="deploymentName" cssClass="error" />
 			</div>
 			<div class="form-group row">
-				<label> Application Name: </label>
-				<form:input class="form-control" path="applicationName" />
-				<form:errors path="applicationName" cssClass="error" />
-			</div>
+				<label> Image: </label>
+				<form:input class="form-control" path="image" />
+				<form:errors path="image" cssClass="error" />
+			</div>			
 			<div class="form-group row">
-				<label> Version: </label>
-				<form:input class="form-control" path="version" />
-				<form:errors path="version" cssClass="error" />
+				<label> replicas: </label>
+				<form:input class="form-control" path="replicas" />
+				<form:errors path="replicas" cssClass="error" />
 			</div>
 			<div class="form-group row">
 				<label> Container Port: </label>
@@ -81,7 +81,14 @@
 				<form:errors path="containerPort" cssClass="error" />
 			</div>
 
+			<div class="form-group row">
+				<label> Select An Available Cluster: </label>
+				<form:select class="form-control row" path="clusterUrl">
 
+					<form:options items="${availableClusters}" />
+				</form:select>
+				<form:errors path="clusterUrl" cssClass="error" />
+			</div>
 
 
 			<div class=" form-group row">
@@ -100,7 +107,7 @@
 								<div class="col-md-5">
 									<form:input id="key" name="key" type="text" placeholder=""
 										class="form-control input-md" path="key" />
-
+									<form:errors path="key" cssClass="error" />
 								</div>
 							</div>
 							<br> <br>
@@ -110,7 +117,7 @@
 								<div class="col-md-5">
 									<form:input id="value" name="value" type="text" placeholder=""
 										class="form-control input-md" path="value" />
-
+									<form:errors path="value" cssClass="error" />
 								</div>
 							</div>
 
@@ -123,9 +130,9 @@
 							<button id="add-more" name="add-more" class="btn btn-primary">Add
 								Another Label</button>
 						</div>
-						<br> <br> <br> <br> <br> <br> <br>
+						<br> <br> <br>
 						<br>
-
+						
 						<div class="form-group row">
 							<input class="btn btn-primary text-center" type="submit"
 								value="Submit" />
@@ -152,7 +159,7 @@
 												next = next + 1;
 												var newIn = ' <div id="field'+ next 
 												+'" name="field'+ next 
-												+'"><!-- Text input--><div class="form-group"> <label class="col-md-4 control-label" for="key">Key</label> <div class="col-md-5"> <form:input id="key" name="key" path="key" type="text" placeholder="" class="form-control input-md"/> </div></div><br><br> <!-- Text input--><div class="form-group"> <label class="col-md-4 control-label" for="value">Value</label> <div class="col-md-5"> <form:input id="value" name="value" type="text" path="value" placeholder="" class="form-control input-md"/> </div></div>';
+												+'"><!-- Text input--><div class="form-group"> <label class="col-md-4 control-label" for="key">Key</label> <div class="col-md-5"> <form:input id="key" name="key" path="key" type="text" placeholder="" class="form-control input-md"/> <form:errors path="key" cssClass="error" /> </div></div><br><br> <!-- Text input--><div class="form-group"> <label class="col-md-4 control-label" for="value">Value</label> <div class="col-md-5"> <form:input id="value" name="value" type="text" path="value" placeholder="" class="form-control input-md"/> <form:errors path="value" cssClass="error" /> </div></div>';
 												var newInput = $(newIn);
 												var removeBtn = '<button id="remove'
 														+ (next - 1)
