@@ -33,15 +33,16 @@
 										<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary">
 										<input type="button" onclick="location.href='login'" value="Login" class="btn btn-primary">
 								</sec:authorize>
+								<sec:authorize access="hasAnyRole('USER, PROVIDER')">
+									<a class="nav-link" href="${pageContext.request.contextPath}/logout"><input type="button" value="Logout" class="btn btn-danger"></a>
+									<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
+								</sec:authorize>
 								<sec:authorize access="hasRole('USER')">
 										<input type="button" onclick="location.href='user'" value="User Dashboard" class="btn btn-primary">
-										<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
 								</sec:authorize>
 								<sec:authorize access="hasRole('PROVIDER')">
 										<input type="button" onclick="location.href='provider'" value="Provider Dashboard" class="btn btn-primary">
-										<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
 								</sec:authorize>
-	
 						</ul>
 						<div class="drop-holder visible-sm visible-xs">
 							<span>Follow Us</span>
