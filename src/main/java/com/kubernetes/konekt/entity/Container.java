@@ -22,30 +22,30 @@ public class Container {
 	@Column(name="container_name")
 	private String containerName;
 	
-	@Column(name="container_path")
-	private String containerPath;
+	@Column(name="cluster_url")
+	private String clusterUrl;
 	
 	@Column(name="container_status")
 	private String status;
-	
-	@Column(name="container_ip")
-	private String ipAddress;
-	
+	/*
+	 Add mapping for each container back to the cluster that it running on to 
+	 ease populating provider table that show what is running on their clusters
+	 */
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
 			 			CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="user_account_id")
 	private Account account;
+	
 
 	public Container() {
 		
 	}
 	
-	public Container(String containerName, String containerPath,String status, String ipAddress) {
-		super();
-		this.status = status;
-		this.ipAddress = ipAddress;
+	public Container(String containerName, String status, String clusterUrl) {
+		//super();
 		this.containerName = containerName;
-		this.containerPath = containerPath;
+		this.clusterUrl = clusterUrl;
+		this.status = status;
 	}
 	
 	public Long getId() {
@@ -64,14 +64,6 @@ public class Container {
 		this.containerName = containerName;
 	}
 
-	public String getContainerPath() {
-		return containerPath;
-	}
-
-	public void setContainerPath(String containerPath) {
-		this.containerPath = containerPath;
-	}
-
 	public Account getAccount() {
 		return account;
 	}
@@ -88,21 +80,18 @@ public class Container {
 		this.status = status;
 	}
 
-	public String getIpAddress() {
-		return ipAddress;
+	public String getClusterUrl() {
+		return clusterUrl;
 	}
 
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
+	public void setClusterUrl(String clusterUrl) {
+		this.clusterUrl = clusterUrl;
 	}
 
 	@Override
 	public String toString() {
 		return containerName;
 	}
-
-
-	
 	
 }
 

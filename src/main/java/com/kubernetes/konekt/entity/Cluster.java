@@ -19,91 +19,74 @@ public class Cluster {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "ip")
-	private String ip;
+	@Column(name = "cluster_url")
+	private String clusterUrl;
 	
-	@Column(name = "container_name")
-	private String containerName;
+	@Column(name = "cluster_username")
+	private String clusterUsername;
 	
-	@Column(name = "cluster_status")
-	private String status;
-
+	@Column(name = "cluster_password")
+	private String clusterPassword;
 
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
 						 CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="provider_account_id")
 	private Account account;
 	
-
-
 	public Cluster() {
 	}
 	
-	public Cluster(String ip, String status, String containerName) {
-		this.containerName = containerName;
-		this.status = status;
-		this.ip = ip;
+	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword) {
+		this.clusterUrl = clusterUrl;
+		this.clusterUsername = clusterUsername;
+		this.clusterPassword = clusterPassword;
+
 	}
-
-
-
-	public String getIp() {
-		return ip;
-	}
-
-
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
-
 
 	public Long getId() {
 		return id;
 	}
 
-
-
 	public void setId(Long id) {
 		this.id = id;
 	}
 
+	public String getClusterUrl() {
+		return clusterUrl;
+	}
+
+	public void setClusterUrl(String clusterUrl) {
+		this.clusterUrl = clusterUrl;
+	}
+
+	public String getClusterUsername() {
+		return clusterUsername;
+	}
+
+	public void setClusterUsername(String clusterUsername) {
+		this.clusterUsername = clusterUsername;
+	}
+
+	public String getClusterPassword() {
+		return clusterPassword;
+	}
+
+	public void setClusterPassword(String clusterPassword) {
+		this.clusterPassword = clusterPassword;
+	}
 
 
 	public Account getAccount() {
 		return account;
 	}
 
-
-
 	public void setAccount(Account account) {
 		this.account = account;
 	}
 
-
-
-	public String getContainerName() {
-		return containerName;
-	}
-
-	public void setContainerName(String containerName) {
-		this.containerName = containerName;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
 	@Override
 	public String toString() {
-		return ip;
+		return clusterUrl;
 	}
-
-
 
 }

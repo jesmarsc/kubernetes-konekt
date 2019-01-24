@@ -4,13 +4,13 @@ import java.util.List;
 
 import com.kubernetes.konekt.entity.Cluster;
 
-public interface ClusterDAO {
+public interface ClusterDao {
 
+	public Cluster getCluster(String clusterUrl);
+	
 	public List<Cluster> getAllClusters();
 	
 	public boolean saveCluster(Cluster newCluster);
-	
-	public Cluster getCluster(String ClusterIp);
 	
 	public void deleteCluster(Cluster cluster);
 

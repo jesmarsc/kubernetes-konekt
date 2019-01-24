@@ -362,26 +362,25 @@
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 		<table class="table table-hover table-bordered">
-			<caption>Container/Cluster Status</caption>
 			<thead>
 				<tr>
+					<th>Id</th>
 					<th>Container</th>
-					<th>Cluster IP</th>
+					<th>Cluster URL</th>
 					<th>Status</th>
 					<th>Action</th>
 				</tr>
 			</thead>
 			<tbody>
-			
-			
 				<c:forEach var="container" items="${currentAccount.containers}">
-					<c:url var="removeLink" value="deleteContainerConfirmation">
-						<c:param name="containerName" value="${container.containerName}" />
+					<c:url var="removeLink" value="/user/delete">
+						<c:param name="containerId" value="${container.id}" />
 					</c:url>
 					
 					<tr>
+						<td>${container.id}</td>
 						<td>${container.containerName}</td>
-						<td>${container.ipAddress}</td>
+						<td>${container.clusterUrl}</td>
 						<td>${container.status}</td>
 						<td>
 							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
@@ -393,87 +392,55 @@
 		</table>
 	</div>
 
-
-
-
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-
-	<div
-		class="  container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-		<form:form class="custom-file form-inline" method="POST"
-			action="/uploadContainerConfirmation" enctype="multipart/form-data">
-
-			<div class="form-group  mb-2">
+	<div class="  border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
+		<!-- Form to upload deployment yaml file to cluster -->
+		<form:form class="custom-file " method="POST"
+			action="/user/upload" enctype="multipart/form-data" modelAttribute="uploadContainerClusterForm">
+			<!-- choose deployment file -->
+			<div class="form-group row mb-2">
 				<input type="file" class="custom-file-input" id="customFile"
 					name="containerFile">
-
 			</div>
-			<div class="form-group  mb-2">
-				<input class="btn btn-primary custom-file text-center" type="submit"
-					value="Upload" /> <label class="custom-file-label"
+			<!-- display selected file  -->
+			<div class="form-group row  mb-2">
+				 <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+			<!-- Select cluster  -->
+		<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+			<label> Select An Available Cluster: </label>
+			<form:select class="form-control row" path="clusterUrl">
+				
+				<form:options items="${availableClusters}" />
+			</form:select>
+			<form:errors path="clusterUrl" cssClass="error" />
+		</div>
+			<!-- submit -->
+			<div class="form-group row mx-4 my-4">
+				<input class="btn btn-primary text-center" type="submit"
+					value="Submit" />
+			</div>
 			
-
 		</form:form>
 	</div>
 
-	
-
-
-	<!--  Form to upload -->
-<br></br>
-
-
-	<form:form
-		class=" border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12"
-		action="uploadContainerToClusterConfirmation" modelAttribute="uploadContainerClusterForm">
-
-
-		<!-- Uploaded containers -->
-
-
-		<div class="form-group row  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-			<label> Select An Uploaded Containers: </label>
-			<form:select class="form-control" path="containerName">
-				<form:options items="${currentAccount.containers}" />
-			</form:select>
-			<form:errors path="containerName" cssClass="error" />
-		</div>
-
-			<!-- table Available cluster  -->
-
-		<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-			<label> Select An Available Cluster: </label>
-			<form:select class="form-control" path="clusterIp">
-				<form:options items="${availableClusters}" />
-			</form:select>
-			<form:errors path="clusterIp" cssClass="error" />
-		</div>
-
-		<div class="form-group mx-4 my-4">
-			<input class="btn btn-primary text-center" type="submit"
-				value="Submit" />
-		</div>
-	</form:form>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script
-		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script type="application/javascript">
-		
-   			 $('input[type="file"]').change(function(e){
-       		 var fileName = e.target.files[0].name;
-        	$('.custom-file-label').html(fileName);
-   		 });
-		
+		$('input[type="file"]').change(function(e){
+			var fileName = e.target.files[0].name;
+			$('.custom-file-label').html(fileName);
+		});
 	</script>
 	
+<<<<<<< HEAD
 	
+=======
+>>>>>>> b574258112043cf1f14c65935d7db77c7b5d9dbf
 </body>
 </html>
 

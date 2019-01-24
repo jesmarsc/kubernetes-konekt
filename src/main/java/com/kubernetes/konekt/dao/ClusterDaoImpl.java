@@ -12,18 +12,18 @@ import org.springframework.stereotype.Repository;
 import com.kubernetes.konekt.entity.Cluster;
 
 @Repository
-public class ClusterDAOImpl implements ClusterDAO {
+public class ClusterDaoImpl implements ClusterDao {
 	
 	@Autowired
 	private EntityManager factory;
 	
 	@Override
-	public Cluster getCluster(String ClusterIp) {
+	public Cluster getCluster(String clusterUrl) {
 		Session currentSession = factory.unwrap(Session.class);
 		
 		Query<Cluster> theQuery = 
-				currentSession.createQuery("FROM Cluster WHERE ip = :ip ", Cluster.class);
-		theQuery.setParameter("ip",ClusterIp);
+				currentSession.createQuery("FROM Cluster WHERE cluster_url = :cluster_url ", Cluster.class);
+		theQuery.setParameter("cluster_url", clusterUrl);
 		Cluster cluster = null;
 		
 		try {
@@ -51,9 +51,9 @@ public class ClusterDAOImpl implements ClusterDAO {
 		Session currentSession = factory.unwrap(Session.class);
 		
 		Query<Cluster> theQuery = 
-				currentSession.createQuery("FROM Cluster where ip = :ip ", Cluster.class);
+				currentSession.createQuery("FROM Cluster where id = :id ", Cluster.class);
 		
-		theQuery.setParameter("ip", newCluster.getId());
+		theQuery.setParameter("id", newCluster.getId());
 		
 		List<Cluster> matchingClusterIps = theQuery.getResultList();
 		
@@ -76,7 +76,7 @@ public class ClusterDAOImpl implements ClusterDAO {
 	@Override
 	public List<Cluster> getAllAvailableClusters() {
 		Session currentSession = factory.unwrap(Session.class);
-		String containerName ="N/A";
+		String containerName = "N/A";
 		Query<Cluster> theQuery = 
 				currentSession.createQuery("FROM Cluster WHERE containerName = :containerName ", Cluster.class);
 		theQuery.setParameter("containerName",containerName);
