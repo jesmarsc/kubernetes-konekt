@@ -1,5 +1,8 @@
 package com.kubernetes.konekt.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +17,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.kubernetes.konekt.client.ClusterApi;
 import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
+import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
+import com.kubernetes.konekt.service.ContainerService;
+
+import io.kubernetes.client.ApiException;
 
 
 @Controller
@@ -29,6 +37,12 @@ public class ProviderController {
 
 	@Autowired 
 	private ClusterService clusterService;
+	
+	@Autowired 
+	private ContainerService containerService;
+	
+	@Autowired
+	private ClusterApi clusterApi;
 	
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
@@ -54,9 +68,32 @@ public class ProviderController {
 	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
 
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterUrl);
+		String clusterUser = TBDeletedCluster.getClusterUsername();
+		String clusterPass = TBDeletedCluster.getClusterPassword();
 		
 		// TODO: CLEANUP DEPLOYMENTS
-		
+		// get list of users who have deployments on cluster
+		List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
+		// delete deployments from cluster
+		for(Container container : containers) {
+			String deploymentName = container.getContainerName();
+			String namespace = container.getAccount().getUserName();
+			try {	
+				clusterApi.deleteDeployment(deploymentName, namespace, clusterUrl, clusterUser, clusterPass);
+			} catch( ApiException e) {
+					e.printStackTrace();
+					String deleteClusterSuccessStatus = "Delete Cluster Failed: ";
+					String deleteClusterSuccessMessage = "Cluster with URL: " + TBDeletedCluster.getClusterUrl() + " was NOT deleted. There was a problem removing deployments from cluster";
+					
+					model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
+					model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
+			}
+		}
+		// delete deployments from database
+		for(Container container : containers) {
+			containerService.deleteContainer(container);
+			accountService.updateAccountTables(container.getAccount());
+		}
 		clusterService.deleteCluster(TBDeletedCluster);
 		
 		// TODO: HANDLE IF NOT SUCCESSFUL
