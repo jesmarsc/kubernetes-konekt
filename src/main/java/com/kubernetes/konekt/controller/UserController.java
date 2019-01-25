@@ -21,6 +21,7 @@ import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadContainerToClusterForm;
 import com.kubernetes.konekt.form.YamlBuilderForm;
+import com.kubernetes.konekt.scheduler.RoundRobinScheduler;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
@@ -42,6 +43,9 @@ public class UserController {
 	@Autowired
 	private ClusterApi clusterApi;
 	
+	@Autowired
+	private RoundRobinScheduler scheduler;
+	
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
 		
@@ -52,8 +56,7 @@ public class UserController {
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		
-		List<Cluster> availableClusters = clusterService.getAllClusters();
-		model.addAttribute("availableClusters", availableClusters);
+		// TODO:check all containers are still on clusters
 		
 		return "user/user-dashboard";
 	}
@@ -64,8 +67,6 @@ public class UserController {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
-		List<Cluster> availableClusters = clusterService.getAllClusters();
-		model.addAttribute("availableClusters", availableClusters);
 		return "user/yaml-builder-form";
 	}
 
@@ -80,10 +81,11 @@ public class UserController {
 		// getting username to retrieve account and to use as namespace.
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
-		String clusterUrl = yamlBuildForm.getClusterUrl();
-		Cluster cluster = clusterService.getCluster(clusterUrl);
-		String clusterUser = cluster.getClusterUsername();
-		String clusterPass = cluster.getClusterPassword();
+		// round robin scheduler to select cluster
+		Cluster chosenCluster = scheduler.getNextCluster();
+		String clusterUrl = chosenCluster.getClusterUrl();
+		String clusterUser = chosenCluster.getClusterUsername();
+		String clusterPass = chosenCluster.getClusterPassword();
 		List<String> deploymentNames = null;
 
 		// check if namespace already exist
@@ -118,7 +120,6 @@ public class UserController {
 		for (String name : deploymentNames) {
 			Container newContainer = new Container(name, "Running", clusterUrl);
 			currentAccount.addContainer(newContainer);
-			containerService.saveContainer(newContainer);
 			accountService.updateAccountTables(currentAccount);
 		}
 
@@ -146,10 +147,14 @@ public class UserController {
 		// getting username to retrieve account and to use as namespace.
 		String username = SecurityContextHolder.getContext().getAuthentication().getName(); 
 		Account currentAccount = accountService.findByUserName(username);
-		String clusterUrl = uploadForm.getClusterUrl();
-		Cluster cluster = clusterService.getCluster(clusterUrl);
-		String clusterUser = cluster.getClusterUsername();
-		String clusterPass = cluster.getClusterPassword();
+		
+		// choose cluster for user
+		Cluster chosenCluster = scheduler.getNextCluster();
+		
+		// set url, username, and password needed to access cluster
+		String clusterUrl = chosenCluster.getClusterUrl();
+		String clusterUser = chosenCluster.getClusterUsername();
+		String clusterPass = chosenCluster.getClusterPassword();
 		List<String> deploymentNames = null;
 
 		// check if namespace already exist 
@@ -158,9 +163,9 @@ public class UserController {
 		if(!doesExist) {
 			clusterApi.createNamespace(username,clusterUrl, clusterUser, clusterPass);
 		}
-
-
 		try {
+			
+			
 			deploymentNames = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username);
 		} catch (IOException | ApiException e) { 
             e.printStackTrace();
@@ -182,7 +187,6 @@ public class UserController {
 		for(String name : deploymentNames) {
 			Container newContainer = new Container(name, "Running", clusterUrl);
 			currentAccount.addContainer(newContainer);
-			containerService.saveContainer(newContainer);
 			accountService.updateAccountTables(currentAccount);
 		}
 		
@@ -202,9 +206,7 @@ public class UserController {
 		String containerName = containerTBD.getContainerName();
 		try {
 			// get current user 
-			String username = SecurityContextHolder.getContext().getAuthentication().getName();
-			//Account currentAccount = accountService.findByUserName(username);
-	
+			String username = SecurityContextHolder.getContext().getAuthentication().getName();	
 			// Deleting Deployment from cluster
 			String deploymentName = containerTBD.getContainerName();
 			String clusterUrl = containerTBD.getClusterUrl();

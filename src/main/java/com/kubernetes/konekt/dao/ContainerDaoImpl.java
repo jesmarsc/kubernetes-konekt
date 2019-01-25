@@ -32,26 +32,6 @@ public class ContainerDaoImpl implements ContainerDao {
 	}
 	
 	@Override
-	public boolean saveContainer(Container newContainer) {
-		Session currentSession = factory.unwrap(Session.class);
-		
-		Query<Container> theQuery = 
-				currentSession.createQuery("FROM Container where containerName = :containerName ", Container.class);
-		
-		theQuery.setParameter("containerName", newContainer.getContainerName());
-		
-		List<Container> matchingContainerNames = theQuery.getResultList();
-		
-		if(!matchingContainerNames.isEmpty()) {
-			return false;
-		}
-		
-		currentSession.save(newContainer);
-		return true;
-		
-	}
-
-	@Override
 	public void deleteContainer(Container containerTBD) {
 		Session currentSession = factory.unwrap(Session.class);
 		

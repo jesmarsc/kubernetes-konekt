@@ -29,21 +29,10 @@ public class ClusterServiceImpl implements ClusterService{
 
 	@Override
 	@Transactional
-	public boolean saveCluster(Cluster newCluster) {
-		return clusterDao.saveCluster(newCluster);
-	}
-
-	@Override
-	@Transactional
 	public void deleteCluster(Cluster cluster) {
 		clusterDao.deleteCluster(cluster);
 	}
 
-	@Override
-	@Transactional
-	public List<Cluster> getAllAvailableClusters() {
-		return clusterDao.getAllAvailableClusters();
-	}
 
 	@Override
 	@Transactional
