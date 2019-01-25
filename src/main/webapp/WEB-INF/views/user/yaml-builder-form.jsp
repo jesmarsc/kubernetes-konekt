@@ -69,7 +69,7 @@
 				<label> Image: </label>
 				<form:input class="form-control" path="image" />
 				<form:errors path="image" cssClass="error" />
-			</div>			
+			</div>
 			<div class="form-group row">
 				<label> replicas: </label>
 				<form:input class="form-control" path="replicas" />
@@ -80,122 +80,36 @@
 				<form:input class="form-control" path="containerPort" />
 				<form:errors path="containerPort" cssClass="error" />
 			</div>
-
-			<div class="form-group row">
-				<label> Select An Available Cluster: </label>
-				<form:select class="form-control row" path="clusterUrl">
-
-					<form:options items="${availableClusters}" />
-				</form:select>
-				<form:errors path="clusterUrl" cssClass="error" />
-			</div>
-
-
 			<div class=" form-group row">
 				<h3>Metadata: Labels</h3>
 			</div>
 
-
-			<div class="col-xs-12 form-group row">
-				<div class="col-md-12">
-
-					<div id="field">
-						<div id="field0">
-							<!-- Text input-->
-							<div class="form-group">
-								<label class="col-md-4 control-label" for="key">Key</label>
-								<div class="col-md-5">
-									<form:input id="key" name="key" type="text" placeholder=""
-										class="form-control input-md" path="key" />
-									<form:errors path="key" cssClass="error" />
-								</div>
-							</div>
-							<br> <br>
-							<!-- Text input-->
-							<div class="form-group">
-								<label class="col-md-4 control-label" for="value">Value</label>
-								<div class="col-md-5">
-									<form:input id="value" name="value" type="text" placeholder=""
-										class="form-control input-md" path="value" />
-									<form:errors path="value" cssClass="error" />
-								</div>
-							</div>
-
-
-						</div>
-					</div>
-					<!-- Button -->
-					<div class="form-group">
-						<div class="col-md-4">
-							<button id="add-more" name="add-more" class="btn btn-primary">Add
-								Another Label</button>
-						</div>
-						<br> <br> <br>
-						<br>
-						
-						<div class="form-group row">
-							<input class="btn btn-primary text-center" type="submit"
-								value="Submit" />
-						</div>
-					</div>
-
-
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="key">Key</label>
+				<div class="col-md-5">
+					<form:input id="key" name="key" type="text" placeholder=""
+						class="form-control input-md" path="key" />
+					<form:errors path="key" cssClass="error" />
 				</div>
 			</div>
-
-			<script type="text/javascript">
-		$(document)
-				.ready(
-						function() {
-							//@naresh action dynamic childs
-							var next = 0;
-							$("#add-more")
-									.click(
-											function(e) {
-												e.preventDefault();
-												var addto = "#field" + next;
-												var addRemove = "#field"
-														+ (next);
-												next = next + 1;
-												var newIn = ' <div id="field'+ next 
-												+'" name="field'+ next 
-												+'"><!-- Text input--><div class="form-group"> <label class="col-md-4 control-label" for="key">Key</label> <div class="col-md-5"> <form:input id="key" name="key" path="key" type="text" placeholder="" class="form-control input-md"/> <form:errors path="key" cssClass="error" /> </div></div><br><br> <!-- Text input--><div class="form-group"> <label class="col-md-4 control-label" for="value">Value</label> <div class="col-md-5"> <form:input id="value" name="value" type="text" path="value" placeholder="" class="form-control input-md"/> <form:errors path="value" cssClass="error" /> </div></div>';
-												var newInput = $(newIn);
-												var removeBtn = '<button id="remove'
-														+ (next - 1)
-														+ '" class="btn btn-danger remove-me" >Remove</button></div></div><div id="field">';
-												var removeButton = $(removeBtn);
-												$(addto).after(newInput);
-												$(addRemove)
-														.after(removeButton);
-												$("#field" + next).attr(
-														'data-source',
-														$(addto).attr(
-																'data-source'));
-												$("#count").val(next);
-
-												$('.remove-me')
-														.click(
-																function(e) {
-																	e
-																			.preventDefault();
-																	var fieldNum = this.id
-																			.charAt(this.id.length - 1);
-																	var fieldID = "#field"
-																			+ fieldNum;
-																	$(this)
-																			.remove();
-																	$(fieldID)
-																			.remove();
-																});
-											});
-
-						});
-	</script>
-
-
-			<br></br>
-
+			<br>
+			<br>
+			<!-- Text input-->
+			<div class="form-group">
+				<label class="col-md-4 control-label" for="value">Value</label>
+				<div class="col-md-5">
+					<form:input id="value" name="value" type="text" placeholder=""
+						class="form-control input-md" path="value" />
+					<form:errors path="value" cssClass="error" />
+				</div>
+			</div>
+			<br>
+			<br>
+			<div class="form-group row">
+				<input class="btn btn-primary text-center" type="submit"
+					value="Submit" />
+			</div>
+			
 		</form:form>
 	</div>
 

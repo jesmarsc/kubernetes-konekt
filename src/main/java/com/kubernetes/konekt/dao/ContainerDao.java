@@ -7,8 +7,6 @@ import com.kubernetes.konekt.entity.Container;
 public interface ContainerDao {
 	
 	public Container getContainerByName(String name);
-	
-	public boolean saveContainer(Container newContainer);
 
 	public void deleteContainer(Container containerTBD);
 

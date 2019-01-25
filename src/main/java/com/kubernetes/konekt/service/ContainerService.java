@@ -9,8 +9,6 @@ public interface ContainerService {
 	public Container getContainerById(Long id);
 	
 	public Container getContainerByName(String name);
-	
-	public boolean saveContainer(Container newContainer);
 
 	public void deleteContainer(Container containerTBD);
 

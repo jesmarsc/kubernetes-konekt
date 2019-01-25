@@ -26,6 +26,7 @@ import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1DeleteOptions;
 import io.kubernetes.client.models.V1Deployment;
+import io.kubernetes.client.models.V1DeploymentList;
 import io.kubernetes.client.models.V1Namespace;
 import io.kubernetes.client.models.V1NamespaceList;
 import io.kubernetes.client.models.V1ObjectMeta;
@@ -77,34 +78,26 @@ public class ClusterApi {
 			String clusterUser, String clusterPass, String namespace, YamlBuilderForm form) throws IOException, ApiException{
 		
 		String tab = "  ";
-		List<String> keys = form.getKey();
-		List<String> values = form.getValue();
-		String app = "";
-		if(keys != null) {
-			app = values.get(keys.indexOf("app"));
-		}
-		
-		
-		
+		String label = form.getKey() + ": " + form.getValue();
 		String fileContent =
 				  "apiVersion: apps/v1 \n" 
 				+ "kind: Deployment \n"
 				+ "metadata: \n"
 				+ tab + "name: " + form.getDeploymentName() + "\n"
 				+ tab + "labels: \n"
-				+ formatLabels(keys,values,tab+tab)
+				+ tab + tab + label + "\n"
 				+ "spec: \n"
 				+ tab + "replicas: " + form.getReplicas() + "\n"
 				+ tab + "selector: \n"
 				+ tab + tab + "matchLabels: \n"
-				+ formatLabels(keys, values, tab+tab+tab)
+				+ tab + tab + tab + label + "\n"
 				+ tab +"template: \n"
 				+ tab + tab + "metadata: \n"
 				+ tab + tab + tab + "labels: \n"
-				+ formatLabels(keys,values,tab + tab + tab + tab)
+				+ tab + tab + tab + tab + label + "\n"
 				+ tab + tab + "spec: \n"
 				+ tab + tab + tab + "containers: \n"
-				+ tab + tab + tab + "- name: " + app + "\n"
+				+ tab + tab + tab + "- name: " + form.getValue() + "\n"
 				+ tab + tab + tab + tab + "image: " + form.getImage() + "\n"
 				+ tab + tab + tab + tab + "ports: \n"
 				+ tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
@@ -131,23 +124,14 @@ public class ClusterApi {
 	}
 	
 	public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
+		
 		client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
         client.setDebugging(true);
         
         Configuration.setDefaultApiClient(client);
-        appsInstance = new AppsV1Api(client);
         coreInstance = new CoreV1Api(client);
-	}
-	
-	private String formatLabels(List<String> keys, List<String> values, String tabs)  {
-		if(keys == null) {
-			return "";
-		}
-		String labels = new String();
-		for(Integer i = 0; i < keys.size(); i++) {
-			labels += tabs + keys.get(i) + ": " + values.get(i) + "\n";
-		}
-		return labels;
+        appsInstance = new AppsV1Api(client);
+        
 	}
 
 	private File saveFileLocally(MultipartFile file) throws IOException{
@@ -317,5 +301,20 @@ public class ClusterApi {
 		    System.err.println("Exception when calling CoreV1Api#createNamespace");
 		    e.printStackTrace();
 		}		
+	}
+	
+	public List<String> getDeploymentsByNamespace(String namespace, 
+			String clusterUrl, String clusterUser, String clusterPass) throws ApiException {
+		
+		setupClient(clusterUrl, clusterUser, clusterPass);
+		ApiResponse<V1DeploymentList> response =  appsInstance.listNamespacedDeploymentWithHttpInfo(namespace, pretty, null, null, null, null, null, null, null, null);
+		List<V1Deployment> result = response.getData().getItems();
+		List<String> deploymentNames = new ArrayList<String>();
+		for(V1Deployment item : result) {
+			deploymentNames.add(item.getMetadata().getName());
+		}
+		System.out.println(deploymentNames);
+		
+		return deploymentNames;
 	}
 }

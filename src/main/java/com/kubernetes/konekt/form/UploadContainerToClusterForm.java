@@ -6,9 +6,7 @@ public class UploadContainerToClusterForm {
 	
 	@NotNull(message = "Required Field")
 	private String yaml;
-	
-	@NotNull(message = "Required Field")
-	private String clusterUrl;
+
 	
 	public UploadContainerToClusterForm() {
 		
@@ -22,12 +20,6 @@ public class UploadContainerToClusterForm {
 		this.yaml = yaml;
 	}
 
-	public String getClusterUrl() {
-		return clusterUrl;
-	}
 
-	public void setClusterUrl(String clusterUrl) {
-		this.clusterUrl = clusterUrl;
-	}
 	
 }

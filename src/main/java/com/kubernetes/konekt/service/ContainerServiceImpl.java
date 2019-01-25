@@ -21,11 +21,6 @@ public class ContainerServiceImpl implements ContainerService{
 		return containerDao.getContainerByName(name);
 	}
 	
-	@Override
-	@Transactional
-	public boolean saveContainer(Container newContainer) {
-		return containerDao.saveContainer(newContainer);
-	}
 
 	@Override
 	@Transactional

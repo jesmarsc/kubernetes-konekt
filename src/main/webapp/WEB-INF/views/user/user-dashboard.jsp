@@ -165,15 +165,6 @@
 				 <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
-			<!-- Select cluster  -->
-		<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-			<label> Select An Available Cluster: </label>
-			<form:select class="form-control row" path="clusterUrl">
-				
-				<form:options items="${availableClusters}" />
-			</form:select>
-			<form:errors path="clusterUrl" cssClass="error" />
-		</div>
 			<!-- submit -->
 			<div class="form-group row mx-4 my-4">
 				<input class="btn btn-primary text-center" type="submit"

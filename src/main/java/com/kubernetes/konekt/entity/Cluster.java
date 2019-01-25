@@ -27,6 +27,9 @@ public class Cluster {
 	
 	@Column(name = "cluster_password")
 	private String clusterPassword;
+	
+	@Column(name = "round_robin")
+	private Integer roundRobin;
 
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
 						 CascadeType.PERSIST, CascadeType.REFRESH})
@@ -41,6 +44,14 @@ public class Cluster {
 		this.clusterUsername = clusterUsername;
 		this.clusterPassword = clusterPassword;
 
+	}
+
+	public Integer getRoundRobin() {
+		return roundRobin;
+	}
+
+	public void setRoundRobin(Integer roundRobin) {
+		this.roundRobin = roundRobin;
 	}
 
 	public Long getId() {
