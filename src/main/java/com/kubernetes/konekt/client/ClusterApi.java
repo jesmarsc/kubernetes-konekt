@@ -258,8 +258,8 @@ public class ClusterApi {
             // exception is thrown
             // There is no fix yet. The only solution is to make the call and catch the
             // exception and move on.
-            ApiResponse<V1Status> response = coreInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null,
-                    null, null);
+            ApiResponse<V1Status> response = 
+                    coreInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, null);
             V1Status result = response.getData();
             System.out.println(result);
         } catch (ApiException e) {
