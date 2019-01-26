@@ -1,7 +1,7 @@
 package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import javax.validation.Valid;
 
@@ -27,6 +27,7 @@ import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiException;
+import javafx.util.Pair;
 
 @Controller
 public class UserController {
@@ -86,7 +87,7 @@ public class UserController {
 		String clusterUrl = chosenCluster.getClusterUrl();
 		String clusterUser = chosenCluster.getClusterUsername();
 		String clusterPass = chosenCluster.getClusterPassword();
-		List<String> deploymentNames = null;
+		ArrayList<Pair<String,String>> deploymentNames = null;
 
 		// check if namespace already exist
 		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
@@ -117,8 +118,8 @@ public class UserController {
 			return this.showUserDashboard(model);
 		}
 
-		for (String name : deploymentNames) {
-			Container newContainer = new Container(name, "Running", clusterUrl);
+		for (Pair<String,String> nameAndKind : deploymentNames) {
+			Container newContainer = new Container(nameAndKind.getKey(), nameAndKind.getValue(), "Running", clusterUrl);
 			currentAccount.addContainer(newContainer);
 			accountService.updateAccountTables(currentAccount);
 		}
@@ -155,7 +156,7 @@ public class UserController {
 		String clusterUrl = chosenCluster.getClusterUrl();
 		String clusterUser = chosenCluster.getClusterUsername();
 		String clusterPass = chosenCluster.getClusterPassword();
-		List<String> deploymentNames = null;
+		ArrayList<Pair<String,String>> deploymentNames = null;
 
 		// check if namespace already exist 
 		Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
@@ -176,7 +177,7 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 		
-		if(deploymentNames.isEmpty()) {
+		if(deploymentNames.isEmpty()){
 			String uploadContainerFailStatus = "Deployment Failed";
 			String uploadContainerFailMessage =  "The YAML: '" + file.getOriginalFilename() + "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name)";
 			model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
@@ -184,8 +185,8 @@ public class UserController {
             return this.showUserDashboard(model);
 		}
 		
-		for(String name : deploymentNames) {
-			Container newContainer = new Container(name, "Running", clusterUrl);
+		for(Pair<String,String> nameAndKind : deploymentNames) {
+			Container newContainer = new Container(nameAndKind.getKey(), nameAndKind.getValue(), "Running", clusterUrl);
 			currentAccount.addContainer(newContainer);
 			accountService.updateAccountTables(currentAccount);
 		}

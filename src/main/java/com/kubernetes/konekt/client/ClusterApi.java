@@ -36,6 +36,7 @@ import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
+import javafx.util.Pair;
 
 
 @Component
@@ -49,7 +50,7 @@ public class ClusterApi {
 	
 	private static String pretty = "true";
 	
-	public List<String> parseYaml(MultipartFile file, String clusterUrl, 
+	public ArrayList<Pair<String,String>> parseYaml(MultipartFile file, String clusterUrl, 
 			String clusterUser, String clusterPass, String namespace) throws IOException, ApiException {
 		
 		setupClient(clusterUrl, clusterUser, clusterPass);
@@ -57,24 +58,34 @@ public class ClusterApi {
 		
 		FileReader fr = new FileReader(file.getOriginalFilename());
 		List<Object> objects = Yaml.loadAll(fr);
-		List<String> result = new ArrayList<String>();
+		ArrayList<Pair<String,String>> result = new ArrayList<Pair<String,String>>();
+		String name = "";
+		String kind = "";
+		
 		
 		for (Object body : objects) {
 			if(body instanceof V1Deployment) {
-				result.add(createDeployment((V1Deployment) body, namespace).getMetadata().getName());
+				name = createDeployment((V1Deployment) body, namespace).getMetadata().getName();
+				kind = ((V1Deployment) body).getKind();
+				result.add(new Pair<String,String>(name,kind));
 			}
 			else if(body instanceof V1Service) {
-				result.add(createService((V1Service) body, namespace).getMetadata().getName());
+				name = createService((V1Service) body, namespace).getMetadata().getName();
+				kind = ((V1Service) body).getKind();
+				result.add(new Pair<String,String>(name,kind));
 			}
 			else if(body instanceof V1ConfigMap) {
-				result.add(createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName());
+				name = createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName();
+				kind = ((V1ConfigMap) body).getKind();
+				result.add(new Pair<String,String>(name,kind));
 			}
 		}
+
 		
         return result;
 	}
 
-	public List<String> deploymentFromUserInput(String clusterUrl, 
+	public ArrayList<Pair<String,String>> deploymentFromUserInput(String clusterUrl, 
 			String clusterUser, String clusterPass, String namespace, YamlBuilderForm form) throws IOException, ApiException{
 		
 		String tab = "  ";
