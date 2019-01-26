@@ -15,6 +15,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
 
 import io.kubernetes.client.ApiClient;
@@ -49,7 +50,7 @@ public class ClusterApi {
 	
 	private static String pretty = "true";
 	
-	public List<String> parseYaml(MultipartFile file, String clusterUrl, 
+	public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
 			String clusterUser, String clusterPass, String namespace) throws IOException, ApiException {
 		
 		setupClient(clusterUrl, clusterUser, clusterPass);
@@ -57,24 +58,28 @@ public class ClusterApi {
 		
 		FileReader fr = new FileReader(file.getOriginalFilename());
 		List<Object> objects = Yaml.loadAll(fr);
-		List<String> result = new ArrayList<String>();
+		List<Container> result = new ArrayList<Container>();
+		String name = null;
 		
 		for (Object body : objects) {
 			if(body instanceof V1Deployment) {
-				result.add(createDeployment((V1Deployment) body, namespace).getMetadata().getName());
+				name = createDeployment((V1Deployment) body, namespace).getMetadata().getName();
+				result.add(new Container(name, clusterUrl, "Deployment", "Running"));
 			}
 			else if(body instanceof V1Service) {
-				result.add(createService((V1Service) body, namespace).getMetadata().getName());
+				name = createService((V1Service) body, namespace).getMetadata().getName();
+				result.add(new Container(name, clusterUrl, "Service", "Running"));
 			}
 			else if(body instanceof V1ConfigMap) {
-				result.add(createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName());
+				name = createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName();
+				result.add(new Container(name, clusterUrl, "ConfigMap", "Running"));
 			}
 		}
 		
         return result;
 	}
 
-	public List<String> deploymentFromUserInput(String clusterUrl, 
+	public List<Container> deploymentFromUserInput(String clusterUrl, 
 			String clusterUser, String clusterPass, String namespace, YamlBuilderForm form) throws IOException, ApiException{
 		
 		String tab = "  ";
@@ -157,6 +162,7 @@ public class ClusterApi {
         } catch (ApiException e) {
             System.err.println("Exception when calling AppsV1Api#createNamespacedDeployment");
             e.printStackTrace();
+            throw e;
         }
         
         return result;
@@ -172,6 +178,7 @@ public class ClusterApi {
         } catch (ApiException e) {
             System.err.println("Exception when calling CoreV1Api#createNamespacedService");
             e.printStackTrace();
+            throw e;
         }
         
         return result;
@@ -187,6 +194,7 @@ public class ClusterApi {
         } catch (ApiException e) {
             System.err.println("Exception when calling CoreV1Api#createNamespacedConfigMap");
             e.printStackTrace();
+            throw e;
         }
         
         return result;
@@ -204,6 +212,7 @@ public class ClusterApi {
 		} catch (ApiException e) {
 		    System.err.println("Exception when calling AppsV1Api#deleteNamespacedDeployment");
 		    e.printStackTrace();
+		    throw e;
 		}
 		
 	}
@@ -220,6 +229,23 @@ public class ClusterApi {
 		} catch (ApiException e) {
 			System.err.println("Exception when calling CoreV1Api#deleteNamespacedService");
 		    e.printStackTrace();
+		    throw e;
+		}
+	}
+	
+	public void deleteConfigMap(String configName, String namespace, 
+			String clusterUrl, String clusterUser, String clusterPass) throws ApiException{
+		
+		setupClient(clusterUrl, clusterUser, clusterPass);
+		
+		V1DeleteOptions body = new V1DeleteOptions();
+		
+		try {
+			coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
+		} catch (ApiException e) {
+			System.err.println("Exception when calling CoreV1Api#deleteNamespacedConfigMap");
+		    e.printStackTrace();
+		    throw e;
 		}
 	}
 	
@@ -241,6 +267,7 @@ public class ClusterApi {
 		} catch (ApiException e) {
 		    System.err.println("Exception when calling CoreV1Api#deleteNamespace");
 		    e.printStackTrace();
+		    throw e;
 		}
 	}
 	
@@ -259,6 +286,7 @@ public class ClusterApi {
 		} catch (ApiException e) {
 		    System.err.println("Exception when calling CoreV1Api#listNamespacedPod");
 		    e.printStackTrace();
+		    throw e;
 		}
 
 		return false;
@@ -281,6 +309,7 @@ public class ClusterApi {
 		} catch (ApiException e) {
 		    System.err.println("Exception when calling CoreV1Api#listNamespace");
 		    e.printStackTrace();
+		    throw e;
 		}
 		return false; // reached end of list without finding namespace
 	}
@@ -300,6 +329,7 @@ public class ClusterApi {
 		} catch (ApiException e) {
 		    System.err.println("Exception when calling CoreV1Api#createNamespace");
 		    e.printStackTrace();
+		    throw e;
 		}		
 	}
 	

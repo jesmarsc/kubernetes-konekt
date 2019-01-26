@@ -25,8 +25,12 @@ public class Container {
 	@Column(name="cluster_url")
 	private String clusterUrl;
 	
+	@Column(name="kind")
+	private String kind;
+	
 	@Column(name="container_status")
 	private String status;
+	
 	/*
 	 Add mapping for each container back to the cluster that it running on to 
 	 ease populating provider table that show what is running on their clusters
@@ -41,10 +45,10 @@ public class Container {
 		
 	}
 	
-	public Container(String containerName, String status, String clusterUrl) {
-		//super();
+	public Container(String containerName, String clusterUrl, String kind, String status) {
 		this.containerName = containerName;
 		this.clusterUrl = clusterUrl;
+		this.kind = kind;
 		this.status = status;
 	}
 	
@@ -63,13 +67,21 @@ public class Container {
 	public void setContainerName(String containerName) {
 		this.containerName = containerName;
 	}
-
-	public Account getAccount() {
-		return account;
+	
+	public String getClusterUrl() {
+		return clusterUrl;
 	}
 
-	public void setAccount(Account account) {
-		this.account = account;
+	public void setClusterUrl(String clusterUrl) {
+		this.clusterUrl = clusterUrl;
+	}
+
+	public String getKind() {
+		return kind;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
 	}
 
 	public String getStatus() {
@@ -80,14 +92,14 @@ public class Container {
 		this.status = status;
 	}
 
-	public String getClusterUrl() {
-		return clusterUrl;
+	public Account getAccount() {
+		return account;
 	}
 
-	public void setClusterUrl(String clusterUrl) {
-		this.clusterUrl = clusterUrl;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
-
+	
 	@Override
 	public String toString() {
 		return containerName;
