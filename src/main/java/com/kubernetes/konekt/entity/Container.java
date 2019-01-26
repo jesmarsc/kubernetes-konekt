@@ -18,41 +18,39 @@ public class Container {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
-	
-	@Column(name="container_name")
+
+	@Column(name = "container_name")
 	private String containerName;
-	
-	@Column(name="cluster_url")
+
+	@Column(name = "cluster_url")
 	private String clusterUrl;
-	
-	@Column(name="kind")
+
+	@Column(name = "kind")
 	private String kind;
-	
-	@Column(name="container_status")
+
+	@Column(name = "container_status")
 	private String status;
 	/*
-	 * TODO:
-	 Add mapping for each container back to the cluster that it is running on to 
-	 ease populating provider table that show what is running on their clusters
+	 * TODO: Add mapping for each container back to the cluster that it is running
+	 * on to ease populating provider table that show what is running on their
+	 * clusters
 	 */
-	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE,
-			 			CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name="user_account_id")
+	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
+	@JoinColumn(name = "user_account_id")
 	private Account account;
-	
 
 	public Container() {
-		
+
 	}
-	
-	public Container(String containerName,String kind, String status, String clusterUrl) {
-		//super();
+
+	public Container(String containerName, String kind, String status, String clusterUrl) {
+		// super();
 		this.containerName = containerName;
 		this.clusterUrl = clusterUrl;
 		this.status = status;
 		this.kind = kind;
 	}
-	
+
 	public String getKind() {
 		return kind;
 	}
@@ -105,7 +103,5 @@ public class Container {
 	public String toString() {
 		return containerName;
 	}
-	
+
 }
-
-
