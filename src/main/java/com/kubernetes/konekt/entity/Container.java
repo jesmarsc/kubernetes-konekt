@@ -30,11 +30,10 @@ public class Container {
 
 	@Column(name = "container_status")
 	private String status;
-	/*
-	 * TODO: Add mapping for each container back to the cluster that it is running
-	 * on to ease populating provider table that show what is running on their
-	 * clusters
-	 */
+	
+	@Column(name = "provider_id")
+	private Long providerId;
+
 	@ManyToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
 	@JoinColumn(name = "user_account_id")
 	private Account account;
@@ -43,12 +42,21 @@ public class Container {
 
 	}
 
-	public Container(String containerName, String kind, String status, String clusterUrl) {
+	public Container(String containerName, String kind, String status, String clusterUrl, Long providerId) {
 		// super();
 		this.containerName = containerName;
 		this.clusterUrl = clusterUrl;
 		this.status = status;
 		this.kind = kind;
+		this.providerId = providerId;
+	}
+
+	public Long getProviderId() {
+		return providerId;
+	}
+
+	public void setProviderId(Long providerId) {
+		this.providerId = providerId;
 	}
 
 	public String getKind() {

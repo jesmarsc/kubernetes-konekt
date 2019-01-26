@@ -17,6 +17,8 @@ public interface ContainerDao {
 	public Container getContainerById(Long id);
 
 	public List<Container> getContainerByClusterUrl(String clusterUrl);
+
+	public List<Container> getContainersByProviderId(Long id);
 	
 
 }

@@ -126,6 +126,32 @@
 		</table>
 		<!-- End of Table -->
 
+		<h3>Running On Your Clusters</h3>
+		<!-- Beginning of table -->
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>Cluster URL</th>
+					<th>Name</th>
+					<th>Kind</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="container" items="${runningContainers}">
+					<c:url var="removeLink" value="/provider/delete">
+						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
+					</c:url>
+					<tr>
+						<td>${container.clusterUrl}</td>
+						<td>${container.containerName}</td>
+						<td>${container.kind}</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<!-- End of Table -->
+
+
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
 		More than likely we can simplify it by sending email or uploading a file top the cluster -->

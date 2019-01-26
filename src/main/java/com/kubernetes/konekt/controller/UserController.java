@@ -125,7 +125,7 @@ public class UserController {
 		}
 
 		for (Pair<String, String> nameAndKind : deploymentNames) {
-			Container newContainer = new Container(nameAndKind.getKey(), nameAndKind.getValue(), "Running", clusterUrl);
+			Container newContainer = new Container(nameAndKind.getKey(), nameAndKind.getValue(), "Running", clusterUrl,chosenCluster.getAccount().getId());
 			currentAccount.addContainer(newContainer);
 			accountService.updateAccountTables(currentAccount);
 		}
@@ -197,7 +197,8 @@ public class UserController {
 		}
 
 		for (Pair<String, String> nameAndKind : deploymentNames) {
-			Container newContainer = new Container(nameAndKind.getKey(), nameAndKind.getValue(), "Running", clusterUrl);
+			
+			Container newContainer = new Container(nameAndKind.getKey(), nameAndKind.getValue(), "Running", clusterUrl, chosenCluster.getAccount().getId());
 			currentAccount.addContainer(newContainer);
 			accountService.updateAccountTables(currentAccount);
 		}

@@ -57,7 +57,9 @@ public class ProviderController {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
-		
+		List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
+		model.addAttribute("runningContainers", containers);
+		System.out.println("\n\n\n\n\n\n\n" + containers + "\n\n\n\n\n\n");
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
 
@@ -71,7 +73,7 @@ public class ProviderController {
 		String clusterUser = TBDeletedCluster.getClusterUsername();
 		String clusterPass = TBDeletedCluster.getClusterPassword();
 		
-		// TODO: CLEANUP DEPLOYMENTS
+
 		// get list of users who have deployments on cluster
 		List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
 		// delete deployments from cluster
@@ -95,8 +97,6 @@ public class ProviderController {
 			accountService.updateAccountTables(container.getAccount());
 		}
 		clusterService.deleteCluster(TBDeletedCluster);
-		
-		// TODO: HANDLE IF NOT SUCCESSFUL
 		
 		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
 		String deleteClusterSuccessMessage = "Cluster with URL: " + TBDeletedCluster.getClusterUrl() + " has been deleted";
