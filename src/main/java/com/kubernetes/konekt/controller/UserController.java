@@ -1,7 +1,6 @@
 package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -28,7 +27,6 @@ import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiException;
-import javafx.util.Pair;
 
 @Controller
 public class UserController {
@@ -103,7 +101,7 @@ public class UserController {
 
         try {
             deployments = clusterApi.deploymentFromUserInput(clusterUrl, clusterUser, clusterPass, username,
-                    yamlBuildForm);
+                    yamlBuildForm,chosenCluster.getAccount().getId());
         } catch (IOException | ApiException e) {
             e.printStackTrace();
             String uploadContainerFailStatus = "Deployment Failed";
@@ -148,7 +146,6 @@ public class UserController {
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
         }
-
         // Get username to retrieve account and to use as namespace.
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account currentAccount = accountService.findByUserName(username);
@@ -171,7 +168,7 @@ public class UserController {
         }
 
         try {
-            deployments = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username);
+            deployments = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username,chosenCluster.getAccount().getId());
         } catch (IOException e) {
             e.printStackTrace();
             String uploadContainerFailStatus = "Upload Failed";

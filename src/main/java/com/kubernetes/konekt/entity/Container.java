@@ -60,14 +60,6 @@ public class Container {
 		this.providerId = providerId;
 	}
 
-	public String getKind() {
-		return kind;
-	}
-
-	public void setKind(String kind) {
-		this.kind = kind;
-	}
-
 	public Long getId() {
 		return id;
 	}

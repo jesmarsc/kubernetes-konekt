@@ -55,6 +55,7 @@ public class TestAPI {
         }
     }
 	
+	@SuppressWarnings("unchecked")
 	public static Object convertyamlToObject(FileReader fr, String kind) {
 		return yaml.loadAs(fr, (Class<Object>) objMap.get(kind));
 	}

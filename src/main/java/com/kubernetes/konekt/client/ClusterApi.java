@@ -37,7 +37,6 @@ import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
-import javafx.util.Pair;
 
 @Component
 public class ClusterApi {
@@ -53,7 +52,7 @@ public class ClusterApi {
 
 
     public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
-            String clusterUser, String clusterPass, String namespace) throws IOException, ApiException {
+            String clusterUser, String clusterPass, String namespace, Long providerId) throws IOException, ApiException {
 
         setupClient(clusterUrl, clusterUser, clusterPass);
         saveFileLocally(file); // save file in local directory so convertyamlToObject can find the file
@@ -66,13 +65,14 @@ public class ClusterApi {
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
                 name = createDeployment((V1Deployment) body, namespace).getMetadata().getName();
-                result.add(new Container(name, clusterUrl, "Deployment", "Running"));
+                
+                result.add(new Container(name,"Deployment","Running", clusterUrl,  providerId));
             } else if (body instanceof V1Service) {
                 name = createService((V1Service) body, namespace).getMetadata().getName();
-                result.add(new Container(name, clusterUrl, "Service", "Running"));
+                result.add(new Container(name, "Service", "Running",clusterUrl, providerId));
             } else if (body instanceof V1ConfigMap) {
                 name = createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName();
-                result.add(new Container(name, clusterUrl, "ConfigMap", "Running"));
+                result.add(new Container(name, "ConfigMap", "Running", clusterUrl, providerId));
             }
         }
 
@@ -80,7 +80,7 @@ public class ClusterApi {
     }
 
     public List<Container> deploymentFromUserInput(String clusterUrl, String clusterUser, String clusterPass,
-            String namespace, YamlBuilderForm form) throws IOException, ApiException {
+            String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
 
         String tab = "  ";
         String label = form.getKey() + ": " + form.getValue();
@@ -122,7 +122,7 @@ public class ClusterApi {
         }
         MultipartFile readFile = new MockMultipartFile(fileName, fileName, contentType, content);
 
-        return parseYaml(readFile, clusterUrl, clusterUser, clusterPass, namespace);
+        return parseYaml(readFile, clusterUrl, clusterUser, clusterPass, namespace,providerId);
     }
   
     public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
