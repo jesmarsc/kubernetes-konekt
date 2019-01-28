@@ -30,7 +30,7 @@ public class Container {
 
 	@Column(name = "container_status")
 	private String status;
-	
+
 	@Column(name = "provider_id")
 	private Long providerId;
 
@@ -43,9 +43,10 @@ public class Container {
 	}
 
 	public Container(String containerName, String kind, String status, String clusterUrl, Long providerId) {
-		// super();
+
 		this.containerName = containerName;
 		this.clusterUrl = clusterUrl;
+		this.kind = kind;
 		this.status = status;
 		this.kind = kind;
 		this.providerId = providerId;
@@ -82,13 +83,21 @@ public class Container {
 	public void setContainerName(String containerName) {
 		this.containerName = containerName;
 	}
-
-	public Account getAccount() {
-		return account;
+	
+	public String getClusterUrl() {
+		return clusterUrl;
 	}
 
-	public void setAccount(Account account) {
-		this.account = account;
+	public void setClusterUrl(String clusterUrl) {
+		this.clusterUrl = clusterUrl;
+	}
+
+	public String getKind() {
+		return kind;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
 	}
 
 	public String getStatus() {
@@ -99,14 +108,14 @@ public class Container {
 		this.status = status;
 	}
 
-	public String getClusterUrl() {
-		return clusterUrl;
+	public Account getAccount() {
+		return account;
 	}
 
-	public void setClusterUrl(String clusterUrl) {
-		this.clusterUrl = clusterUrl;
+	public void setAccount(Account account) {
+		this.account = account;
 	}
-
+	
 	@Override
 	public String toString() {
 		return containerName;
