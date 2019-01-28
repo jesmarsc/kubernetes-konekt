@@ -188,7 +188,7 @@
 	</div>
 
 	<sec:authorize access="hasRole('USER')">
-		<input type="button" onclick="location.href='user/build-yaml'"
+		<input type="button" onclick="${pageContext.request.contextPath}/user/build-yaml"
 			value="Build A Yaml File" class="btn btn-primary">
 	</sec:authorize>
 
