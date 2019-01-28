@@ -149,9 +149,13 @@ public class UserController {
         // Get username to retrieve account and to use as namespace.
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account currentAccount = accountService.findByUserName(username);
-
+        Cluster chosenCluster;
         // Choose cluster for the user.
-        Cluster chosenCluster = scheduler.getNextCluster();
+        if(uploadForm.getClusterUrl().isEmpty()) {
+        	chosenCluster = scheduler.getNextCluster();
+        }else {
+        	chosenCluster = clusterService.getCluster(uploadForm.getClusterUrl());
+        }
 
         // Get url, username, and password needed to access cluster.
         String clusterUrl = chosenCluster.getClusterUrl();
