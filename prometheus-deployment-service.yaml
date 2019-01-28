@@ -33,7 +33,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: prometheus-example-service
+  name: prometheus-service
 spec:
   selector:
     app: prometheus

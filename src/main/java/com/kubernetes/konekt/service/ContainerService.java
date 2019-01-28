@@ -17,5 +17,7 @@ public interface ContainerService {
 	public void updateEntry(Container updateContainer);
 
 	public List<Container> getContainerByClusterUrl(String clusterUrl);
+
+	public List<Container> getContainersByProviderId(Long id);
 	
 }

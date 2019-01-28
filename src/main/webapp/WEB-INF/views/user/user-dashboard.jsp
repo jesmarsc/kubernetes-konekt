@@ -165,6 +165,19 @@
 				 <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+			<!-- Select cluster  -->
+			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+				<label> Select An Available Cluster: </label>
+				<form:select class="form-control row" path="clusterUrl">
+					<form:option value=""></form:option>
+					<form:options items="${availableClusters}" />
+				</form:select>
+				<form:errors path="clusterUrl" cssClass="error" />
+			</div>
+			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+				<small>NOTE: If cluster is not specified it
+						will be chosen for you.</small>
+			</div>
 			<!-- submit -->
 			<div class="form-group row mx-4 my-4">
 				<input class="btn btn-primary text-center" type="submit"
@@ -175,7 +188,7 @@
 	</div>
 
 	<sec:authorize access="hasRole('USER')">
-		<input type="button" onclick="location.href='user/build-yaml'"
+		<input type="button" onclick="${pageContext.request.contextPath}/user/build-yaml"
 			value="Build A Yaml File" class="btn btn-primary">
 	</sec:authorize>
 

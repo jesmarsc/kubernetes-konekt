@@ -1,6 +1,5 @@
 package com.kubernetes.konekt.controller;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -57,7 +56,8 @@ public class ProviderController {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
-		
+		List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
+		model.addAttribute("runningContainers", containers);
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
 
@@ -71,7 +71,7 @@ public class ProviderController {
 		String clusterUser = TBDeletedCluster.getClusterUsername();
 		String clusterPass = TBDeletedCluster.getClusterPassword();
 		
-		// TODO: CLEANUP DEPLOYMENTS
+
 		// get list of users who have deployments on cluster
 		List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
 		// delete deployments from cluster
@@ -95,8 +95,6 @@ public class ProviderController {
 			accountService.updateAccountTables(container.getAccount());
 		}
 		clusterService.deleteCluster(TBDeletedCluster);
-		
-		// TODO: HANDLE IF NOT SUCCESSFUL
 		
 		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
 		String deleteClusterSuccessMessage = "Cluster with URL: " + TBDeletedCluster.getClusterUrl() + " has been deleted";
@@ -143,13 +141,49 @@ public class ProviderController {
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 			
 		} catch(Exception e) {
-			System.out.println( "\n" + e + "\n");
 			String uploadClusterFailStatus = "Cluster Upload Failed:";
 			String uploadClusterFailMessage= "The URL entered is already registered to another cluster";
 			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
 			model.addAttribute("uploadClusterFailMessage", uploadClusterFailMessage);
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 		}
+	}
+	
+	@RequestMapping(value = "/provider/delete-container")
+	public String deleteContainer(@RequestParam("containerId") Long id, Model model) {
+
+		Container containerTBD = containerService.getContainerById(id);
+		String containerName = containerTBD.getContainerName();
+		
+		try {
+			// get username of user who owns container
+			String username = containerTBD.getAccount().getUserName();
+			// Deleting Deployment from cluster
+			String deploymentName = containerTBD.getContainerName();
+			String clusterUrl = containerTBD.getClusterUrl();
+			Cluster cluster = clusterService.getCluster(clusterUrl);
+			String userName = cluster.getClusterUsername();
+			String passWord = cluster.getClusterPassword();
+			clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
+			// Deleting Deployment from database
+			containerService.deleteContainer(containerTBD);
+		} catch (Exception e) {
+			e.printStackTrace();
+			String deleteContainerToClusterStatus = "Container Delete Failed";
+			String deleteContainerToClusterMessage = "The container: '" + containerName
+					+ "' could not be deleted. Container not found in system";
+			model.addAttribute("deleteContainerToClusterStatus", deleteContainerToClusterStatus);
+			model.addAttribute("deleteContainerToClusterMessage", deleteContainerToClusterMessage);
+			return this.showProviderDashboard(null, null, model);
+		}
+
+		String deleteContainerToClusterStatus = "Container Deleted Successfully";
+		String deleteContainerToClusterMessage = "The container: '" + containerName
+				+ "' was successfully deleted from system ";
+		model.addAttribute("deleteContainerToClusterStatus", deleteContainerToClusterStatus);
+		model.addAttribute("deleteContainerToClusterMessage", deleteContainerToClusterMessage);
+		return this.showProviderDashboard(null, null, model);
+
 	}
 	
 }
