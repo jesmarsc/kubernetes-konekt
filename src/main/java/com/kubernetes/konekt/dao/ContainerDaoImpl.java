@@ -97,4 +97,18 @@ public class ContainerDaoImpl implements ContainerDao {
 		return containers;
 	}
 
+	@Override
+	public List<Container> getContainersByProviderId(Long providerId) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Container> theQuery = 
+				currentSession.createQuery("FROM Container WHERE providerId = :providerId ", Container.class);
+		
+		theQuery.setParameter("providerId", providerId);
+		
+		List<Container> containers = theQuery.getResultList();
+				
+		return containers;
+	}
+
 }

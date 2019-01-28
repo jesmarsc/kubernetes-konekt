@@ -37,17 +37,20 @@ import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1Status;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
+import javafx.util.Pair;
 
 @Component
 public class ClusterApi {
 
-    private ApiClient client;
+	
+	private ApiClient client;
+	
+	private CoreV1Api coreInstance;
+	
+	private AppsV1Api appsInstance;
+	
+	private static String pretty = "true";
 
-    private CoreV1Api coreInstance;
-
-    private AppsV1Api appsInstance;
-
-    private static String pretty = "true";
 
     public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
             String clusterUser, String clusterPass, String namespace) throws IOException, ApiException {
@@ -121,10 +124,11 @@ public class ClusterApi {
 
         return parseYaml(readFile, clusterUrl, clusterUser, clusterPass, namespace);
     }
-
+  
     public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
+		
+		client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
 
-        client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
         client.setDebugging(true);
 
         Configuration.setDefaultApiClient(client);

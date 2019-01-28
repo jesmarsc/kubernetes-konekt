@@ -32,7 +32,8 @@ public class TestAPI {
 	public static void main(String[] args) throws IOException{
 		FileReader fr = new FileReader(yaml_file);
 	    InputStream input = new FileInputStream(new File(yaml_file));
-	    Map map = (Map) yaml.load(input);
+	    @SuppressWarnings("rawtypes")
+		Map map = (Map) yaml.load(input);
 	    V1Deployment body = (V1Deployment) convertyamlToObject(fr, (String) map.get("kind"));
 
 		

@@ -1,6 +1,7 @@
 package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -27,48 +28,53 @@ import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiException;
+import javafx.util.Pair;
 
 @Controller
 public class UserController {
 
-    @Autowired
-    private AccountService accountService;
+	@Autowired
+	private AccountService accountService;
 
-    @Autowired
-    private ClusterService clusterService;
+	@Autowired
+	private ClusterService clusterService;
 
-    @Autowired
-    private ContainerService containerService;
+	@Autowired
+	private ContainerService containerService;
 
-    @Autowired
-    private ClusterApi clusterApi;
+	@Autowired
+	private ClusterApi clusterApi;
 
-    @Autowired
-    private RoundRobinScheduler scheduler;
+	@Autowired
+	private RoundRobinScheduler scheduler;
 
-    @RequestMapping(value = "/user")
-    public String showUserDashboard(Model model) {
+	@RequestMapping(value = "/user")
+	public String showUserDashboard(Model model) {
 
-        UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
-        model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
+		UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
+		model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account currentAccount = accountService.findByUserName(username);
-        model.addAttribute("currentAccount", currentAccount);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		model.addAttribute("currentAccount", currentAccount);
 
-        // TODO:check all containers are still on clusters
+		List<Cluster> availableClusters = clusterService.getAllClusters();
+		model.addAttribute("availableClusters", availableClusters);
 
-        return "user/user-dashboard";
-    }
+		// TODO:check all containers are still on clusters
 
-    @RequestMapping(value = "/user/build-yaml")
-    public String yamlBuilder(@ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm, Model model) {
+		return "user/user-dashboard";
+	}
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account currentAccount = accountService.findByUserName(username);
-        model.addAttribute("currentAccount", currentAccount);
-        return "user/yaml-builder-form";
-    }
+	@RequestMapping(value = "/user/build-yaml")
+	public String yamlBuilder(@ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm, Model model) {
+
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		model.addAttribute("currentAccount", currentAccount);
+
+		return "user/yaml-builder-form";
+	}
 
     @RequestMapping(value = "/user/YamlBuildConfirmation")
     public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm,
@@ -238,4 +244,5 @@ public class UserController {
         model.addAttribute("deleteContainerToClusterMessage", deleteContainerToClusterMessage);
         return this.showUserDashboard(model);
     }
+
 }
