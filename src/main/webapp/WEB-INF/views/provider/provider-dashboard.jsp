@@ -7,19 +7,26 @@
 <!-- Begin HTML Document -->
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<!-- Bootstrap CSS -->
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
-
-<!-- Title at the Tab of the Browser -->
-<title>Provider Dashboard</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Title at the Tab of the Browser -->
+	<title>Provider Dashboard</title>
+    
+    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
+    <meta name="generator" content="Themestr.app">
+    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+	<link href="css/theme.css" rel="stylesheet">
 
 </head>
+
+<!-- Begin Body -->
 <body>
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
@@ -34,22 +41,28 @@
 
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			
+				
 				<ul class="navbar-nav ml-auto">
 
-					<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/"> Home </a></li>
+					<li class="nav-item"><a class="nav-link"
+					href="${pageContext.request.contextPath}/"> Home </a></li>
 					
 					<sec:authorize access="hasRole('USER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link"
+						href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
 					</sec:authorize>
 					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link"
+						href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
 					</sec:authorize>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
 
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navDropdown"
-						data-toggle="dropdown"> Alerts </a> <!-- later these alerts will be read from database for now there's a dummy drop down menu -->
+						data-toggle="dropdown"> Alerts </a>
+						<!-- later these alerts will be read from database for now there's a dummy drop down menu -->
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="#"> Frank Smith wants to buy
 								Bad Cluster </a> <a class="dropdown-item" href="#"> Jesmar paid
@@ -70,6 +83,7 @@
 		</nav>
 	</div>
 
+	<!-- Begin Code for Forms -->
 	<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
@@ -109,11 +123,11 @@
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped">
-			<thead>
+		<table class="table table-bordered">
+			<thead class="thead-light">
 				<tr>
-					<th>Cluster URL</th>
-					<th>Options</th>
+					<th><h5>Cluster URL</h5></th>
+					<th><h5>Options</h5></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -125,8 +139,8 @@
 					<tr>
 						<td>${cluster.clusterUrl}</td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-primary" href="#" role="button">Another Option</a>
+							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
+							<a class="btn btn-light" href="#" role="button">Another Option</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -162,37 +176,41 @@
 			</tbody>
 		</table>
 		<!-- End of Table -->
-
+		<br/>
+		<div class-"mx-4 my-4">
+			<h3>Upload New Cluster URL</h3>
+		</div>
+		
 		<!-- New cluster upload -->
-		<!-- Will need to decide on validation on how to figure out if IP address is valid
-		.we can simplify it by sending email or uploading a file to the cluster -->
-		<h3>Upload New Cluster URL</h3>
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
-			<div class="form-group row">
+			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
 				<label> Cluster URL (i.e. https://122.198.122.166): </label>
 				<form:input class="form-control" path="clusterUrl" />
 				<form:errors path="clusterUrl" cssClass="error" />
 			</div>
-			<div class="form-group row">
+			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
 				<label> Cluster Username (must have admin privileges): </label>
 				<form:input class="form-control" path="clusterUsername" />
 				<form:errors path="clusterUsername" cssClass="error" />
 			</div>
-			<div class="form-group row">
+			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
 				<label> Cluster Password: </label>
 				<form:password class="form-control" path="clusterPassword" />
 				<form:errors path="clusterPassword" cssClass="error" />
 			</div>
-			<div class="form-group row">
+			<div class="form-group row mx-4 my-4">
 				<input class="btn btn-primary text-center" type="submit"
 					value="Submit" />
 			</div>
+			
+			<br/><br/>
 		</form:form>
 	</div>
+	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="js/scripts.js"></script>
 </body>
 </html>

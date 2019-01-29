@@ -1,84 +1,130 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<!DOCTYPE html>
 
 <html>
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Kubernetes Konekt</title>
 	
-	<!-- Bootstrap CSS -->
-	<link href="css/bootstrap.min.css" rel="stylesheet"/>
-	
-	<title>Home</title>
+	<link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16">
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="css/all.css">
+	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 </head>
 <body>
+
+		
+	<header id="header">
+			<div class="container">
+				<div class="logo"><a href="#"><img src="images/kubernetes.png" style="height:60px;"></a></div>
+				<nav id="nav">
+					<div class="opener-holder">
+						<a href="#" class="nav-opener"><span></span></a>
+					</div>
 	
-	<div class="jumbotron text-center">
-		<h1>Welcome to Kubernetes Konekt!</h1><br>
-		<img src="images/kubernetes.png" style="height:60px;">
+					<div class="nav-drop">
+						<ul>
+							<li class="active visible-sm visible-xs"><a href="#">Home</a></li>
+								<sec:authorize access="isAnonymous()">
+										<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary">
+										<input type="button" onclick="location.href='login'" value="Login" class="btn btn-primary">
+								</sec:authorize>
+								<sec:authorize access="hasAnyRole('USER, PROVIDER')">
+									<a class="nav-link" href="${pageContext.request.contextPath}/logout"><input type="button" value="Logout" class="btn btn-danger"></a>
+									<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
+								</sec:authorize>
+								<sec:authorize access="hasRole('USER')">
+										<input type="button" onclick="location.href='user'" value="User Dashboard" class="btn btn-primary">
+								</sec:authorize>
+								<sec:authorize access="hasRole('PROVIDER')">
+										<input type="button" onclick="location.href='provider'" value="Provider Dashboard" class="btn btn-primary">
+								</sec:authorize>
+						</ul>
+						<div class="drop-holder visible-sm visible-xs">
+							<span>Follow Us</span>
+							<ul class="social-networks">
+								<li><a class="fa fa-github" href="#"></a></li>
+								<li><a class="fa fa-twitter" href="#"></a></li>
+								<li><a class="fa fa-facebook" href="#"></a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
+			</div>
+		</header>
+	
+		<section class="visual">
+		<div class="container">
+			<div class="text-block">
+				<div class="heading-holder">
+					<h1>Welcome to Kubernetes Konekt!</h1>
+					
+				</div>
+				<p class="tagline">Connecting containers to clusters!</p>
+				<span class="info">Get connected now</span>
+			</div>
+		</div>
+		<img src="images/5940.jpg" alt="" class="bg-stretch">
+	</section>
+
+	
 		
 		<p> </p>
-		<div class="container-fluid col-md-4">
-			<sec:authorize access="isAnonymous()">
-				<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary">
-				<input type="button" onclick="location.href='login'" value="Login" class="btn btn-primary">
-			</sec:authorize>
-			<sec:authorize access="hasRole('USER')">
-				<input type="button" onclick="location.href='user'"
-					value="User Dashboard" class="btn btn-primary">
-			</sec:authorize>
-			<sec:authorize access="hasRole('PROVIDER')">
-				<input type="button" onclick="location.href='provider'"
-					value="Provider Dashboard" class="btn btn-primary">
-			</sec:authorize>
-	
-			<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
-			
-			<p> </p>
-			<sec:authorize access="isAuthenticated()">
-				<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-					<input type="submit" value="Logout" class="btn btn-danger"/>
-				</form:form>
-			</sec:authorize>
+		
+		<section class="area">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-5">
+					<ul class="visual-list">
+						<li>
+							<div class="img-holder">
+								<img src="images/online-payment.svg" width="110" alt="">
+							</div>
+							<div class="text-holder">
+								<h3>Easy Payment</h3>
+								<p>With most major credit cards accepted and PayPal being set up, easy payment is only minutes away! *Soon to Accept Venmo, etc. </p>
+							</div>
+						</li>
+						<li>
+							<div class="img-holder">
+								<img class="pull-left" src="images/integration.svg" width="90" alt="">
+							</div>
+							<div class="text-holder">
+								<h3>Seamless Cluster Integration</h3>
+								<p>Kubernetes Konekt allows for multiple connections with multiple purchases. No more need to connect with different clients to support large apps! </p>
+							</div>
+						</li>
+						<li>
+							<div class="img-holder">
+								<img src="images/user.svg" height="84" alt="">
+							</div>
+							<div class="text-holder">
+								<h3>Command-less Interface</h3>
+								<p>No need for users to upload their image through multiple command-line arguments. Easily upload a user container and let us do the rest! </p>
+							</div>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-7">
+					<div class="slide-holder">
+						<div class="img-slide scroll-trigger"><img src="images/img-01.png" height="450" width="684" alt=""></div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</div>
+	</section>
+		
+	<!-- </div> -->
 	
-	<!-- Start Div Class for Descriptions -->
 	
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-4 col-sm-6 portfolio-item">
-          		<div class="card h-45">
-          			<h4 class="card-header" align="center">Seamless Cluster Integration</h4>
-          			<div class="card-body">
-              			<p class="card-text" align="center">Kubernetes Konekt allows for multiple connections with multiple purchases. No more need to connect with different clients to support large apps!</p>
-            		</div>
-          		</div>
-        	</div>
-        	<div class="col-lg-4 col-sm-6 portfolio-item">
-          		<div class="card h-45">
-          			<h4 class="card-header" align="center">Command-less Interface</h4>
-          			<div class="card-body">
-              			<p class="card-text" align="center">No need for users to upload their image through multiple command-line arguments. Easily upload a user container and let us do the rest!</p>
-            		</div>
-          		</div>
-        	</div>
-        	<div class="col-lg-4 col-sm-6 portfolio-item">
-          		<div class="card h-45">
-          			<h4 class="card-header" align="center">Easy Payment</h4>
-          			<div class="card-body">
-              			<p class="card-text" align="center">With most major credit cards accepted and PayPal being set up, easy payment is only minutes away! *Soon to Accept Venmo, etc.</p>
-            		</div>
-          		</div>
-        	</div>
-		</div>
-	</div>
-	
-	<!-- Testimonials -->
-	
+	</br></br>
+
 	<div class="container mt-3">
-		<!-- Left-aligned -->
+		<!-- Left-aligned --> 
 		<div class="media border p-3">
 			<div class="media-left">
 				<img src="images/img_avatar1.png" class="mr-3 mt-3 rounded-circle" style="width:60px;">
@@ -105,7 +151,7 @@
 	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script> 
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 </body>

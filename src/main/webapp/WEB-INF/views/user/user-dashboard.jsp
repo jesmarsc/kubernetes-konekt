@@ -5,44 +5,46 @@
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
-    <head>
-    	<meta charset="utf-8">
-    	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    	<!-- Bootstrap CSS -->
-    	<link rel="stylesheet" 
-    		href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"/>
-
-        <title>User Dashboard</title>
-        
-    </head>
+  <head>  
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
+    <meta name="generator" content="Themestr.app">
+    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+ 	<link href="css/theme.css" rel="stylesheet">
+    
+</head>
 	<!-- 
 	 href"#" means clicking the text does not redirect the page to a new page.
 		For now they are just stubs later they can be removed of used to redirect the user to other places 
 		on the website.
 	-->
+
 <body>
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
 
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+			<button class="navbar-toggler dropdown-toggle" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    			<span class="navbar-toggler-icon"></span>
+  			</button>
 
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav ml-auto">
 
-					<li class="nav-item"><a class="nav-link" href="/"> Home </a></li>
+					<li class="nav-item" ><a class="nav-link" href="/" >Home</a></li>
 					<sec:authorize access="hasRole('USER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user">User Dashboard</a></li>
 
 					</sec:authorize>
 					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard</a></li>
 					</sec:authorize>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
@@ -56,7 +58,7 @@
 								class="dropdown-item" href="#"> Cluster 1 Stopped </a>
 						</div></li>
 
-					<li class="nav-item"><a class="nav-link" href="#">Profile</a>
+					<li class="nav-item"><a class="nav-link" href="#">Profile </a>
 					</li>
 
 					<li class="nav-item">
@@ -118,13 +120,13 @@
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 		<table class="table table-hover table-bordered">
-			<thead>
+			<thead class="thead-light">
 				<tr>
-					<th>Id</th>
-					<th>Container</th>
-					<th>Cluster URL</th>
-					<th>Status</th>
-					<th>Action</th>
+					<th align="center"><h5>Id</h5></th>
+					<th><h5>Container</h5></th>
+					<th><h5>Cluster URL</h5></th>
+					<th><h5><span class="badge badge-pill badge-light">Status</span></h5></th>
+					<th><h5>Action</h5></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -137,10 +139,10 @@
 						<td>${container.id}</td>
 						<td>${container.containerName}</td>
 						<td>${container.clusterUrl}</td>
-						<td>${container.status}</td>
+						<td ><span class="badge badge-pill badge-primary">${container.status}</span></td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
-							<a class="btn btn-primary" href="#" role="button">another option</a>
+							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-light" href="#" role="button">Another Option</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -151,7 +153,7 @@
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-	<div class="  border-box container  mx-0 my-4 col-sm-10 col-md-10 col-lg-6">
+	<div class="border-box container  mx-0 my-4 col-sm-10 col-md-10 col-lg-6">
 		<!-- Form to upload deployment yaml file to cluster -->
 		<form:form class="custom-file " method="POST"
 			action="/user/upload" enctype="multipart/form-data" modelAttribute="uploadContainerClusterForm">
@@ -165,6 +167,7 @@
 				 <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+
 			<!-- Select cluster  -->
 			<div class="form-group row mx-1 my-2 col-sm-10 col-md-10 col-lg-12">
 				<label> Select An Available Cluster: </label>
@@ -179,6 +182,7 @@
 				<small>NOTE: If cluster is not specified it
 						will be chosen for you.</small>
 			</div>
+
 			<!-- submit -->
 			<div class="border-box row mx-0 my-2 col-sm-10 col-md-10 col-lg-12">
 				<input class="btn btn-primary text-center" type="submit"
@@ -187,22 +191,15 @@
 			
 		</form:form>
 	</div>
-	<div class="  border-box row  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-		<sec:authorize access="hasRole('USER')">
-			<input type="button"
-				onclick="${pageContext.request.contextPath}/user/build-yaml"
-				value="Build A Yaml File" class="btn btn-primary">
-		</sec:authorize>
-	</div>
+
+	<sec:authorize access="hasRole('USER')">
+		<input type="button" onclick="location.href='user/build-yaml'"
+			value="Build A Yaml File" class="btn btn-primary mx-4 my-4">
+	</sec:authorize>
+
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	<script type="application/javascript">
-		$('input[type="file"]').change(function(e){
-			var fileName = e.target.files[0].name;
-			$('.custom-file-label').html(fileName);
-		});
-	</script>
-	
+	<script src="js/scripts.js"></script>
 </body>
 </html>
