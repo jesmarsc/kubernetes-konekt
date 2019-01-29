@@ -130,7 +130,7 @@ Bootstrap CSS
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-bordered" width="75%">
+		<table class="table table-bordered"  ">
 			<thead class="thead-light">
 				<tr>
 					<th><h5>Cluster URL</h5></th>
