@@ -130,7 +130,7 @@
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 		<table class="table table-hover table-bordered">
-			<thead>
+			<thead class="thead-light">
 				<tr>
 					<th align="center"><h5>Id</h5></th>
 					<th><h5>Container</h5></th>
@@ -151,8 +151,8 @@
 						<td>${container.clusterUrl}</td>
 						<td ><span class="badge badge-pill badge-primary">${container.status}</span></td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
-							<a class="btn btn-primary" href="#" role="button">another option</a>
+							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-light" href="#" role="button">Another Option</a>
 						</td>
 					</tr>
 				</c:forEach>

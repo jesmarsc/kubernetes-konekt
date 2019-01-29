@@ -62,7 +62,7 @@ Bootstrap CSS
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			
-				<input type="button" onclick="location.href='schedule'" value="Scheduling" class="btn">
+				
 				<ul class="navbar-nav ml-auto">
 
 					<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/"> Home </a></li>
@@ -130,8 +130,8 @@ Bootstrap CSS
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped">
-			<thead>
+		<table class="table table-bordered" width="75%">
+			<thead class="thead-light">
 				<tr>
 					<th><h5>Cluster URL</h5></th>
 					<th><h5>Options</h5></th>
@@ -146,8 +146,8 @@ Bootstrap CSS
 					<tr>
 						<td>${cluster.clusterUrl}</td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-primary" href="#" role="button">Another Option</a>
+							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
+							<a class="btn btn-light" href="#" role="button">Another Option</a>
 						</td>
 					</tr>
 				</c:forEach>
