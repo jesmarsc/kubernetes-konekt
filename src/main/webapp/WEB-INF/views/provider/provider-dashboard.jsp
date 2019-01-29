@@ -176,13 +176,12 @@
 			</tbody>
 		</table>
 		<!-- End of Table -->
-
-		<!-- New cluster upload -->
-		<!-- Will need to decide on validation on how to figure out if IP address is valid
-		<div class="mx-4 my-4">
-
-		<h3>Upload New Cluster URL</h3>
+		<br/>
+		<div class-"mx-4 my-4">
+			<h3>Upload New Cluster URL</h3>
 		</div>
+		
+		<!-- New cluster upload -->
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
@@ -206,7 +205,7 @@
 			</div>
 			
 			<br/><br/>
-			</form:form>
+		</form:form>
 	</div>
 	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
