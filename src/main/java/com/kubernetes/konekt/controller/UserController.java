@@ -54,12 +54,14 @@ public class UserController {
 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
+		// check if expected workload is still running
+		// Currently any entry on database not found on cluster is removed from database
+		clusterApi.checkUserWorkload(currentAccount.getContainers());
 		model.addAttribute("currentAccount", currentAccount);
 
 		List<Cluster> availableClusters = clusterService.getAllClusters();
 		model.addAttribute("availableClusters", availableClusters);
 
-		// TODO:check all containers are still on clusters
 
 		return "user/user-dashboard";
 	}
