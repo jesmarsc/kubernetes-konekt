@@ -9,8 +9,6 @@ public interface ContainerService {
 	public Container getContainerById(Long id);
 	
 	public Container getContainerByName(String name);
-	
-	public boolean saveContainer(Container newContainer);
 
 	public void deleteContainer(Container containerTBD);
 
@@ -19,5 +17,7 @@ public interface ContainerService {
 	public void updateEntry(Container updateContainer);
 
 	public List<Container> getContainerByClusterUrl(String clusterUrl);
+
+	public List<Container> getContainersByProviderId(Long id);
 	
 }

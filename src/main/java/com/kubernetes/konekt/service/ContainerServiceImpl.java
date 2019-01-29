@@ -21,11 +21,6 @@ public class ContainerServiceImpl implements ContainerService{
 		return containerDao.getContainerByName(name);
 	}
 	
-	@Override
-	@Transactional
-	public boolean saveContainer(Container newContainer) {
-		return containerDao.saveContainer(newContainer);
-	}
 
 	@Override
 	@Transactional
@@ -55,9 +50,17 @@ public class ContainerServiceImpl implements ContainerService{
 	}
 
 	@Override
+	@Transactional
 	public List<Container> getContainerByClusterUrl(String clusterUrl) {
 		return containerDao.getContainerByClusterUrl( clusterUrl);
 		
+	}
+
+
+	@Override
+	@Transactional
+	public List<Container> getContainersByProviderId(Long id) {
+		return containerDao.getContainersByProviderId( id);
 	}
 
 }

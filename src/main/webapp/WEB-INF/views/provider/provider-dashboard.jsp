@@ -121,7 +121,15 @@ Bootstrap CSS
 			</div>
 			</div>
 	    </c:when>
-	    <c:otherwise>
+		<c:when test="${not empty deleteContainerToClusterStatus}">
+			<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+				<div class="alert alert-danger" role="alert">
+					<strong>${deleteContainerToClusterStatus}</strong>
+					${deleteContainerToClusterMessage}
+				</div>
+			</div>
+		</c:when>
+		<c:otherwise>
 	
 	    </c:otherwise>
 	</c:choose>
@@ -155,11 +163,40 @@ Bootstrap CSS
 		</table>
 		<!-- End of Table -->
 
+		<h3>Running On Your Clusters</h3>
+		<!-- Beginning of table -->
+		<table class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>Cluster URL</th>
+					<th>Name</th>
+					<th>Kind</th>
+					<th>Option(s)</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach var="container" items="${runningContainers}">
+					<c:url var="removeLink" value="/provider/delete-container">
+						<c:param name="containerId" value="${container.id}" />
+					</c:url>
+					<tr>
+						<td>${container.clusterUrl}</td>
+						<td>${container.containerName}</td>
+						<td>${container.kind}</td>
+						<td>
+							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<!-- End of Table -->
+
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
-		More than likely we can simplify it by sending email or uploading a file top the cluster -->
-		<br/><br/><br/>
+<br/><br/><br/>
 		<div class="mx-4 my-4">
+
 		<h3>Upload New Cluster URL</h3>
 		</div>
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">

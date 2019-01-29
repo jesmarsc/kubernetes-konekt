@@ -163,7 +163,7 @@
 	<!-- input field browse/Upload button for 
 			user to upload new containers/ browse for containers. -->
 
-	<div class="  border-box container  mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
+	<div class="  border-box container  mx-0 my-4 col-sm-10 col-md-10 col-lg-6">
 		<!-- Form to upload deployment yaml file to cluster -->
 		<form:form class="custom-file " method="POST"
 			action="/user/upload" enctype="multipart/form-data" modelAttribute="uploadContainerClusterForm">
@@ -177,8 +177,24 @@
 				 <label class="custom-file-label"
 					for="customFile">Upload New Container</label>
 			</div>
+
+			<!-- Select cluster  -->
+			<div class="form-group row mx-1 my-2 col-sm-10 col-md-10 col-lg-12">
+				<label> Select An Available Cluster: </label>
+				<form:select class="form-control row" path="clusterUrl">
+					<form:option value=""></form:option>
+					<form:options items="${availableClusters}" />
+				</form:select>
+				<form:errors path="clusterUrl" cssClass="error" />
+			</div>
+			
+			<div class="form-group row mx-0 my-2 col-sm-10 col-md-10 col-lg-12 ">
+				<small>NOTE: If cluster is not specified it
+						will be chosen for you.</small>
+			</div>
+
 			<!-- submit -->
-			<div class="form-group row mx-4 my-4">
+			<div class="border-box row mx-0 my-2 col-sm-10 col-md-10 col-lg-12">
 				<input class="btn btn-primary text-center" type="submit"
 					value="Submit" />
 			</div>
@@ -192,6 +208,16 @@
 	</sec:authorize>
 
 <!-- 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+=======
+	<div class="  border-box row  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+		<sec:authorize access="hasRole('USER')">
+			<input type="button"
+				onclick="${pageContext.request.contextPath}/user/build-yaml"
+				value="Build A Yaml File" class="btn btn-primary">
+		</sec:authorize>
+	</div>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script type="application/javascript">
