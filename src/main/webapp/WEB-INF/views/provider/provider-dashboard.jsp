@@ -7,46 +7,26 @@
 <!-- Begin HTML Document -->
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+
 <head>
-<!-- <meta charset="utf-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-Bootstrap CSS
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
- -->
-
- <head>  
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    
     <!-- Title at the Tab of the Browser -->
-<title>Provider Dashboard</title>
+	<title>Provider Dashboard</title>
     
     <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
     <meta name="generator" content="Themestr.app">
     <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <meta property="og:image" name="twitter:image" content="http://bootstrap.themes.guide/assets/ss_tequila.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@ThemesGuide">
-    <meta name="twitter:creator" content="@ThemesGuide">
-    <meta name="twitter:title" content="Open-source Bootstrap 4 Themes">
-    <meta name="twitter:description" content="Download Tequila - free, open source Bootstrap 4 theme by Themes.guide">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-    
- <link href="css/theme.css" rel="stylesheet">
-    <link href="css/template.css" rel="stylesheet">
-    
-
+	<link href="css/theme.css" rel="stylesheet">
 
 </head>
 
-
-</head>
+<!-- Begin Body -->
 <body>
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
@@ -65,20 +45,24 @@ Bootstrap CSS
 				
 				<ul class="navbar-nav ml-auto">
 
-					<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/"> Home </a></li>
+					<li class="nav-item"><a class="nav-link"
+					href="${pageContext.request.contextPath}/"> Home </a></li>
 					
 					<sec:authorize access="hasRole('USER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link"
+						href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
 					</sec:authorize>
 					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
+						<li class="nav-item"><a class="nav-link"
+						href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
 					</sec:authorize>
 					<li class="nav-item"><a class="nav-link" href="#">
 							Messages </a></li>
 
 					<li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navDropdown"
-						data-toggle="dropdown"> Alerts </a> <!-- later these alerts will be read from database for now there's a dummy drop down menu -->
+						data-toggle="dropdown"> Alerts </a>
+						<!-- later these alerts will be read from database for now there's a dummy drop down menu -->
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="#"> Frank Smith wants to buy
 								Bad Cluster </a> <a class="dropdown-item" href="#"> Jesmar paid
@@ -99,6 +83,7 @@ Bootstrap CSS
 		</nav>
 	</div>
 
+	<!-- Begin Code for Forms -->
 	<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
@@ -138,7 +123,7 @@ Bootstrap CSS
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-bordered"  ">
+		<table class="table table-bordered">
 			<thead class="thead-light">
 				<tr>
 					<th><h5>Cluster URL</h5></th>
@@ -194,7 +179,6 @@ Bootstrap CSS
 
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid
-<br/><br/><br/>
 		<div class="mx-4 my-4">
 
 		<h3>Upload New Cluster URL</h3>
@@ -222,12 +206,8 @@ Bootstrap CSS
 			</div>
 			
 			<br/><br/>
-		</form:form>
+			</form:form>
 	</div>
-	<!-- <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
 	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
