@@ -1033,7 +1033,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
 
 .btn {
   display: inline-block;
-  font-weight: 400;
+  font-weight: 100;
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
@@ -2188,6 +2188,7 @@ input[type="button"].btn-block {
   display: block; }
 
 .navbar {
+	font-family: Voltaire;
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -2323,7 +2324,7 @@ input[type="button"].btn-block {
       .navbar-expand-lg .navbar-nav .dropdown-menu {
         position: absolute; }
       .navbar-expand-lg .navbar-nav .nav-link {
-        padding-right: 0.5rem;
+        padding-right: 2rem;
         padding-left: 0.5rem; }
     .navbar-expand-lg > .container,
     .navbar-expand-lg > .container-fluid {
