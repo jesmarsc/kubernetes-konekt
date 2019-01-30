@@ -23,10 +23,11 @@
 				<div class="logo"><a href="#"><img src="images/kubernetes.png" style="height:60px;"></a></div>
 				<nav id="nav">
 					<div class="opener-holder">
-						<a href="#" class="nav-opener"><span></span></a>
+					
+						<a href="#" class="nav-opener"><span class="navbar-toggler-icon"></span></a>
 					</div>
 	
-					<div class="nav-drop">
+					<div class="collapse navbar-collapse">
 						<ul>
 							<li class="active visible-sm visible-xs"><a href="#">Home</a></li>
 								<sec:authorize access="isAnonymous()">

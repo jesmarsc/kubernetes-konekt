@@ -15,35 +15,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YAML Builder</title>
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
+    <meta name="description" />
+    <meta name="generator">
     <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <meta property="og:image" name="twitter:image" content="http://bootstrap.themes.guide/assets/ss_tequila.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@ThemesGuide">
-    <meta name="twitter:creator" content="@ThemesGuide">
-    <meta name="twitter:title" content="Open-source Bootstrap 4 Themes">
-    <meta name="twitter:description" content="Download Tequila - free, open source Bootstrap 4 theme by Themes.guide">
+    <meta property="og:image" name="twitter:image" >
+    <meta name="twitter:card" >
+    <meta name="twitter:site" >
+    <meta name="twitter:creator" >
+    <meta name="twitter:title" >
+    <meta name="twitter:description" >
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-    <link href="css/theme.css" rel="stylesheet">
-    <link href="css/template.css" rel="stylesheet">
+    <link href="../css/theme.css" rel="stylesheet">
+    
     
 
 
 </head>
 
-<body class="text-center">
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+<body>
+	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
 
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
+	<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent">
 				<span class="navbar-toggler-icon"></span>
 			</button>
+		
 
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -54,7 +55,7 @@
 			</div>
 		</nav>
 	</div>
-	<h1>Yaml Builder Form</h1>
+	<h1 class="text-center">Yaml Builder Form</h1>
 
 	<h1>
 		<font color="red">${message} </font>
@@ -90,8 +91,8 @@
 				<h3>Metadata: Labels</h3>
 			</div>
 
-			<div class="form-group">
-				<label class="col-md-4 control-label" for="key">Key</label>
+			<div class="form-group text-center">
+				<label class="control-label text-center" for="key">Key</label>
 				<div class="col-md-5">
 					<form:input id="key" name="key" type="text" placeholder=""
 						class="form-control input-md" path="key" />
@@ -102,10 +103,10 @@
 			<br>
 			<!-- Text input-->
 			<div class="form-group">
-				<label class="col-md-4 control-label" for="value">Value</label>
+				<label class="col-md-4 control-label text-center" for="value">Value</label>
 				<div class="col-md-5">
 					<form:input id="value" name="value" type="text" placeholder=""
-						class="form-control input-md" path="value" />
+						class="form-control input-md " path="value" />
 					<form:errors path="value" cssClass="error" />
 				</div>
 			</div>
@@ -125,7 +126,7 @@
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script> -->
 		
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script src="js/scripts.js"></script>

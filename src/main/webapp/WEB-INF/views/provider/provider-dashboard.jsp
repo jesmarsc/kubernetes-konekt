@@ -17,39 +17,33 @@ Bootstrap CSS
 	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
  -->
 
- <head>  
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    
-    <!-- Title at the Tab of the Browser -->
-<title>Provider Dashboard</title>
-    
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
-    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <meta property="og:image" name="twitter:image" content="http://bootstrap.themes.guide/assets/ss_tequila.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@ThemesGuide">
-    <meta name="twitter:creator" content="@ThemesGuide">
-    <meta name="twitter:title" content="Open-source Bootstrap 4 Themes">
-    <meta name="twitter:description" content="Download Tequila - free, open source Bootstrap 4 theme by Themes.guide">
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-    
- <link href="css/theme.css" rel="stylesheet">
-    <link href="css/template.css" rel="stylesheet">
-    
-
-
-</head>
+	 <head>  
+	   <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>YAML Builder</title>
+	    <meta name="description" />
+	    <meta name="generator">
+	    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+	    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+	    <meta property="og:image" name="twitter:image" >
+	    <meta name="twitter:card" >
+	    <meta name="twitter:site" >
+	    <meta name="twitter:creator" >
+	    <meta name="twitter:title" >
+	    <meta name="twitter:description" >
+	    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+	    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+	    <link href="css/theme.css" rel="stylesheet">
+	    
+	
+	
+	</head>
 
 
 </head>
 <body>
 
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
@@ -193,8 +187,8 @@ Bootstrap CSS
 		<!-- End of Table -->
 
 		<!-- New cluster upload -->
-		<!-- Will need to decide on validation on how to figure out if IP address is valid
-<br/><br/><br/>
+		<!-- Will need to decide on validation on how to figure out if IP address is valid-->
+<br/><br/>
 		<div class="mx-4 my-4">
 
 		<h3>Upload New Cluster URL</h3>
