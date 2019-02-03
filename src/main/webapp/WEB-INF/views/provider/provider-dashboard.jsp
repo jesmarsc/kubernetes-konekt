@@ -12,18 +12,17 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Refresh" content="100"> <!-- used as a backup, will refresh entire page ever 100sec -->
     
     <!-- Title at the Tab of the Browser -->
 	<title>Provider Dashboard</title>
-    
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
-    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
+   
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link href="css/theme.css" rel="stylesheet">
-
+	
+        
 </head>
 
 <!-- Begin Body -->
@@ -118,99 +117,54 @@
 	
 	    </c:otherwise>
 	</c:choose>
-
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-
-		<h3>My Clusters</h3>
-		<!-- Beginning of table -->
-		<table class="table table-bordered">
-			<thead class="thead-light">
-				<tr>
-					<th><h5>Cluster URL</h5></th>
-					<th><h5>Options</h5></th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="cluster" items="${currentAccount.clusters}">
-					<c:url var="removeLink" value="/provider/delete">
-						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
-					</c:url>
-					
-					<tr>
-						<td>${cluster.clusterUrl}</td>
-						<td>
-							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-light" href="#" role="button">Another Option</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<!-- End of Table -->
-
-		<h3>Running On Your Clusters</h3>
-		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th>Cluster URL</th>
-					<th>Name</th>
-					<th>Kind</th>
-					<th>Option(s)</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="container" items="${runningContainers}">
-					<c:url var="removeLink" value="/provider/delete-container">
-						<c:param name="containerId" value="${container.id}" />
-					</c:url>
-					<tr>
-						<td>${container.clusterUrl}</td>
-						<td>${container.containerName}</td>
-						<td>${container.kind}</td>
-						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<!-- End of Table -->
-		<br/>
-		<div class-"mx-4 my-4">
-			<h3>Upload New Cluster URL</h3>
-		</div>
-		
-		<!-- New cluster upload -->
-		<form:form action="/provider/upload" modelAttribute="newClusterForm">
-			<!-- Action will be to send to confirmation page and validate -->
-			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster URL (i.e. https://122.198.122.166): </label>
-				<form:input class="form-control" path="clusterUrl" />
-				<form:errors path="clusterUrl" cssClass="error" />
-			</div>
-			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster Username (must have admin privileges): </label>
-				<form:input class="form-control" path="clusterUsername" />
-				<form:errors path="clusterUsername" cssClass="error" />
-			</div>
-			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster Password: </label>
-				<form:password class="form-control" path="clusterPassword" />
-				<form:errors path="clusterPassword" cssClass="error" />
-			</div>
-			<div class="form-group row mx-4 my-4">
-				<input class="btn btn-primary text-center" type="submit"
-					value="Submit" />
-			</div>
-			
-			<br/><br/>
-		</form:form>
-	</div>
 	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script>
+		/* function autoRefresh() {
+			   $('#cluster-div').load('sample.jsp' ); }
+		autoRefresh();
+		setInterval(autoRefresh(), 10); */
+
+		      /*  $('#lmao').html("<h3>My Clusters</h3><table class='table table-bordered'><thead class='thead-light'><tr><th><h5>Cluster URL</h5></th><th><h5>Options</h5></th></tr></thead><tbody><c:forEach var='cluster' items='${currentAccount.clusters}'><c:url var='removeLink' value='/provider/delete'><c:param name='clusterUrl' value='${cluster.clusterUrl}' /></c:url><tr><td>${cluster.clusterUrl}</td><td><a class='btn btn-outline-primary' href='${removeLink}' onclick='if(!(confirm('Are you sure you want to delete cluster')))return false' role='button'>Delete Cluster</a><a class='btn btn-light' href='#' role='button'>Another Option</a></td></tr></c:forEach></tbody></table><h3>Running On Your Clusters</h3><table class='table table-bordered table-striped'><thead><tr><th>Cluster URL</th><th>Name</th><th>Kind</th><th>Option(s)</th></tr></thead><tbody><c:forEach var='container' items='${runningContainers}'><c:url var='removeLink' value='/provider/delete-container'><c:param name='containerId' value='${container.id}' /></c:url><tr><td>${container.clusterUrl}</td><td>${container.containerName}</td>	<td>${container.kind}</td><td><a class='btn btn-primary' href='${removeLink}' onclick='if(!(confirm('Are you sure you want to delete container')))return false' role='button'>Delete Container</a></td></tr></c:forEach></tbody></table><br/><div class-'mx-4 my-4'><h3>Upload New Cluster URL</h3></div><form:form action='/provider/upload' modelAttribute='newClusterForm'><div class='form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6'><label> Cluster URL (i.e. 'https://122.198.122.166'): </label><form:input class='form-control' path='clusterUrl' /><form:errors path='clusterUrl' cssClass='error' /></div><div class='form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6'><label> Cluster Username (must have admin privileges): </label><form:input class='form-control' path='clusterUsername' /><form:errors path='clusterUsername' cssClass='error' /></div><div class='form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6'><label> Cluster Password: </label><form:password class='form-control' path='clusterPassword' /><form:errors path='clusterPassword' cssClass='error' /></div><div class='form-group row mx-4 my-4'><input class='btn btn-primary text-center' type='submit' value='Submit' /></div><br/><br/></form:form> " ); 
+		       }, 1000); */
+		       
+		  		/* $(document).ready(function() {
+					setInterval(function() {
+						$('#cluster-div').load('sample.jsp' );
+	            	},1000);
+	            }); */
+	            function sendRequest(){
+	                $.ajax({
+	                	type: 'POST', 
+	                    url: "sample.jsp",
+	                    cache: false,
+	                    success: 
+	                    	function(result){
+	                        	$('#cluster-div').load(result); 	          
+	                    },
+	                	error: 
+	                		function(result) {
+	                        alert('something bad happened');
+	                 	},
+	                 	complete: 
+	               			function(){
+	                 		setTimeout(sendRequest,1000);
+	                 	}
+	                });
+	            }
+	</script>
+	
+	
+	<div id="cluster-div" class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+	<%@ include file="sample.jsp" %>
+	</div>
+	<div id="sample" class="container mx-1"> ... </div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script src="js/scripts.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>	
+
 </body>
+
 </html>

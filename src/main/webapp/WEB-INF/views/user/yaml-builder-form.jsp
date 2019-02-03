@@ -16,10 +16,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YAML Builder</title>
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
-    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
     <link href="../css/theme.css" rel="stylesheet">
