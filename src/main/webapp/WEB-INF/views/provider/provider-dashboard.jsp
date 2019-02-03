@@ -176,8 +176,8 @@
 			</tbody>
 		</table>
 		<!-- End of Table -->
-		<br/>
-		<div class-"mx-4 my-4">
+		<br>
+		<div class="mx-4 my-4">
 			<h3>Upload New Cluster URL</h3>
 		</div>
 		

@@ -121,7 +121,7 @@
 	<!-- </div> -->
 	
 	
-	</br></br>
+	<br><br>
 
 	<div class="container mt-3">
 		<!-- Left-aligned --> 

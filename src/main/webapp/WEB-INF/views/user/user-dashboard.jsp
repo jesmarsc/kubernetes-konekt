@@ -16,6 +16,24 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
  	<link href="css/theme.css" rel="stylesheet">
+
+ 	<!-- Javascript for Ajax -->
+ 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+ 	<script type="text/javascript">
+    	function crunchifyAjax() {
+        	$.ajax({
+            	url : '/user/ajaxtest',
+            	success : function(data) {
+                	$('#result').html(data);
+            	}
+        	});
+    	}
+	</script>
+ 	
+ 	<script type="text/javascript">
+    	var intervalId = 0;
+    	intervalId = setInterval(crunchifyAjax, 3000);
+	</script>
     
 </head>
 	<!-- 
@@ -196,6 +214,14 @@
 		<input type="button" onclick="location.href='user/build-yaml'"
 			value="Build A Yaml File" class="btn btn-primary mx-4 my-4">
 	</sec:authorize>
+	
+	<!-- Testing Ajax with Date Refresh -->
+	<div align="center">
+        <br> <br> ${message} <br> <br>
+        <div id="result"></div>
+        <br>
+        <p> why? </p>
+    </div>
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
