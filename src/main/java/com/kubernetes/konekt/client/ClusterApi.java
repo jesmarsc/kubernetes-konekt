@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
+import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
@@ -41,11 +43,7 @@ import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
-<<<<<<< HEAD
-=======
 import io.kubernetes.client.models.V1ServiceList;
-import io.kubernetes.client.models.V1Status;
->>>>>>> e1cc0766197feb85539d219863892917225ed56b
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
@@ -69,6 +67,9 @@ public class ClusterApi {
 	
 	@Autowired
 	private AccountService accountService;
+	
+	@Autowired
+	private ClusterSecurity clusterSecurity;
 
     public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
             String clusterUser, String clusterPass, String namespace, Long providerId) throws IOException, ApiException {
@@ -319,7 +320,11 @@ public class ClusterApi {
 			cluster = clusterService.getCluster(container.getClusterUrl());
 			username = container.getAccount().getUserName();
 			Boolean found = false;
-			setupClient(cluster.getClusterUrl(),cluster.getClusterUsername() , cluster.getClusterPassword());
+			Blob encryptedUsername = cluster.getEncryptedUsername();
+			Blob encryptedPassword = cluster.getEncryptedPassword();
+			String clusterUsername = clusterSecurity.decodeCredential(encryptedUsername);
+			String clusterPassword	= clusterSecurity.decodeCredential(encryptedPassword);
+			setupClient(cluster.getClusterUrl(),clusterUsername , clusterPassword);
 			try {
 				if (container.getKind().equals("Deployment")) {
 					// get list of deployments running on namespace
