@@ -1,5 +1,6 @@
 package com.kubernetes.konekt.controller;
 
+import java.sql.Blob;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
+import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
@@ -42,6 +44,9 @@ public class ProviderController {
 	
 	@Autowired
 	private ClusterApi clusterApi;
+	
+	@Autowired
+	private ClusterSecurity clusterSecurity;
 	
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
@@ -68,9 +73,11 @@ public class ProviderController {
 	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
 
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterUrl);
-		String clusterUser = TBDeletedCluster.getClusterUsername();
-		String clusterPass = TBDeletedCluster.getClusterPassword();
-		
+		Blob encryptedUsername = TBDeletedCluster.getEncryptedUsername();
+		Blob encryptedPassword = TBDeletedCluster.getEncryptedUsername();
+		String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
+		String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
+	
 
 		// get list of users who have deployments on cluster
 		List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
@@ -120,8 +127,10 @@ public class ProviderController {
 			String clusterUrl = uploadClusterForm.getClusterUrl();
 			String clusterUsername = uploadClusterForm.getClusterUsername();
 			String clusterPassword = uploadClusterForm.getClusterPassword();
+			Blob encryptedUsername = clusterSecurity.encodeCredential(clusterUsername);
+			Blob encryptedPassword = clusterSecurity.encodeCredential(clusterPassword);
 			
-			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword);	
+			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0);	
 	
 			// Get current user 
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -162,8 +171,10 @@ public class ProviderController {
 			String deploymentName = containerTBD.getContainerName();
 			String clusterUrl = containerTBD.getClusterUrl();
 			Cluster cluster = clusterService.getCluster(clusterUrl);
-			String userName = cluster.getClusterUsername();
-			String passWord = cluster.getClusterPassword();
+			Blob encryptedUsername =cluster.getEncryptedUsername();
+			Blob encryptedPassword = cluster.getEncryptedPassword();
+			String userName = clusterSecurity.decodeCredential(encryptedUsername);
+			String passWord = clusterSecurity.decodeCredential(encryptedPassword);
 			clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
 			// Deleting Deployment from database
 			containerService.deleteContainer(containerTBD);

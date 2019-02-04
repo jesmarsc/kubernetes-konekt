@@ -1,5 +1,7 @@
 package com.kubernetes.konekt.entity;
 
+import java.sql.Blob;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,11 +24,11 @@ public class Cluster {
 	@Column(name = "cluster_url")
 	private String clusterUrl;
 	
-	@Column(name = "cluster_username")
-	private String clusterUsername;
+	@Column(name = "encrypted_username")
+	private Blob encryptedUsername;
 	
-	@Column(name = "cluster_password")
-	private String clusterPassword;
+	@Column(name = "encrypted_password")
+	private Blob encryptedPassword;
 	
 	@Column(name = "round_robin")
 	private Integer roundRobin;
@@ -39,11 +41,11 @@ public class Cluster {
 	public Cluster() {
 	}
 	
-	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword) {
+	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin) {
 		this.clusterUrl = clusterUrl;
-		this.clusterUsername = clusterUsername;
-		this.clusterPassword = clusterPassword;
-
+		this.encryptedUsername = encryptedUsername;
+		this.encryptedPassword = encryptedPassword;
+		this.roundRobin = roundRobin;
 	}
 
 	public Integer getRoundRobin() {
@@ -70,20 +72,20 @@ public class Cluster {
 		this.clusterUrl = clusterUrl;
 	}
 
-	public String getClusterUsername() {
-		return clusterUsername;
+	public Blob getEncryptedUsername() {
+		return encryptedUsername;
 	}
 
-	public void setClusterUsername(String clusterUsername) {
-		this.clusterUsername = clusterUsername;
+	public void setEncryptedUsername(Blob encryptedUsername) {
+		this.encryptedUsername = encryptedUsername;
 	}
 
-	public String getClusterPassword() {
-		return clusterPassword;
+	public Blob getEncryptedPassword() {
+		return encryptedPassword;
 	}
 
-	public void setClusterPassword(String clusterPassword) {
-		this.clusterPassword = clusterPassword;
+	public void setEncryptedPassword(Blob encryptedPassword) {
+		this.encryptedPassword = encryptedPassword;
 	}
 
 
