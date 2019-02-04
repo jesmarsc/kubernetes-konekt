@@ -9,14 +9,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
+import com.kubernetes.konekt.service.AccountService;
+import com.kubernetes.konekt.service.ClusterService;
+import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -25,6 +31,7 @@ import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.AppsV1Api;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.models.V1ConfigMap;
+import io.kubernetes.client.models.V1ConfigMapList;
 import io.kubernetes.client.models.V1DeleteOptions;
 import io.kubernetes.client.models.V1Deployment;
 import io.kubernetes.client.models.V1DeploymentList;
@@ -34,6 +41,11 @@ import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
+<<<<<<< HEAD
+=======
+import io.kubernetes.client.models.V1ServiceList;
+import io.kubernetes.client.models.V1Status;
+>>>>>>> e1cc0766197feb85539d219863892917225ed56b
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
@@ -48,7 +60,15 @@ public class ClusterApi {
 	private AppsV1Api appsInstance;
 	
 	private static String pretty = "true";
-
+	
+	@Autowired
+	private ClusterService clusterService;
+	
+	@Autowired
+	private ContainerService containerService;
+	
+	@Autowired
+	private AccountService accountService;
 
     public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
             String clusterUser, String clusterPass, String namespace, Long providerId) throws IOException, ApiException {
@@ -290,4 +310,62 @@ public class ClusterApi {
 
         return deploymentNames;
     }
+
+	public void checkUserWorkload(List<Container> containers) {
+		Cluster cluster = null;
+		String username = null;
+		
+		for(Container container : containers) {
+			cluster = clusterService.getCluster(container.getClusterUrl());
+			username = container.getAccount().getUserName();
+			Boolean found = false;
+			setupClient(cluster.getClusterUrl(),cluster.getClusterUsername() , cluster.getClusterPassword());
+			try {
+				if (container.getKind().equals("Deployment")) {
+					// get list of deployments running on namespace
+					ApiResponse<V1DeploymentList> response = appsInstance.listNamespacedDeploymentWithHttpInfo(username,
+							pretty, null, null, null, null, null, null, null, null);
+					List<V1Deployment> results = response.getData().getItems();
+					// check if deployment is on cluster  
+					for (Iterator<V1Deployment> iterator = results.iterator(); iterator.hasNext() && !found;) {
+						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+							found = true;
+						}
+					}
+					
+				} else if (container.getKind().equals("Service")) {
+					// get list of services running on namespace
+					ApiResponse<V1ServiceList> response = coreInstance.listNamespacedServiceWithHttpInfo(username,
+							pretty, null, null, null, null, null, null, null, null);
+					List<V1Service> results = response.getData().getItems();
+					// check if Service is on cluster
+					for (Iterator<V1Service> iterator = results.iterator(); iterator.hasNext() && !found;) {
+						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+							found = true;
+						}
+					}
+
+				} else if (container.getKind().equals("ConfigMap")) {
+					// get list of config maps in namespace
+					ApiResponse<V1ConfigMapList> response = coreInstance.listNamespacedConfigMapWithHttpInfo(username,
+							pretty, null, null, null, null, null, null, null, null);
+					List<V1ConfigMap> results = response.getData().getItems();
+					// check if config map  is in namespace
+					for (Iterator<V1ConfigMap> iterator = results.iterator(); iterator.hasNext() && !found;) {
+						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+							found = true;
+						}
+					}
+				}
+			} catch (ApiException e) {
+
+			}
+			if(!found) {
+				containerService.deleteContainer(container);
+				accountService.updateAccountTables(container.getAccount());
+				
+			}
+		}
+
+	}
 }
