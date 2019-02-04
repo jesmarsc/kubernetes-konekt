@@ -41,11 +41,6 @@ import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
-<<<<<<< HEAD
-=======
-import io.kubernetes.client.models.V1ServiceList;
-import io.kubernetes.client.models.V1Status;
->>>>>>> e1cc0766197feb85539d219863892917225ed56b
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
