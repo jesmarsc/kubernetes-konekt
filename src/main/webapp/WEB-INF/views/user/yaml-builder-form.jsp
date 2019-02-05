@@ -16,53 +16,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YAML Builder</title>
-    <meta name="description" />
-    <meta name="generator">
+    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
+    <meta name="generator" content="Themestr.app">
     <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-<<<<<<< HEAD
-    <meta property="og:image" name="twitter:image" >
-    <meta name="twitter:card" >
-    <meta name="twitter:site" >
-    <meta name="twitter:creator" >
-    <meta name="twitter:title" >
-    <meta name="twitter:description" >
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
     <link href="../css/theme.css" rel="stylesheet">
-    
-    
-
-=======
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-    <link href="../css/theme.css" rel="stylesheet">
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
 
 </head>
 
 <body>
-<<<<<<< HEAD
-=======
 
 	<!-- Navbar -->
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
 
-<<<<<<< HEAD
-	<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-		
-=======
 			<button class="navbar-toggler dropdown-toggle" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     			<span class="navbar-toggler-icon"></span>
   			</button>
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
 
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -101,21 +75,12 @@
 			</div>
 		</nav>
 	</div>
-<<<<<<< HEAD
-	<h1 class="text-center">Yaml Builder Form</h1>
-
-	<h1>
-		<font color="red">${message} </font>
-		<!-- use to let user know they made an error. -->
-	</h1>
-=======
 	
 	<!-- Begin Body -->
 	
 	<div class="container-fluid col-xs-12 col-sm-6">
 		
 		<h1> Yaml Builder Form </h1>
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
 
 		<h1>
 			<font color="red">${message} </font>
@@ -151,15 +116,9 @@
 				<h3>Metadata: Labels</h3>
 			</div>
 
-<<<<<<< HEAD
-			<div class="form-group text-center">
-				<label class="control-label text-center" for="key">Key</label>
-				<div class="col-md-5">
-=======
 			<div class="form-group">
 				<label class="col-md-4 control-label" for="key">Key</label>
 				<div class="col-md-6">
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
 					<form:input id="key" name="key" type="text" placeholder=""
 						class="form-control input-md" path="key" />
 					<form:errors path="key" cssClass="error" />
@@ -168,15 +127,10 @@
 			<br>
 			<!-- Text input-->
 			<div class="form-group">
-<<<<<<< HEAD
-				<label class="col-md-4 control-label text-center" for="value">Value</label>
-				<div class="col-md-5">
-=======
 				<label class="col-md-4 control-label" for="value">Value</label>
 				<div class="col-md-6">
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
 					<form:input id="value" name="value" type="text" placeholder=""
-						class="form-control input-md " path="value" />
+						class="form-control input-md" path="value" />
 					<form:errors path="value" cssClass="error" />
 				</div>
 			</div>

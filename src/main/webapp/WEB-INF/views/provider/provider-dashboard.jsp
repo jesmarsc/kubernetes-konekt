@@ -5,16 +5,14 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Begin HTML Document -->
-<!DOCTYPE html>
-<html class="no-js" lang="en">
+<!DOCTYPE html >
+<html class="no-js" lang="en" >
 
-<head>
-
-<<<<<<< HEAD
 	 <head>  
 	   <meta charset="utf-8">
 	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <title>YAML Builder</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	    <title>Provider Dashboard</title>
 	    <meta name="description" />
 	    <meta name="generator">
 	    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
@@ -32,23 +30,8 @@
 	
 	
 	</head>
-=======
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Title at the Tab of the Browser -->
-	<title>Provider Dashboard</title>
-    
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
-    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-	<link href="css/theme.css" rel="stylesheet">
 
-</head>
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
+   
 
 <!-- Begin Body -->
 <body>
@@ -200,7 +183,7 @@
 			</tbody>
 		</table>
 		<!-- End of Table -->
-<<<<<<< HEAD
+
 
 		<!-- New cluster upload -->
 		<!-- Will need to decide on validation on how to figure out if IP address is valid-->
@@ -208,13 +191,7 @@
 		<div class="mx-4 my-4">
 
 		<h3>Upload New Cluster URL</h3>
-=======
-		<br/>
-		<div class-"mx-4 my-4">
-			<h3>Upload New Cluster URL</h3>
->>>>>>> f0e95625ad7c33a869c54b953a1b1001334825c9
-		</div>
-		
+
 		<!-- New cluster upload -->
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
