@@ -5,38 +5,30 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!-- Begin HTML Document -->
-<!DOCTYPE html >
-<html class="no-js" lang="en" >
+<!DOCTYPE html>
+<html class="no-js" lang="en">
 
-	 <head>  
-	   <meta charset="utf-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	    <title>Provider Dashboard</title>
-	    <meta name="description" />
-	    <meta name="generator">
-	    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-	    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-	    <meta property="og:image" name="twitter:image" >
-	    <meta name="twitter:card" >
-	    <meta name="twitter:site" >
-	    <meta name="twitter:creator" >
-	    <meta name="twitter:title" >
-	    <meta name="twitter:description" >
-	    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-	    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-	    <link href="css/theme.css" rel="stylesheet">
-	    
-	
-	
-	</head>
+<head>
 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="Refresh" content="100"> --> <!-- used as a backup, will refresh entire page ever 100sec -->
+    
+    <!-- Title at the Tab of the Browser -->
+	<title>Provider Dashboard</title>
    
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+	<link href="css/theme.css" rel="stylesheet">
+	
+        
+</head>
 
 <!-- Begin Body -->
 <body>
 
-	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
@@ -125,103 +117,96 @@
 	
 	    </c:otherwise>
 	</c:choose>
-
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-
-		<h3>My Clusters</h3>
-		<!-- Beginning of table -->
-		<table class="table table-bordered">
-			<thead class="thead-light">
-				<tr>
-					<th><h5>Cluster URL</h5></th>
-					<th><h5>Options</h5></th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="cluster" items="${currentAccount.clusters}">
-					<c:url var="removeLink" value="/provider/delete">
-						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
-					</c:url>
-					
-					<tr>
-						<td>${cluster.clusterUrl}</td>
-						<td>
-							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-light" href="#" role="button">Another Option</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<!-- End of Table -->
-
-		<h3>Running On Your Clusters</h3>
-		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th>Cluster URL</th>
-					<th>Name</th>
-					<th>Kind</th>
-					<th>Option(s)</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="container" items="${runningContainers}">
-					<c:url var="removeLink" value="/provider/delete-container">
-						<c:param name="containerId" value="${container.id}" />
-					</c:url>
-					<tr>
-						<td>${container.clusterUrl}</td>
-						<td>${container.containerName}</td>
-						<td>${container.kind}</td>
-						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<!-- End of Table -->
-
-
-		<!-- New cluster upload -->
-		<!-- Will need to decide on validation on how to figure out if IP address is valid-->
-<br/><br/>
-		<div class="mx-4 my-4">
-
-		<h3>Upload New Cluster URL</h3>
-
-		<!-- New cluster upload -->
-		<form:form action="/provider/upload" modelAttribute="newClusterForm">
-			<!-- Action will be to send to confirmation page and validate -->
-			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster URL (i.e. https://122.198.122.166): </label>
-				<form:input class="form-control" path="clusterUrl" />
-				<form:errors path="clusterUrl" cssClass="error" />
-			</div>
-			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster Username (must have admin privileges): </label>
-				<form:input class="form-control" path="clusterUsername" />
-				<form:errors path="clusterUsername" cssClass="error" />
-			</div>
-			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster Password: </label>
-				<form:password class="form-control" path="clusterPassword" />
-				<form:errors path="clusterPassword" cssClass="error" />
-			</div>
-			<div class="form-group row mx-4 my-4">
-				<input class="btn btn-primary text-center" type="submit"
-					value="Submit" />
-			</div>
-			
-			<br/><br/>
-		</form:form>
-	</div>
 	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script>
+		/* function autoRefresh() {
+			   $('#cluster-div').load('sample.jsp' ); }
+		autoRefresh();
+		setInterval(autoRefresh(), 10); */
+		      /*  $('#lmao').html("<h3>My Clusters</h3><table class='table table-bordered'><thead class='thead-light'><tr><th><h5>Cluster URL</h5></th><th><h5>Options</h5></th></tr></thead><tbody><c:forEach var='cluster' items='${currentAccount.clusters}'><c:url var='removeLink' value='/provider/delete'><c:param name='clusterUrl' value='${cluster.clusterUrl}' /></c:url><tr><td>${cluster.clusterUrl}</td><td><a class='btn btn-outline-primary' href='${removeLink}' onclick='if(!(confirm('Are you sure you want to delete cluster')))return false' role='button'>Delete Cluster</a><a class='btn btn-light' href='#' role='button'>Another Option</a></td></tr></c:forEach></tbody></table><h3>Running On Your Clusters</h3><table class='table table-bordered table-striped'><thead><tr><th>Cluster URL</th><th>Name</th><th>Kind</th><th>Option(s)</th></tr></thead><tbody><c:forEach var='container' items='${runningContainers}'><c:url var='removeLink' value='/provider/delete-container'><c:param name='containerId' value='${container.id}' /></c:url><tr><td>${container.clusterUrl}</td><td>${container.containerName}</td>	<td>${container.kind}</td><td><a class='btn btn-primary' href='${removeLink}' onclick='if(!(confirm('Are you sure you want to delete container')))return false' role='button'>Delete Container</a></td></tr></c:forEach></tbody></table><br/><div class-'mx-4 my-4'><h3>Upload New Cluster URL</h3></div><form:form action='/provider/upload' modelAttribute='newClusterForm'><div class='form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6'><label> Cluster URL (i.e. 'https://122.198.122.166'): </label><form:input class='form-control' path='clusterUrl' /><form:errors path='clusterUrl' cssClass='error' /></div><div class='form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6'><label> Cluster Username (must have admin privileges): </label><form:input class='form-control' path='clusterUsername' /><form:errors path='clusterUsername' cssClass='error' /></div><div class='form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6'><label> Cluster Password: </label><form:password class='form-control' path='clusterPassword' /><form:errors path='clusterPassword' cssClass='error' /></div><div class='form-group row mx-4 my-4'><input class='btn btn-primary text-center' type='submit' value='Submit' /></div><br/><br/></form:form> " ); 
+		       }, 1000); */
+		       
+		  		/* $(document).ready(function() {
+					setInterval(function() {
+						$('#cluster-div').load('sample.jsp' );
+	            	},1000);
+	            }); */
+	            /* function sendRequest(){ */
+	            	
+	            $(document).ready(function() {
+
+	                $("#cluster-div").submit(function(e) {
+	                    e.preventDefault();
+	                $.ajax({
+	                	'type': 'POST', 
+	                    url: "sample.jsp",
+	                    cache: false,
+	                    success: 
+	                    	function(result){
+	                        	$('#cluster-div').load(result); 
+	                        	 alert('success');
+	                    },
+	                	error: 
+	                		function(result) {
+	                        alert('something bad happened');
+	                 	},
+	                 	complete: 
+	               			function(){
+	                 		setTimeout(sendRequest,1000);
+	                 		alert('complete');
+	                 		
+	                 	}
+	                });
+	                e.preventDefault();
+	            });
+	            });
+	            
+	            if (window.performance) {
+	            	  console.info("window.performance works fine on this browser");
+	            	}
+	            	  if (performance.navigation.type == 1) {
+	            	    console.info( "This page is reloaded" );
+	            	  } else {
+	            	    console.info( "This page is not reloaded");
+	            	  }
+	            	  
+	            	  
+	            	 
+	            		  if (performance.navigation.type == 1) {
+	            		    var URL = "sample.jsp";
+	            		    var xhr = new XMLHttpRequest();
+	            		    xhr.open("POST", URL, true);
+	            		    xhr.onreadystatechange = function() {
+	            		        if (xhr.readyState == 4) {
+	            		            console.log("ready");
+	            		        }
+	            		    };
+	            		    try { xhr.send(); } catch( err ) {
+	            		        alert( 'Error getting data: ' + err.message );
+	            		    }
+	            		  }
+	            		  
+	            		  else
+	            			  {
+	            			  
+	            			  console.log("testURL not working");
+	            			  }
+	            		
+	       
+	</script>
+	
+	
+	<div id="cluster-div" class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+	<%@ include file="sample.jsp" %>
+	</div>
+	<div id="sample" class="container mx-1"> ... </div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script src="js/scripts.js"></script>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>	
+
 </body>
+
 </html>
