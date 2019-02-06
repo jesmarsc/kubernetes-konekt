@@ -8,15 +8,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
+import com.kubernetes.konekt.security.ClusterSecurity;
+import com.kubernetes.konekt.service.AccountService;
+import com.kubernetes.konekt.service.ClusterService;
+import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -25,6 +33,7 @@ import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.AppsV1Api;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.models.V1ConfigMap;
+import io.kubernetes.client.models.V1ConfigMapList;
 import io.kubernetes.client.models.V1DeleteOptions;
 import io.kubernetes.client.models.V1Deployment;
 import io.kubernetes.client.models.V1DeploymentList;
@@ -34,7 +43,7 @@ import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
-import io.kubernetes.client.models.V1Status;
+import io.kubernetes.client.models.V1ServiceList;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
@@ -49,7 +58,18 @@ public class ClusterApi {
 	private AppsV1Api appsInstance;
 	
 	private static String pretty = "true";
-
+	
+	@Autowired
+	private ClusterService clusterService;
+	
+	@Autowired
+	private ContainerService containerService;
+	
+	@Autowired
+	private AccountService accountService;
+	
+	@Autowired
+	private ClusterSecurity clusterSecurity;
 
     public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
             String clusterUser, String clusterPass, String namespace, Long providerId) throws IOException, ApiException {
@@ -116,10 +136,7 @@ public class ClusterApi {
         Path path = Paths.get(fileName);
         String contentType = "text/plain";
         byte[] content = null;
-        try {
-            content = Files.readAllBytes(path);
-        } catch (final IOException e) {
-        }
+        content = Files.readAllBytes(path);
         MultipartFile readFile = new MockMultipartFile(fileName, fileName, contentType, content);
 
         return parseYaml(readFile, clusterUrl, clusterUser, clusterPass, namespace,providerId);
@@ -138,62 +155,32 @@ public class ClusterApi {
     }
 
     private File saveFileLocally(MultipartFile file) throws IOException {
-        try {
             File convFile = new File(file.getOriginalFilename());
             convFile.createNewFile();
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
             fos.close();
             return convFile;
-        } catch (IOException e) {
-            return null;
-        }
     }
 
     public V1Deployment createDeployment(V1Deployment body, String namespace) throws ApiException {
 
         V1Deployment result = null;
-
-        try {
-            result = appsInstance.createNamespacedDeployment(namespace, body, pretty);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling AppsV1Api#createNamespacedDeployment");
-            e.printStackTrace();
-            throw e;
-        }
-
+        result = appsInstance.createNamespacedDeployment(namespace, body, pretty);
         return result;
     }
 
     public V1Service createService(V1Service body, String namespace) throws ApiException {
 
         V1Service result = null;
-
-        try {
-            result = coreInstance.createNamespacedService(namespace, body, pretty);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#createNamespacedService");
-            e.printStackTrace();
-            throw e;
-        }
-
+        result = coreInstance.createNamespacedService(namespace, body, pretty);
         return result;
     }
 
     public V1ConfigMap createConfigMap(V1ConfigMap body, String namespace) throws ApiException {
 
         V1ConfigMap result = null;
-
-        try {
-            result = coreInstance.createNamespacedConfigMap(namespace, body, pretty);
-            System.out.println(result);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#createNamespacedConfigMap");
-            e.printStackTrace();
-            throw e;
-        }
+        result = coreInstance.createNamespacedConfigMap(namespace, body, pretty);
 
         return result;
     }
@@ -205,13 +192,8 @@ public class ClusterApi {
 
         V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions |
 
-        try {
-            appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling AppsV1Api#deleteNamespacedDeployment");
-            e.printStackTrace();
-            throw e;
-        }
+        appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
+
 
     }
 
@@ -222,13 +204,8 @@ public class ClusterApi {
 
         V1DeleteOptions body = new V1DeleteOptions();
 
-        try {
-            coreInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#deleteNamespacedService");
-            e.printStackTrace();
-            throw e;
-        }
+        coreInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
+
     }
 
     public void deleteConfigMap(String configName, String namespace, String clusterUrl, 
@@ -237,14 +214,8 @@ public class ClusterApi {
         setupClient(clusterUrl, clusterUser, clusterPass);
 
         V1DeleteOptions body = new V1DeleteOptions();
-
-        try {
-            coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#deleteNamespacedConfigMap");
-            e.printStackTrace();
-            throw e;
-        }
+        coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
+        
     }
 
     public void deleteNamespace(String namespace, String clusterUrl, 
@@ -262,10 +233,9 @@ public class ClusterApi {
             // exception is thrown
             // There is no fix yet. The only solution is to make the call and catch the
             // exception and move on.
-            ApiResponse<V1Status> response = 
-                    coreInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, null);
-            V1Status result = response.getData();
-            System.out.println(result);
+            //ApiResponse<V1Status> response = 	// For debugging to read response
+            coreInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, null);
+           //V1Status result = response.getData(); // For debugging
         } catch (ApiException e) {
             System.err.println("Exception when calling CoreV1Api#deleteNamespace");
             e.printStackTrace();
@@ -278,7 +248,7 @@ public class ClusterApi {
 
         setupClient(clusterUrl, clusterUser, clusterPass);
 
-        try {
+
             ApiResponse<V1PodList> response = 
                     coreInstance.listNamespacedPodWithHttpInfo(namespace, pretty, 
                             null, null, null, null, null, null, null, null);
@@ -286,12 +256,8 @@ public class ClusterApi {
             if (list.isEmpty()) {
                 return true;
             }
-            System.out.println(list);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#listNamespacedPod");
-            e.printStackTrace();
-            throw e;
-        }
+
+
 
         return false;
     }
@@ -301,22 +267,18 @@ public class ClusterApi {
 
         setupClient(clusterUrl, clusterUser, clusterPass);
 
-        try {
-            ApiResponse<V1NamespaceList> response = 
-                    coreInstance.listNamespaceWithHttpInfo(pretty, 
-                            null, null, null, null, null, null, null, null);
-            V1NamespaceList result = response.getData();
-            List<V1Namespace> list = result.getItems();
-            for (V1Namespace item : list) {
-                if (item.getMetadata().getName().equals(namespace)) {
-                    return true; // namespace already exists.
-                }
+       
+        ApiResponse<V1NamespaceList> response = 
+                coreInstance.listNamespaceWithHttpInfo(pretty, 
+                        null, null, null, null, null, null, null, null);
+        V1NamespaceList result = response.getData();
+        List<V1Namespace> list = result.getItems();
+        for (V1Namespace item : list) {
+            if (item.getMetadata().getName().equals(namespace)) {
+                return true; // namespace already exists.
             }
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#listNamespace");
-            e.printStackTrace();
-            throw e;
         }
+
         return false; // reached end of list without finding namespace
     }
 
@@ -330,13 +292,8 @@ public class ClusterApi {
         metadata.setName(namespace);
         body.setMetadata(metadata);
 
-        try {
-            coreInstance.createNamespace(body, pretty);
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#createNamespace");
-            e.printStackTrace();
-            throw e;
-        }
+        coreInstance.createNamespace(body, pretty);
+
     }
 
     public List<String> getDeploymentsByNamespace(String namespace, String clusterUrl, 
@@ -351,8 +308,69 @@ public class ClusterApi {
         for (V1Deployment item : result) {
             deploymentNames.add(item.getMetadata().getName());
         }
-        System.out.println(deploymentNames);
 
         return deploymentNames;
     }
+
+	public void checkUserWorkload(List<Container> containers) {
+		Cluster cluster = null;
+		String username = null;
+		
+		for(Container container : containers) {
+			cluster = clusterService.getCluster(container.getClusterUrl());
+			username = container.getAccount().getUserName();
+			Boolean found = false;
+			Blob encryptedUsername = cluster.getEncryptedUsername();
+			Blob encryptedPassword = cluster.getEncryptedPassword();
+			String clusterUsername = clusterSecurity.decodeCredential(encryptedUsername);
+			String clusterPassword	= clusterSecurity.decodeCredential(encryptedPassword);
+			setupClient(cluster.getClusterUrl(),clusterUsername , clusterPassword);
+			try {
+				if (container.getKind().equals("Deployment")) {
+					// get list of deployments running on namespace
+					ApiResponse<V1DeploymentList> response = appsInstance.listNamespacedDeploymentWithHttpInfo(username,
+							pretty, null, null, null, null, null, null, null, null);
+					List<V1Deployment> results = response.getData().getItems();
+					// check if deployment is on cluster  
+					for (Iterator<V1Deployment> iterator = results.iterator(); iterator.hasNext() && !found;) {
+						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+							found = true;
+						}
+					}
+					
+				} else if (container.getKind().equals("Service")) {
+					// get list of services running on namespace
+					ApiResponse<V1ServiceList> response = coreInstance.listNamespacedServiceWithHttpInfo(username,
+							pretty, null, null, null, null, null, null, null, null);
+					List<V1Service> results = response.getData().getItems();
+					// check if Service is on cluster
+					for (Iterator<V1Service> iterator = results.iterator(); iterator.hasNext() && !found;) {
+						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+							found = true;
+						}
+					}
+
+				} else if (container.getKind().equals("ConfigMap")) {
+					// get list of config maps in namespace
+					ApiResponse<V1ConfigMapList> response = coreInstance.listNamespacedConfigMapWithHttpInfo(username,
+							pretty, null, null, null, null, null, null, null, null);
+					List<V1ConfigMap> results = response.getData().getItems();
+					// check if config map  is in namespace
+					for (Iterator<V1ConfigMap> iterator = results.iterator(); iterator.hasNext() && !found;) {
+						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+							found = true;
+						}
+					}
+				}
+			} catch (ApiException e) {
+
+			}
+			if(!found) {
+				containerService.deleteContainer(container);
+				accountService.updateAccountTables(container.getAccount());
+				
+			}
+		}
+
+	}
 }

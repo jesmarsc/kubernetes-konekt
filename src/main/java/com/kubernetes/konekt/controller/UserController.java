@@ -1,6 +1,7 @@
 package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
+import java.sql.Blob;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadContainerToClusterForm;
 import com.kubernetes.konekt.form.YamlBuilderForm;
 import com.kubernetes.konekt.scheduler.RoundRobinScheduler;
+import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
@@ -45,6 +47,9 @@ public class UserController {
 
 	@Autowired
 	private RoundRobinScheduler scheduler;
+	
+	@Autowired
+	private ClusterSecurity clusterSecurity;
 
 	@RequestMapping(value = "/user")
 	public String showUserDashboard(Model model) {
@@ -54,12 +59,14 @@ public class UserController {
 
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
+		// check if expected workload is still running
+		// Currently any entry on database not found on cluster is removed from database
+		clusterApi.checkUserWorkload(currentAccount.getContainers());
 		model.addAttribute("currentAccount", currentAccount);
 
 		List<Cluster> availableClusters = clusterService.getAllClusters();
 		model.addAttribute("availableClusters", availableClusters);
 
-		// TODO:check all containers are still on clusters
 
 		return "user/user-dashboard";
 	}
@@ -76,7 +83,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/YamlBuildConfirmation")
     public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm,
-            BindingResult theBindingResult, Model model) throws ApiException {
+            BindingResult theBindingResult, Model model)  {
 
         if (theBindingResult.hasErrors()) {
             return yamlBuilder(yamlBuildForm, model);
@@ -88,15 +95,26 @@ public class UserController {
         // round robin scheduler to select cluster
         Cluster chosenCluster = scheduler.getNextCluster();
         String clusterUrl = chosenCluster.getClusterUrl();
-        String clusterUser = chosenCluster.getClusterUsername();
-        String clusterPass = chosenCluster.getClusterPassword();
+        Blob encryptedUsername = chosenCluster.getEncryptedUsername();
+        Blob encryptedPassword = chosenCluster.getEncryptedPassword();
+        String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
+        String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
         List<Container> deployments = null;
-
+        try {
         // check if namespace already exist
         Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
         // if namespace does not exist create it
         if (!doesExist) {
             clusterApi.createNamespace(username, clusterUrl, clusterUser, clusterPass);
+        }
+        }catch(Exception e) {
+        	e.printStackTrace();
+            String uploadContainerFailStatus = "Deployment Failed";
+            String uploadContainerFailMessage = "The YAML: '" + yamlBuildForm.getDeploymentName()
+                    + "' could not be uploaded. There was an error accessing the selected cluster. Please choose another cluster.";
+            model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
+            model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
+            return this.showUserDashboard(model);
         }
 
         try {
@@ -136,7 +154,7 @@ public class UserController {
 
     @RequestMapping(value = "/user/upload")
     public String uploadContainer(@RequestParam("containerFile") MultipartFile file,
-            @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) throws ApiException {
+            @ModelAttribute("uploadForm") UploadContainerToClusterForm uploadForm, Model model) {
 
         if (file.isEmpty()) {
             String uploadContainerFailStatus = "Upload Failed";
@@ -159,17 +177,32 @@ public class UserController {
 
         // Get url, username, and password needed to access cluster.
         String clusterUrl = chosenCluster.getClusterUrl();
-        String clusterUser = chosenCluster.getClusterUsername();
-        String clusterPass = chosenCluster.getClusterPassword();
+        Blob encryptedUsername = chosenCluster.getEncryptedUsername();
+        Blob encryptedPassword = chosenCluster.getEncryptedPassword();
+        String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
+        String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
+
         List<Container> deployments = null;
 
         // Check if namespace already exist.
-        Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
+        Boolean doesExist;
+		try {
+			doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
+	        // If namespace does not exist, create it.
+	        if (!doesExist) {
+	            clusterApi.createNamespace(username, clusterUrl, clusterUser, clusterPass);
+	        }
+		} catch (ApiException e1) {
+            String uploadContainerFailStatus = "Upload Failed";
+            String uploadContainerFailMessage = "The YAML: '" + file.getOriginalFilename()
+                    + "' could not be uploaded. Cluster is currently not available choose another cluster.";
+            model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
+            model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
+			e1.printStackTrace();
+			return this.showUserDashboard(model);
+		}
 
-        // If namespace does not exist, create it.
-        if (!doesExist) {
-            clusterApi.createNamespace(username, clusterUrl, clusterUser, clusterPass);
-        }
+
 
         try {
             deployments = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username,chosenCluster.getAccount().getId());
@@ -217,8 +250,10 @@ public class UserController {
 
         // Get Cluster
         Cluster cluster = clusterService.getCluster(clusterUrl);
-        String userName = cluster.getClusterUsername();
-        String passWord = cluster.getClusterPassword();
+        Blob encryptedUsername = cluster.getEncryptedUsername();
+        Blob ecnryptedPassword = cluster.getEncryptedPassword();
+        String userName = clusterSecurity.decodeCredential(encryptedUsername);
+        String passWord = clusterSecurity.decodeCredential(ecnryptedPassword);
 
         try {
             if (kind.equals("Deployment")) {
