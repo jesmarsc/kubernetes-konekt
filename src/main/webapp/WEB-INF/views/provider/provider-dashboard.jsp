@@ -134,8 +134,7 @@
 	            	},1000);
 	            }); */
 	            function sendRequest(){
-	                $.ajax({
-	                	type: 'POST', 
+	                $.ajax(
 	                    url: "sample.jsp",
 	                    cache: false,
 	                    success: 
