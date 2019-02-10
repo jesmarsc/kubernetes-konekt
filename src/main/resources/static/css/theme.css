@@ -51,7 +51,9 @@ html {
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   -ms-overflow-style: scrollbar;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); 
+  
+  }
 
 @-ms-viewport {
   width: device-width; }
@@ -308,25 +310,31 @@ h1, h2, h3, h4, h5, h6,
   font-family: Voltaire;
   font-weight: 500;
   line-height: 1.2;
-  color: #ffc107; }
+   }
 
 h1, .h1 {
-  font-size: 2.5rem; }
+  font-size: 2.5rem;
+  color: #ffc107; }
 
 h2, .h2 {
-  font-size: 2rem; }
+  font-size: 2rem;
+  color: #ffc107; }
 
 h3, .h3 {
-  font-size: 1.75rem; }
+  font-size: 1.75rem;
+  color: #ffc107; }
 
 h4, .h4 {
-  font-size: 1.5rem; }
+  font-size: 1.5rem;
+  color: #ffc107; }
 
 h5, .h5 {
-  font-size: 1.25rem; }
+  font-size: 1.25rem; 
+  color: #ffc107;}
 
 h6, .h6 {
-  font-size: 1rem; }
+  font-size: 1rem;
+  color: #fff; }
 
 .lead {
   font-size: 1.25rem;
@@ -594,7 +602,7 @@ pre {
 
 .table .thead-dark th {
   color: #fff;
-  background-color: #212529;
+  background-color: purple;
   border-color: #32383e; }
 
 .table .thead-light th {
@@ -2436,7 +2444,7 @@ input[type="button"].btn-block {
 .navbar-dark .navbar-nav .nav-link {
   color: #fff; }
   .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
-    color: #6f42c1; }
+    color: #ffc107; }
   .navbar-dark .navbar-nav .nav-link.disabled {
     color: #fff; }
 

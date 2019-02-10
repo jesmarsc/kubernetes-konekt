@@ -126,11 +126,11 @@ i	<c:choose>
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped	">
-			<thead class="thead-light">
+		<table class="table table-hover table-bordered table-striped	">
+			<thead class="thead-transparent" >
 				<tr>
-					<th><h5>Cluster URL</h5></th>
-					<th><h5>Options</h5></th>
+					<th><h4>Cluster URL</h4></th>
+					<th><h4>Options</h4></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -140,10 +140,18 @@ i	<c:choose>
 					</c:url>
 					
 					<tr>
-						<td>${cluster.clusterUrl}</td>
+						<td><h6 >${cluster.clusterUrl}</h6></td>
 						<td>
 							<a class="btn btn-outline-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
 							<a class="btn btn-light" href="#" role="button">Another Option</a>
+							<a class="btn btn-outline-light" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="multiCollapseExample1"href="#multiCollapseExample1" role="button">Metrics</a>
+							  <div class="col">
+    							<div class="collapse multi-collapse" id="multiCollapseExample1">
+    							  <div class="card card-body">
+     							   Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+      								</div>
+  								  </div>
+ 								 </div>
 						</td>
 					</tr>
 				</c:forEach>
@@ -156,10 +164,10 @@ i	<c:choose>
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th>Cluster URL</th>
-					<th>Name</th>
-					<th>Kind</th>
-					<th>Option(s)</th>
+					<th><h4 >Cluster URL</h4></th>
+					<th><h4 >Name</h4></th>
+					<th><h4 >Kind</h4></th>
+					<th><h4 >Option(s)</h4></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -168,9 +176,9 @@ i	<c:choose>
 						<c:param name="containerId" value="${container.id}" />
 					</c:url>
 					<tr>
-						<td>${container.clusterUrl}</td>
-						<td>${container.containerName}</td>
-						<td>${container.kind}</td>
+						<td><h6 >${container.clusterUrl}</h6></td>
+						<td><h6 >${container.containerName}</h6></td>
+						<td><h6 >${container.kind}</h6></td>
 						<td>
 							<a class="btn btn-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
 						</td>
@@ -188,17 +196,17 @@ i	<c:choose>
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster URL (i.e. https://122.198.122.166): </label>
+				<label><font face="Voltaire" color="#fff"> Cluster URL (i.e. https://122.198.122.166):</font></label>
 				<form:input class="form-control" path="clusterUrl" />
 				<form:errors path="clusterUrl" cssClass="error" />
 			</div>
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster Username (must have admin privileges): </label>
+				<label> <font face="Voltaire" color="#fff"> Cluster Username (must have admin privileges):</font> </label>
 				<form:input class="form-control" path="clusterUsername" />
 				<form:errors path="clusterUsername" cssClass="error" />
 			</div>
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> Cluster Password: </label>
+				<label><font face="Voltaire" color="#fff">  Cluster Password: </font></label>
 				<form:password class="form-control" path="clusterPassword" />
 				<form:errors path="clusterPassword" cssClass="error" />
 			</div>

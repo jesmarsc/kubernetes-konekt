@@ -25,9 +25,11 @@
 	-->
 
 <body>
+<div class="view " style="background-image: url('images/background_image_goodfellas.png'); background-repeat: no-repeat; background-size: cover; background-position: initial;">
+
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<nav class="navbar navbar-expand-lg navbar-dark transparent">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
 
 			<button class="navbar-toggler dropdown-toggle" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -119,13 +121,13 @@
 
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-		<table class="table table-hover table-bordered">
-			<thead class="thead-light">
+		<table class="table table-hover table-bordered table-striped">
+			<thead class="thead-transparent">
 				<tr>
 					<th align="center"><h5>Id</h5></th>
 					<th><h5>Container</h5></th>
 					<th><h5>Cluster URL</h5></th>
-					<th><h5><span class="badge badge-pill badge-light">Status</span></h5></th>
+					<th><h5>Status</h5></th>
 					<th><h5>Action</h5></th>
 				</tr>
 			</thead>
@@ -165,12 +167,12 @@
 			<!-- display selected file  -->
 			<div class="form-group row  mb-2">
 				 <label class="custom-file-label"
-					for="customFile">Upload New Container</label>
+					for="customFile"> <font face="Voltaire" color="#fff">Upload New Container</font></label>
 			</div>
 
 			<!-- Select cluster  -->
 			<div class="form-group row mx-1 my-2 col-sm-10 col-md-10 col-lg-12">
-				<label> Select An Available Cluster: </label>
+				<label><font face="Voltaire" color="#fff"> Select An Available Cluster: </font></label>
 				<form:select class="form-control row" path="clusterUrl">
 					<form:option value=""></form:option>
 					<form:options items="${availableClusters}" />
@@ -179,13 +181,13 @@
 			</div>
 			
 			<div class="form-group row mx-0 my-2 col-sm-10 col-md-10 col-lg-12 ">
-				<small>NOTE: If cluster is not specified it
-						will be chosen for you.</small>
+				<small> <font face="Voltaire" color="#fff">NOTE: If cluster is not specified it
+						will be chosen for you.</font></small>
 			</div>
 
 			<!-- submit -->
 			<div class="border-box row mx-0 my-2 col-sm-10 col-md-10 col-lg-12">
-				<input class="btn btn-primary text-center" type="submit"
+				<input class="btn btn-light text-center" type="submit"
 					value="Submit" />
 			</div>
 			
@@ -194,9 +196,9 @@
 
 	<sec:authorize access="hasRole('USER')">
 		<input type="button" onclick="location.href='user/build-yaml'"
-			value="Build A Yaml File" class="btn btn-primary mx-4 my-4">
+			value="Build A Yaml File" class="btn btn-light text-center mx-4 my-4">
 	</sec:authorize>
-
+</div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
