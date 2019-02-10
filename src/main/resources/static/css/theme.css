@@ -40,6 +40,10 @@
 *::before,
 *::after {
   box-sizing: border-box; }
+  
+  
+  
+  
 
 html {
   font-family: sans-serif;
@@ -304,7 +308,7 @@ h1, h2, h3, h4, h5, h6,
   font-family: Voltaire;
   font-weight: 500;
   line-height: 1.2;
-  color: inherit; }
+  color: #ffc107; }
 
 h1, .h1 {
   font-size: 2.5rem; }
@@ -1391,7 +1395,7 @@ fieldset:disabled a.btn {
   background-image: none;
   border-color: #eef0f2; }
   .btn-outline-light:hover {
-    color: #212529;
+    color: #6f42c1h;
     background-color: #eef0f2;
     border-color: #eef0f2; }
   .btn-outline-light:focus, .btn-outline-light.focus {
@@ -2430,11 +2434,11 @@ input[type="button"].btn-block {
     color: #fff; }
 
 .navbar-dark .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.5); }
+  color: #fff; }
   .navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
-    color: rgba(255, 255, 255, 0.75); }
+    color: #6f42c1; }
   .navbar-dark .navbar-nav .nav-link.disabled {
-    color: rgba(255, 255, 255, 0.25); }
+    color: #fff; }
 
 .navbar-dark .navbar-nav .show > .nav-link,
 .navbar-dark .navbar-nav .active > .nav-link,

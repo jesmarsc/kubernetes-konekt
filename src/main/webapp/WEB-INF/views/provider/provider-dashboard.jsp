@@ -23,15 +23,18 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link href="css/theme.css" rel="stylesheet">
+	<link type="text/css" rel="stylesheet" href="<c:url value="css/theme.css" />" />
 
 </head>
 
 <!-- Begin Body -->
+
 <body>
+<div class="view " style="background-image: url('images/background_image_goodfellas.png'); background-repeat: no-repeat; background-size: cover; background-position: initial;">
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<nav class="navbar navbar-expand-lg navbar-dark transparent">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
   
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -84,7 +87,7 @@
 	</div>
 
 	<!-- Begin Code for Forms -->
-	<c:choose>
+i	<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 	        <div class="alert alert-danger" role="alert">
@@ -123,7 +126,7 @@
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-bordered">
+		<table class="table table-bordered table-striped	">
 			<thead class="thead-light">
 				<tr>
 					<th><h5>Cluster URL</h5></th>
@@ -139,7 +142,7 @@
 					<tr>
 						<td>${cluster.clusterUrl}</td>
 						<td>
-							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
+							<a class="btn btn-outline-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
 							<a class="btn btn-light" href="#" role="button">Another Option</a>
 						</td>
 					</tr>
@@ -169,7 +172,7 @@
 						<td>${container.containerName}</td>
 						<td>${container.kind}</td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -200,14 +203,14 @@
 				<form:errors path="clusterPassword" cssClass="error" />
 			</div>
 			<div class="form-group row mx-4 my-4">
-				<input class="btn btn-primary text-center" type="submit"
+				<input class="btn btn-light text-center" type="submit"
 					value="Submit" />
 			</div>
 			
 			<br/><br/>
 		</form:form>
 	</div>
-	
+	</div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
