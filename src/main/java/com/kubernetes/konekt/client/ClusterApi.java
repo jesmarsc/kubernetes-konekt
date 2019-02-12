@@ -12,9 +12,7 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -175,20 +173,27 @@ public class ClusterApi {
         return convFile;
     }
     
-    public void setupPrometheus() {
+    public void setupPrometheus() throws ApiException, IOException {
+    	File folder = new File("manifests/custom-resource-definitions/");
+    	for(File file : folder.listFiles()) {
+    		System.out.println(file.getName());
+        	crdCreate("manifests/custom-resource-definitions/" + file.getName());
+    	}
+    	
 
     }
 
-    public void crdCreate() throws ApiException, IOException {
-        FileReader fr = new FileReader("prometheus-prometheus.yaml");
-        Map prometheusMap = Yaml.loadAs(fr, Map.class);
+    public void crdCreate(String fileName) throws ApiException, IOException {
+        //FileReader fr = new FileReader("manifests/custom-objects/prometheus-prometheus.yaml");
+        //Map prometheusMap = Yaml.loadAs(fr, Map.class);
 
-        FileReader fr1 = new FileReader("0prometheus-operator-0prometheusCustomResourceDefinition.yaml");
-        V1beta1CustomResourceDefinition body = (V1beta1CustomResourceDefinition) Yaml.load(fr1);
+        FileReader fr1 = new FileReader(fileName);
+        V1beta1CustomResourceDefinition body = (V1beta1CustomResourceDefinition) Yaml.load(fr1); 
+        
         createCustomResourceDefinition(body);
 
-        customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
-                "monitoring", "prometheuses", prometheusMap, pretty);
+       // customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
+        //        "monitoring", "prometheuses", prometheusMap, pretty);
 
     }
 
@@ -218,9 +223,8 @@ public class ClusterApi {
 
     public V1beta1CustomResourceDefinition createCustomResourceDefinition
     (V1beta1CustomResourceDefinition body) throws ApiException {
-
         V1beta1CustomResourceDefinition result = null;
-        result = apiExtensionsInstance.createCustomResourceDefinition(body, null);
+        result = apiExtensionsInstance.createCustomResourceDefinition(body, pretty);
 
         return result;
     }
