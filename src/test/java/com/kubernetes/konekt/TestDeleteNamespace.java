@@ -16,7 +16,7 @@ public class TestDeleteNamespace {
 		
 		Boolean doesExist;
 		try {
-			doesExist = clusterApi.checkNamespaceAlreadyExist(namespace, url, username, password);
+			doesExist = clusterApi.checkNamespaceAlreadyExist(namespace);
 			if(doesExist) {
 				System.out.println("\n\n Namespace exist \n\n");
 			}

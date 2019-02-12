@@ -11,7 +11,7 @@ public class TestCrdCreate {
 	
 	public static void main(String[] args) throws ApiException, IOException {
 		ClusterApi test = new ClusterApi();
-		test.crdCreate("https://35.247.107.39", "admin", "HvH8Xwgrcf7toHvQ");
+		test.crdCreate();
 
 	}
 
