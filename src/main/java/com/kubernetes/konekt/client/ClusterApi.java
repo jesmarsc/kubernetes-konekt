@@ -12,7 +12,9 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
@@ -30,8 +32,10 @@ import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.ApiResponse;
 import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.ApiextensionsV1beta1Api;
 import io.kubernetes.client.apis.AppsV1Api;
 import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.apis.CustomObjectsApi;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapList;
 import io.kubernetes.client.models.V1DeleteOptions;
@@ -44,6 +48,7 @@ import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1ServiceList;
+import io.kubernetes.client.models.V1beta1CustomResourceDefinition;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
@@ -56,6 +61,10 @@ public class ClusterApi {
 	private CoreV1Api coreInstance;
 	
 	private AppsV1Api appsInstance;
+	
+	private ApiextensionsV1beta1Api apiExtensionsInstance;
+	
+	private CustomObjectsApi customObjectsInstance;
 	
 	private static String pretty = "true";
 	
@@ -81,22 +90,48 @@ public class ClusterApi {
         List<Object> objects = Yaml.loadAll(fr);
         List<Container> result = new ArrayList<Container>();
         String name = null;
+        
+        System.out.println(objects.get(0).getClass().getName());
 
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
                 name = createDeployment((V1Deployment) body, namespace).getMetadata().getName();
-                
                 result.add(new Container(name,"Deployment","Running", clusterUrl,  providerId));
+                
             } else if (body instanceof V1Service) {
                 name = createService((V1Service) body, namespace).getMetadata().getName();
                 result.add(new Container(name, "Service", "Running",clusterUrl, providerId));
+                
             } else if (body instanceof V1ConfigMap) {
                 name = createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName();
                 result.add(new Container(name, "ConfigMap", "Running", clusterUrl, providerId));
-            }
+                
+            } else if (body instanceof V1beta1CustomResourceDefinition) {
+                name = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body)
+                		.getMetadata().getName();
+                
+            } 
         }
 
         return result;
+    }
+    
+    public void crdCreate(String clusterUrl, String clusterUser, String clusterPass) throws ApiException, IOException {
+    	setupClient(clusterUrl, clusterUser, clusterPass);
+    	FileReader fr = new FileReader("prometheus-prometheus.yaml");
+    	Map prometheusMap = Yaml.loadAs(fr, Map.class);
+    	
+    	/*
+    	FileReader fr1 = new FileReader("0prometheus-operator-0prometheusCustomResourceDefinition.yaml");
+    	V1beta1CustomResourceDefinition body = (V1beta1CustomResourceDefinition) Yaml.load(fr1);
+    	createCustomResourceDefinition(body);
+    	
+    	System.out.println("WOW");
+    	*/
+    	JSONObject prometheusObject = new JSONObject(prometheusMap);
+    	customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
+    			"monitoring", "prometheuses", prometheusMap, pretty);
+    	
     }
 
     public List<Container> deploymentFromUserInput(String clusterUrl, String clusterUser, String clusterPass,
@@ -147,10 +182,12 @@ public class ClusterApi {
 		client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
 
         client.setDebugging(true);
-
+        client.setBasePath(clusterUrl);
         Configuration.setDefaultApiClient(client);
         coreInstance = new CoreV1Api(client);
         appsInstance = new AppsV1Api(client);
+        customObjectsInstance = new CustomObjectsApi(client);
+        apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
 
     }
 
@@ -183,6 +220,15 @@ public class ClusterApi {
         result = coreInstance.createNamespacedConfigMap(namespace, body, pretty);
 
         return result;
+    }
+    
+    public V1beta1CustomResourceDefinition createCustomResourceDefinition
+    (V1beta1CustomResourceDefinition body) throws ApiException {
+    	
+    	V1beta1CustomResourceDefinition result = null;
+    	result = apiExtensionsInstance.createCustomResourceDefinition(body, null);
+    	
+    	return result;
     }
 
     public void deleteDeployment(String deploymentName, String namespace, String clusterUrl, 
