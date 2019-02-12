@@ -32,6 +32,6 @@ spec:
     matchLabels:
       k8s-app: prometheus
   additionalScrapeConfigs:
-    name: prometheus-config
-    key: prometheus.yaml
+    name: prometheus-additional-configs
+    key: prometheus-federation.yaml
   version: v2.5.0

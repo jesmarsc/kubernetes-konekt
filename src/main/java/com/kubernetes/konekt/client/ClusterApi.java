@@ -90,8 +90,6 @@ public class ClusterApi {
         List<Object> objects = Yaml.loadAll(fr);
         List<Container> result = new ArrayList<Container>();
         String name = null;
-        
-        System.out.println(objects.get(0).getClass().getName());
 
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
