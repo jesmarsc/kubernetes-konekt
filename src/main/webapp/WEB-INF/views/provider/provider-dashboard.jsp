@@ -144,14 +144,25 @@ i	<c:choose>
 						<td>
 							<a class="btn btn-outline-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
 							<a class="btn btn-light" href="#" role="button">Another Option</a>
-							<a class="btn btn-outline-light" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="multiCollapseExample1"href="#multiCollapseExample1" role="button">Metrics</a>
-							  <div class="col">
-    							<div class="collapse multi-collapse" id="multiCollapseExample1">
-    							  <div class="card card-body">
-     							   Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
-      								</div>
-  								  </div>
- 								 </div>
+							
+						
+							<div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <div class="panel-title">
+							<a class="btn btn-outline-light" data-toggle="collapse" data-parent="#accordion" href="#collapse${cluster.clusterUrl}" role="button">Metrics</a>
+</div>
+    </div>
+    <div id="collapse${cluster.clusterUrl}" class="panel-collapse collapse in">
+      <div class="panel-body"><font face="Voltaire" color="#fff"> Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
+      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+      commodo consequat.</font></div>
+    </div>
+  </div>
+   </div>
+
+ 								
 						</td>
 					</tr>
 				</c:forEach>
