@@ -121,14 +121,10 @@ public class ClusterApi {
     	FileReader fr = new FileReader("prometheus-prometheus.yaml");
     	Map prometheusMap = Yaml.loadAs(fr, Map.class);
     	
-    	/*
     	FileReader fr1 = new FileReader("0prometheus-operator-0prometheusCustomResourceDefinition.yaml");
     	V1beta1CustomResourceDefinition body = (V1beta1CustomResourceDefinition) Yaml.load(fr1);
     	createCustomResourceDefinition(body);
     	
-    	System.out.println("WOW");
-    	*/
-    	JSONObject prometheusObject = new JSONObject(prometheusMap);
     	customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
     			"monitoring", "prometheuses", prometheusMap, pretty);
     	
