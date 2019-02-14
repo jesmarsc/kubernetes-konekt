@@ -5,24 +5,6 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>
-<!-- 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>
-        <script>
-            $(document).ready(function() {
-				setInterval(function() {
-            		var dt = new Date();
-    				document.getElementById("datetime").innerHTML = dt.toLocaleTimeString();
-            	},1000);
-            });
-        </script> -->
-   <!--  <div id="time-div" class="container mx-1 my-4"> 
-		<p>Time: <span id="datetime"></span></p>
-
-		<script>
-			var dt = new Date();
-			document.getElementById("datetime").innerHTML = dt.toLocaleTimeString();
-		</script>
-	
-	</div>  -->
 	
 	<div id="cluster-div">
 		
