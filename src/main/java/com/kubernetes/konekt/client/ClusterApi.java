@@ -177,13 +177,11 @@ public class ClusterApi {
     	File folder = new File("manifests/custom-resource-definitions/");
     	for(File file : folder.listFiles()) {
     		System.out.println(file.getName());
-        	crdCreate("manifests/custom-resource-definitions/" + file.getName());
+        	createCustomObject("manifests/custom-resource-definitions/" + file.getName());
     	}
-    	
-
     }
 
-    public void crdCreate(String fileName) throws ApiException, IOException {
+    public void createCustomObject(String fileName) throws ApiException, IOException {
         //FileReader fr = new FileReader("manifests/custom-objects/prometheus-prometheus.yaml");
         //Map prometheusMap = Yaml.loadAs(fr, Map.class);
 
