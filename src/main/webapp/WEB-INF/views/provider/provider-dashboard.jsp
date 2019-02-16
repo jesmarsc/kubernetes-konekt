@@ -23,18 +23,15 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link href="css/theme.css" rel="stylesheet">
-	<link type="text/css" rel="stylesheet" href="<c:url value="css/theme.css" />" />
 
 </head>
 
 <!-- Begin Body -->
-
 <body>
-<div class="view " style="background-image: url('images/background_image_goodfellas.png'); background-repeat: no-repeat; background-size: cover; background-position: initial;">
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
-		<nav class="navbar navbar-expand-lg navbar-dark transparent">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
   
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
@@ -87,7 +84,7 @@
 	</div>
 
 	<!-- Begin Code for Forms -->
-i	<c:choose>
+	<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 	        <div class="alert alert-danger" role="alert">
@@ -126,11 +123,18 @@ i	<c:choose>
 
 		<h3>My Clusters</h3>
 		<!-- Beginning of table -->
-		<table class="table table-hover table-bordered table-striped	">
-			<thead class="thead-transparent" >
+		<div style = "background: transparent;
+  color: transparent;
+  font-weight: bold;
+  position: relative;
+  -webkit-animation: mymove 1s infinite; /* Safari 4.0 - 8.0 */
+  animation: mymove 1s infinite;
+  animation-iteration-count: 1;" id="div3">
+		<table class="table table-bordered">
+			<thead class="thead-light">
 				<tr>
-					<th><h4>Cluster URL</h4></th>
-					<th><h4>Options</h4></th>
+					<th><h5>Cluster URL</h5></th>
+					<th><h5>Options</h5></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -140,34 +144,17 @@ i	<c:choose>
 					</c:url>
 					
 					<tr>
-						<td><h6 >${cluster.clusterUrl}</h6></td>
+						<td>${cluster.clusterUrl}</td>
 						<td>
-							<a class="btn btn-outline-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
+							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
 							<a class="btn btn-light" href="#" role="button">Another Option</a>
-							
-						
-							<div class="panel-group" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <div class="panel-title">
-							<a class="btn btn-outline-light" data-toggle="collapse" data-parent="#accordion" href="#collapse${cluster.clusterUrl}" role="button">Metrics</a>
-</div>
-    </div>
-    <div id="collapse${cluster.clusterUrl}" class="panel-collapse collapse in">
-      <div class="panel-body"><font face="Voltaire" color="#fff"> Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-      sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-      minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat.</font></div>
-    </div>
-  </div>
-   </div>
-
- 								
 						</td>
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
+		
+		</div>
 		<!-- End of Table -->
 
 		<h3>Running On Your Clusters</h3>
@@ -175,10 +162,10 @@ i	<c:choose>
 		<table class="table table-bordered table-striped">
 			<thead>
 				<tr>
-					<th><h4 >Cluster URL</h4></th>
-					<th><h4 >Name</h4></th>
-					<th><h4 >Kind</h4></th>
-					<th><h4 >Option(s)</h4></th>
+					<th>Cluster URL</th>
+					<th>Name</th>
+					<th>Kind</th>
+					<th>Option(s)</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -187,11 +174,11 @@ i	<c:choose>
 						<c:param name="containerId" value="${container.id}" />
 					</c:url>
 					<tr>
-						<td><h6 >${container.clusterUrl}</h6></td>
-						<td><h6 >${container.containerName}</h6></td>
-						<td><h6 >${container.kind}</h6></td>
+						<td>${container.clusterUrl}</td>
+						<td>${container.containerName}</td>
+						<td>${container.kind}</td>
 						<td>
-							<a class="btn btn-light" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
 						</td>
 					</tr>
 				</c:forEach>
@@ -207,29 +194,29 @@ i	<c:choose>
 		<form:form action="/provider/upload" modelAttribute="newClusterForm">
 			<!-- Action will be to send to confirmation page and validate -->
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label><font face="Voltaire" color="#fff"> Cluster URL (i.e. https://122.198.122.166):</font></label>
+				<label> Cluster URL (i.e. https://122.198.122.166): </label>
 				<form:input class="form-control" path="clusterUrl" />
 				<form:errors path="clusterUrl" cssClass="error" />
 			</div>
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label> <font face="Voltaire" color="#fff"> Cluster Username (must have admin privileges):</font> </label>
+				<label> Cluster Username (must have admin privileges): </label>
 				<form:input class="form-control" path="clusterUsername" />
 				<form:errors path="clusterUsername" cssClass="error" />
 			</div>
 			<div class="form-group row mx-1 my-4 col-sm-10 col-md-10 col-lg-6">
-				<label><font face="Voltaire" color="#fff">  Cluster Password: </font></label>
+				<label> Cluster Password: </label>
 				<form:password class="form-control" path="clusterPassword" />
 				<form:errors path="clusterPassword" cssClass="error" />
 			</div>
 			<div class="form-group row mx-4 my-4">
-				<input class="btn btn-light text-center" type="submit"
+				<input class="btn btn-primary text-center" type="submit"
 					value="Submit" />
 			</div>
 			
 			<br/><br/>
 		</form:form>
 	</div>
-	</div>
+	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
