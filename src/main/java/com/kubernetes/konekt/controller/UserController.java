@@ -29,7 +29,6 @@ import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.V1Deployment;
 
 @Controller
 public class UserController {
