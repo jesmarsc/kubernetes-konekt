@@ -1,7 +1,12 @@
 package com.kubernetes.konekt.metric;
 
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,6 +16,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.kubernetes.client.util.Yaml;
 
 @Component
 public class Prometheus {
@@ -23,8 +30,8 @@ public class Prometheus {
     @Autowired
     private ObjectMapper objectMapper;
     
-    public double getCpuUsage(String instanceUrl) throws IOException {
-        String params = "{instance=\""+ instanceUrl + "\",mode=\"idle\"}";
+    public double getCpuUsage(String instanceIp) throws IOException {
+        String params = "{instance=\""+ instanceIp + "\",mode=\"idle\"}";
         String query = restTemplate.getForObject(
                 "http://" + masterInstance + "/api/v1/query?query="
                 + "1-avg(irate(node_cpu_seconds_total{instance}[2m]))", 
@@ -33,9 +40,9 @@ public class Prometheus {
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
-    public double getMemUsage(String instanceUrl) throws IOException {
+    public double getMemUsage(String instanceIp) throws IOException {
         // {instance="URL"}
-        String params = "%7Binstance%3D%22"+ instanceUrl + "%22%7D";
+        String params = "%7Binstance%3D%22"+ instanceIp + "%22%7D";
         // Plus signs not properly encoded, must use builder without encoding.
         // Rest template will automatically encode, cannot use.
         // If a URI is provided, Rest Template will not encode automatically.
@@ -53,8 +60,8 @@ public class Prometheus {
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
-    public double getNetInputUsage(String instanceUrl) throws IOException {
-        String params = "{instance=\""+ instanceUrl + "\",device=\"eth0\"}";
+    public double getNetInputUsage(String instanceIp) throws IOException {
+        String params = "{instance=\""+ instanceIp + "\",device=\"eth0\"}";
         String query = restTemplate.getForObject(
                 "http://" + masterInstance + "/api/v1/query?query="
                 + "sum(irate(node_network_receive_bytes_total{instance}[2m]))", 
@@ -63,8 +70,8 @@ public class Prometheus {
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
-    public double getNetOutputUsage(String instanceUrl) throws IOException {
-        String params = "{instance=\""+ instanceUrl + "\",device=\"eth0\"}";
+    public double getNetOutputUsage(String instanceIp) throws IOException {
+        String params = "{instance=\""+ instanceIp + "\",device=\"eth0\"}";
         String query = restTemplate.getForObject(
                 "http://" + masterInstance + "/api/v1/query?query="
                 + "sum(irate(node_network_transmit_bytes_total{instance}[2m]))", 
@@ -73,9 +80,9 @@ public class Prometheus {
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
-    public double getNetSaturation(String instanceUrl) throws IOException {
+    public double getNetSaturation(String instanceIp) throws IOException {
         // {instance="URL",device="eth0"}
-        String params = "%7Binstance%3D%22"+ instanceUrl + "%22,device%3D%22eth0%22%7D";
+        String params = "%7Binstance%3D%22"+ instanceIp + "%22,device%3D%22eth0%22%7D";
         // Plus signs not properly encoded, must use builder without encoding.
         // Rest template will automatically encode, cannot use.
         // If a URI is provided, Rest Template will not encode automatically.
@@ -89,6 +96,19 @@ public class Prometheus {
         String query = restTemplate.getForObject(uri, String.class);
         JsonNode node = objectMapper.readTree(query);
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
-    } 
+    }
+    
+    public void addInstance(String instanceIp) throws IOException {
+        FileReader fileReader = new FileReader("prometheus-federation.yaml");
+        ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
+        Map<String, Object> topMap = (HashMap) topArray.get(0);
+        ArrayList<Object> static_configs = (ArrayList) topMap.get("static_configs");
+        Map<String, Object> targets = (HashMap) static_configs.get(0);
+        ArrayList<String> instances = (ArrayList) targets.get("targets");
+        instances.add(instanceIp);
+        
+        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
+        Yaml.dump(topArray, fileWriter);
+    }
 
 }

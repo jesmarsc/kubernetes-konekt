@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  prometheus-federation.yaml: LSBqb2JfbmFtZTogJ2V4dGVybmFsLXByb20nDQogIG1ldHJpY3NfcGF0aDogJy9mZWRlcmF0ZScNCiAgcGFyYW1zOg0KICAgICdtYXRjaFtdJzoNCiAgICAgIC0gJ3tqb2I9fiJub2RlLioifScNCiAgICAgICAgDQogIHN0YXRpY19jb25maWdzOg0KICAtIHRhcmdldHM6IFsnMzUuMjMzLjE5Ny4xNDY6OTA5MCdd
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: prometheus-additional-configs
+  namespace: monitoring
