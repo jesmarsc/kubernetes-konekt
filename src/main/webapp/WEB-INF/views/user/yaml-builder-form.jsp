@@ -23,6 +23,7 @@
 </head>
 
 <body>
+<div class="view " style="background-image: url('images/background_image_goodfellas.png'); background-repeat: no-repeat; background-size: cover; background-position: initial;">
 
 	<!-- Navbar -->
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
@@ -140,7 +141,7 @@
 		
 		</table>
 	</div>
-		
+		</div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
