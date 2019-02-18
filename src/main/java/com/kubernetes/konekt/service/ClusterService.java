@@ -14,4 +14,6 @@ public interface ClusterService  {
 
 	public void updateEntry(Cluster updateCluster);
 
+	public Cluster getClusterByPrometheusServiceUid(String uid);
+
 }

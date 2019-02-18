@@ -85,7 +85,8 @@ public class ProviderController {
 		for(Container container : containers) {
 			String deploymentName = container.getContainerName();
 			String namespace = container.getAccount().getUserName();
-			try {	
+			try {
+				clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
 				clusterApi.deleteDeployment(namespace, deploymentName);
 			} catch( ApiException e) {
 					e.printStackTrace();
@@ -141,6 +142,12 @@ public class ProviderController {
 			
 			// Update database to persist changes
 			accountService.updateAccountTables(currentAccount);
+			
+			// Set up prometheus
+			clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
+			clusterApi.setupPrometheus(currentAccount.getId());
+			
+			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";
 			String uploadClusterSuccessMessage = "Cluster with URL: "+ newCluster.getClusterUrl() + " has been successfully uploaded";
 			
@@ -173,8 +180,9 @@ public class ProviderController {
 			Cluster cluster = clusterService.getCluster(clusterUrl);
 			Blob encryptedUsername =cluster.getEncryptedUsername();
 			Blob encryptedPassword = cluster.getEncryptedPassword();
-			String userName = clusterSecurity.decodeCredential(encryptedUsername);
+			String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
 			String passWord = clusterSecurity.decodeCredential(encryptedPassword);
+			clusterApi.setupClient(clusterUrl, clusterUser, passWord);
 			clusterApi.deleteDeployment(username, deploymentName);
 			// Deleting Deployment from database
 			containerService.deleteContainer(containerTBD);

@@ -40,4 +40,10 @@ public class ClusterServiceImpl implements ClusterService{
 		clusterDao.updateEntry(updateCluster);		
 	}
 
+	@Override
+	public Cluster getClusterByPrometheusServiceUid(String uid) {
+		return clusterDao.getClusterByPrometheusServiceUid(uid);
+		
+	}
+
 }

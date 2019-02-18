@@ -14,4 +14,6 @@ public interface ClusterDao {
 
 	public void updateEntry(Cluster updateCluster);
 
+	public Cluster getClusterByPrometheusServiceUid(String uid);
+
 }

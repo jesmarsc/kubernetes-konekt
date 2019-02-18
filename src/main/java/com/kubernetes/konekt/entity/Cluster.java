@@ -16,6 +16,9 @@ import javax.persistence.Table;
 @Table(name = "cluster_info")
 public class Cluster {
 
+	//TODO: add to database status, prometheus_uid, prometheus_ip
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
@@ -30,6 +33,9 @@ public class Cluster {
 	@Column(name = "encrypted_password")
 	private Blob encryptedPassword;
 	
+	@Column(name = "cluster_status")
+	private String status;
+	
 	@Column(name = "round_robin")
 	private Integer roundRobin;
 
@@ -37,6 +43,13 @@ public class Cluster {
 						 CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="provider_account_id")
 	private Account account;
+	
+	@Column(name = "prometheus_uid")
+	private String prometheusUid;
+	
+	@Column(name = "prometheus_ip")
+	private String prometheusIp;
+	
 	
 	public Cluster() {
 	}
@@ -46,6 +59,8 @@ public class Cluster {
 		this.encryptedUsername = encryptedUsername;
 		this.encryptedPassword = encryptedPassword;
 		this.roundRobin = roundRobin;
+		this.status = "Pending";
+		
 	}
 
 	public Integer getRoundRobin() {
@@ -101,5 +116,31 @@ public class Cluster {
 	public String toString() {
 		return clusterUrl;
 	}
+
+	public void setPrometheusUid(String uid) {
+		this.prometheusUid = uid;
+		
+	}
+
+	public String getPrometheusUid() {
+		return prometheusUid;
+	}
+
+	public String getPrometheusIp() {
+		return prometheusIp;
+	}
+
+	public void setPrometheusIp(String prometheusIp) {
+		this.prometheusIp = prometheusIp;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 
 }

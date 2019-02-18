@@ -11,8 +11,8 @@ public class TestCrdCreate {
 	
 	public static void main(String[] args) throws ApiException, IOException {
 		ClusterApi test = new ClusterApi();
-		test.setupClient("https://35.247.107.39", "admin", "HvH8Xwgrcf7toHvQ");
-		test.setupPrometheus();
+		test.setupClient("https://35.202.14.162", "admin", "lVOhLxXGygUo0gRt");
+		test.setupPrometheus(new Long(2));
 		//test.crdCreate();
 
 	}
