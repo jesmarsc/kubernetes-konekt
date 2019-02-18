@@ -21,11 +21,10 @@
 	-->
 
 <body>
-<div class="view " style="background-image: url('images/background_image_goodfellas.png'); background-repeat: no-repeat; background-size: cover; background-position: initial;">
 
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
-		<nav class="navbar navbar-expand-lg navbar-dark transparent">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="#">Kubernetes Konekt</a>
 
 			<button class="navbar-toggler dropdown-toggle" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,17 +43,17 @@
 					<sec:authorize access="hasRole('PROVIDER')">
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard</a></li>
 					</sec:authorize>
-					<li class="nav-item"><a class="nav-link" href="#">
-							Messages </a></li>
+					<!-- <li class="nav-item"><a class="nav-link" href="#">
+							Messages </a></li> -->
 
-					<li class="nav-item dropdown"><a
+					<!-- <li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navDropdown"
-						data-toggle="dropdown"> Alerts </a> <!-- later these alerts will be read from database for now theres a dummy dropdown menu -->
+						data-toggle="dropdown"> Alerts </a> later these alerts will be read from database for now theres a dummy dropdown menu
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="#"> Cluster 1 Started </a> <a
 								class="dropdown-item" href="#"> Cluster 2 Started </a> <a
 								class="dropdown-item" href="#"> Cluster 1 Stopped </a>
-						</div></li>
+						</div></li> -->
 
 					<li class="nav-item"><a class="nav-link" href="#">Profile </a>
 					</li>
@@ -194,7 +193,44 @@
 		<input type="button" onclick="location.href='user/build-yaml'"
 			value="Build A Yaml File" class="btn btn-light text-center mx-4 my-4">
 	</sec:authorize>
-</div>
+	
+	
+<!-- 	
+		<script type="text/javascript">
+		var count = 0;
+		
+		function unhide(divID, otherDivId, otherDivId2,welcome) {
+		    var item = document.getElementById(divID);
+		    if (item) {
+		            item.className=(item.className=='hidden')?'unhidden container mx-1 my-4 col-sm-10 col-md-10 col-lg-12':'hidden';
+		        }
+		        document.getElementById(otherDivId).className = 'hidden';
+		        document.getElementById(otherDivId2).className = 'hidden';
+		        document.getElementById(welcome).className = 'hidden';
+		}
+    	function doRefresh(){
+        	$("#user-cluster1-div").load("user-cluster-list.jsp");
+        	$("#user-cluster2-div").load("user-yaml-builder.jsp");
+        	$("#user-cluster3-div").load("user-upload-cluster.jsp");
+        	/* $("#sample").html(count); */
+        	count++;
+    	}
+    	$(function() {
+        	setInterval(doRefresh, 5000);
+    	}); 
+    	
+    	
+    	function w3_open() {
+    		  document.getElementById("mySidebar").style.display = "block";
+    		}
+
+    		function w3_close() {
+    		  document.getElementById("mySidebar").style.display = "none";
+    		}
+    		
+    		
+    		</script> -->
+
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

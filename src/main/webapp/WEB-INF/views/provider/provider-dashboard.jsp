@@ -21,6 +21,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link href="css/theme.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	
         
 </head>
@@ -31,7 +32,8 @@
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt</a>
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt   </a>
+			<button class="w3-button w3-transparent w3-xlarge" onclick="w3_open()" id="x"><span class="navbar-toggler-icon"></span></button>
   
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent">
@@ -98,81 +100,8 @@
 	
 	    </c:otherwise>
 	</c:choose>
-<<<<<<< HEAD
-
-	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-
-		<h3>My Clusters</h3>
-		<!-- Beginning of table -->
-		<div style = "background: transparent;
-  color: transparent;
-  font-weight: bold;
-  position: relative;
-  -webkit-animation: mymove 1s infinite; /* Safari 4.0 - 8.0 */
-  animation: mymove 1s infinite;
-  animation-iteration-count: 1;" id="div3">
-		<table class="table table-bordered">
-			<thead class="thead-light">
-				<tr>
-					<th><h5>Cluster URL</h5></th>
-					<th><h5>Options</h5></th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="cluster" items="${currentAccount.clusters}">
-					<c:url var="removeLink" value="/provider/delete">
-						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
-					</c:url>
-					
-					<tr>
-						<td>${cluster.clusterUrl}</td>
-						<td>
-							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-light" href="#" role="button">Another Option</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		
-		</div>
-		<!-- End of Table -->
-
-		<h3>Running On Your Clusters</h3>
-		<!-- Beginning of table -->
-		<table class="table table-bordered table-striped">
-			<thead>
-				<tr>
-					<th>Cluster URL</th>
-					<th>Name</th>
-					<th>Kind</th>
-					<th>Option(s)</th>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach var="container" items="${runningContainers}">
-					<c:url var="removeLink" value="/provider/delete-container">
-						<c:param name="containerId" value="${container.id}" />
-					</c:url>
-					<tr>
-						<td>${container.clusterUrl}</td>
-						<td>${container.containerName}</td>
-						<td>${container.kind}</td>
-						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
-						</td>
-					</tr>
-				</c:forEach>
-			</tbody>
-		</table>
-		<!-- End of Table -->
-		<br/>
-		<div class-"mx-4 my-4">
-			<h3>Upload New Cluster URL</h3>
-		</div>
-=======
 	
-	<div class="row-offcanvas row-offcanvas-left">
+	<!-- <div class="row-offcanvas row-offcanvas-left">
 	  	<div id="sidebar" class="sidebar-offcanvas">
 	      <div class="col-md-12">
 	        <ul class="nav nav-pills nav-stacked">
@@ -181,12 +110,27 @@
 	          <li><a href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
 	        </ul>
 	      </div>
-  		</div>
+  		</div> -->
+  		
+  		
+  		
+  		<div class="w3-sidebar w3-bar-block " style="display:none" id="mySidebar">
+   <!-- <button  class="w3-btn w3-circle" >;</button> -->
+   
+   <button type="button" class="btn btn-circle btn-gray float-right" onclick="w3_close()"><i class="glyphicon glyphicon-remove"> <font color="white" >&times;</font></i></button>
+  <br/>
+  <ul>
+	          <li class="active"><a href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
+	          <li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
+	          <li><a href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
+	        </ul>
+</div>
+
+  		
 	
 	<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
 	<script type="text/javascript">
 		var count = 0;
->>>>>>> 173017d0def22f738810fc878d218d0a09ae22bc
 		
 		function unhide(divID, otherDivId, otherDivId2,welcome) {
 		    var item = document.getElementById(divID);
@@ -201,18 +145,27 @@
         	$("#cluster1-div").load("cluster-list.jsp");
         	$("#cluster2-div").load("cluster-workload.jsp");
         	$("#cluster3-div").load("upload-cluster.jsp");
-        	$("#sample").html(count);
+        	/* $("#sample").html(count); */
         	count++;
     	}
     	$(function() {
         	setInterval(doRefresh, 5000);
     	}); 
+    	
+    	
+    	function w3_open() {
+    		  document.getElementById("mySidebar").style.display = "block";
+    		}
+
+    		function w3_close() {
+    		  document.getElementById("mySidebar").style.display = "none";
+    		}
 	</script>
 	
 	<div id="main">
 	
 	<div id="welcome" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12" >
-		<h3>Welcome to the Provider Dashboard!</h3>
+		<h3 align="center">Welcome to the Provider Dashboard!</h3>
 	</div>
 	
 	<div id="cluster1-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden" >
@@ -237,9 +190,6 @@
 		</div>
 	
 </body>
-<<<<<<< HEAD
-</html>
-=======
 
 </html>
->>>>>>> 173017d0def22f738810fc878d218d0a09ae22bc
+	
