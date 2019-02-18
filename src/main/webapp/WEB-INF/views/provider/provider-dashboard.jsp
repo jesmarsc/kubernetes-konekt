@@ -6,7 +6,7 @@
 
 <!-- Begin HTML Document -->
 <!DOCTYPE html>
-<html class="no-js" lang="en">
+<html lang="en">
 
 <head>
 
@@ -21,8 +21,7 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link href="css/theme.css" rel="stylesheet">
-	
-        
+		
 </head>
 
 <!-- Begin Body -->
@@ -111,9 +110,10 @@
   		</div>
 	
 	<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
+	
 	<script type="text/javascript">
 		var count = 0;
-		
+		 
 		function unhide(divID, otherDivId, otherDivId2,welcome) {
 		    var item = document.getElementById(divID);
 		    if (item) {
@@ -134,11 +134,13 @@
         	setInterval(doRefresh, 5000);
     	}); 
 	</script>
-	
+	<script src="jquery.AshAlom.gaugeMeter-2.0.0.min.js"></script> 
 	<div id="main">
 	
 	<div id="welcome" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12" >
 		<h3>Welcome to the Provider Dashboard!</h3>
+		
+    	
 	</div>
 	
 	<div id="cluster1-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden" >
@@ -154,13 +156,16 @@
 	</div> 
 	
 	<div id="sample" class="container mx-1"></div>
+	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 	<script src="js/scripts.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>	
+
+
 	</div>
-		</div>
+	</div>
 	
 </body>
 
