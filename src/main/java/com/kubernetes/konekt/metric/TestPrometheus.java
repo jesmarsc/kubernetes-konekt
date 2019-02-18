@@ -72,7 +72,7 @@ public class TestPrometheus {
     public static void main(String[] args) throws IOException, ApiException {
         TestPrometheus temp = new TestPrometheus();
         
-        temp.addPrometheusInstance("35.247.41.79:9090");
+        temp.addPrometheusInstance("35.192.209.72:9090");
         temp.updatePrometheusSecret();
     }
 
