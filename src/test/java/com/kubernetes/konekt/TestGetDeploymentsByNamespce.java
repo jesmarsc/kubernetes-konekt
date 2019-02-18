@@ -14,7 +14,7 @@ public class TestGetDeploymentsByNamespce {
 		ClusterApi clusterApi = new ClusterApi();
 		
 		try {
-		clusterApi.getDeploymentsByNamespace(namespace, url, username, password);
+		clusterApi.getDeploymentsByNamespace(namespace);
 		}catch(ApiException e) {
 			e.printStackTrace();
 		}
