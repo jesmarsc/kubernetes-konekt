@@ -44,6 +44,7 @@ import io.kubernetes.client.models.V1NamespaceList;
 import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
+import io.kubernetes.client.models.V1Secret;
 import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1ServiceList;
 import io.kubernetes.client.models.V1beta1CustomResourceDefinition;
@@ -224,6 +225,20 @@ public class ClusterApi {
         V1beta1CustomResourceDefinition result = null;
         result = apiExtensionsInstance.createCustomResourceDefinition(body, pretty);
 
+        return result;
+    }
+    
+    public V1Secret createSecret(String namespace, V1Secret body) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.createNamespacedSecret(namespace, body, pretty);
+        
+        return result;
+    }
+    
+    public V1Secret replaceSecret(String name, String namespace, V1Secret body) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.replaceNamespacedSecret(name, namespace, body, pretty);
+        
         return result;
     }
 
