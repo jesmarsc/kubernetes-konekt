@@ -94,18 +94,21 @@ public class UserController {
         Account currentAccount = accountService.findByUserName(username);
         // round robin scheduler to select cluster
         Cluster chosenCluster = scheduler.getNextCluster();
+        Long providerId = chosenCluster.getAccount().getId();
         String clusterUrl = chosenCluster.getClusterUrl();
         Blob encryptedUsername = chosenCluster.getEncryptedUsername();
         Blob encryptedPassword = chosenCluster.getEncryptedPassword();
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
-        List<Container> deployments = null;
+        
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
+        
         try {
         // check if namespace already exist
-        Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
+        Boolean doesExist = clusterApi.checkNamespaceAlreadyExist(username);
         // if namespace does not exist create it
         if (!doesExist) {
-            clusterApi.createNamespace(username, clusterUrl, clusterUser, clusterPass);
+            clusterApi.createNamespace(username);
         }
         }catch(Exception e) {
         	e.printStackTrace();
@@ -116,10 +119,11 @@ public class UserController {
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
         }
+        
+        List<Container> resources = null;
 
         try {
-            deployments = clusterApi.deploymentFromUserInput(clusterUrl, clusterUser, clusterPass, username,
-                    yamlBuildForm,chosenCluster.getAccount().getId());
+            resources = clusterApi.deploymentFromUserInput(username, yamlBuildForm, providerId);
         } catch (IOException | ApiException e) {
             e.printStackTrace();
             String uploadContainerFailStatus = "Deployment Failed";
@@ -130,7 +134,7 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 
-        if (deployments.isEmpty()) {
+        if (resources.isEmpty()) {
             String uploadContainerFailStatus = "Deployment Failed";
             String uploadContainerFailMessage = "The YAML: '" + yamlBuildForm.getDeploymentName()
                     + "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name)";
@@ -139,8 +143,8 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 
-        for (Container deployment : deployments) {
-            currentAccount.addContainer(deployment);
+        for (Container resource : resources) {
+            currentAccount.addContainer(resource);
             accountService.updateAccountTables(currentAccount);
         }
 
@@ -176,21 +180,22 @@ public class UserController {
         }
 
         // Get url, username, and password needed to access cluster.
+        Long providerId = chosenCluster.getAccount().getId();
         String clusterUrl = chosenCluster.getClusterUrl();
         Blob encryptedUsername = chosenCluster.getEncryptedUsername();
         Blob encryptedPassword = chosenCluster.getEncryptedPassword();
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
 
-        List<Container> deployments = null;
-
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
+        
         // Check if namespace already exist.
         Boolean doesExist;
 		try {
-			doesExist = clusterApi.checkNamespaceAlreadyExist(username, clusterUrl, clusterUser, clusterPass);
+			doesExist = clusterApi.checkNamespaceAlreadyExist(username);
 	        // If namespace does not exist, create it.
 	        if (!doesExist) {
-	            clusterApi.createNamespace(username, clusterUrl, clusterUser, clusterPass);
+	            clusterApi.createNamespace(username);
 	        }
 		} catch (ApiException e1) {
             String uploadContainerFailStatus = "Upload Failed";
@@ -202,10 +207,10 @@ public class UserController {
 			return this.showUserDashboard(model);
 		}
 
-
+		List<Container> resources = null;
 
         try {
-            deployments = clusterApi.parseYaml(file, clusterUrl, clusterUser, clusterPass, username,chosenCluster.getAccount().getId());
+            resources = clusterApi.parseYaml(file, username, providerId);
         } catch (IOException e) {
             e.printStackTrace();
             String uploadContainerFailStatus = "Upload Failed";
@@ -224,8 +229,8 @@ public class UserController {
             return this.showUserDashboard(model);
         }
 
-        for (Container deployment : deployments) {
-            currentAccount.addContainer(deployment);
+        for (Container resource : resources) {
+            currentAccount.addContainer(resource);
             accountService.updateAccountTables(currentAccount);
         }
 
@@ -252,16 +257,17 @@ public class UserController {
         Cluster cluster = clusterService.getCluster(clusterUrl);
         Blob encryptedUsername = cluster.getEncryptedUsername();
         Blob ecnryptedPassword = cluster.getEncryptedPassword();
-        String userName = clusterSecurity.decodeCredential(encryptedUsername);
-        String passWord = clusterSecurity.decodeCredential(ecnryptedPassword);
-
+        String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
+        String clusterPass = clusterSecurity.decodeCredential(ecnryptedPassword);
+        
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
         try {
             if (kind.equals("Deployment")) {
-                clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
+                clusterApi.deleteDeployment(username, deploymentName);
             } else if (kind.equals("Service")) {
-                clusterApi.deleteService(deploymentName, username, clusterUrl, userName, passWord);
+                clusterApi.deleteService(username, deploymentName);
             } else if (kind.equals("ConfigMap")) {
-                clusterApi.deleteConfigMap(deploymentName, username, clusterUrl, userName, passWord);
+                clusterApi.deleteConfigMap(username, deploymentName);
             }
             // Deleting Deployment from database
             containerService.deleteContainer(containerTBD);

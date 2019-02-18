@@ -13,7 +13,7 @@ public class TestCreateNamespace {
 		String namespace = "bob";
 		ClusterApi clusterApi = new ClusterApi();
 		
-		clusterApi.createNamespace(namespace, url, username, password);
+		clusterApi.createNamespace(namespace);
 
 	}
 
