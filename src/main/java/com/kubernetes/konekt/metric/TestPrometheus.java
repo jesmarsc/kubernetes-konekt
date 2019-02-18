@@ -65,14 +65,14 @@ public class TestPrometheus {
         meta.setNamespace("monitoring");
         body.setMetadata(meta);
         
-        //clusterApi.createSecret(meta.getNamespace(), body);
+        clusterApi.setupClient("https://35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
         clusterApi.replaceSecret(meta.getName(), meta.getNamespace(), body);
     }
     
     public static void main(String[] args) throws IOException, ApiException {
         TestPrometheus temp = new TestPrometheus();
         
-        temp.removePrometheusInstance("35.247.41.79:9090");
+        temp.addPrometheusInstance("35.247.41.79:9090");
         temp.updatePrometheusSecret();
     }
 
