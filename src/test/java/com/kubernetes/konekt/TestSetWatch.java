@@ -3,7 +3,6 @@ package com.kubernetes.konekt;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.reflect.TypeToken;
-import com.kubernetes.konekt.client.ClusterApi;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -35,7 +34,7 @@ public class TestSetWatch {
              for (Watch.Response<V1Service> item : watch) {
             	 
             	 //if(item.object.getStatus().getLoadBalancer().getIngress() != null && item.object.getMetadata().getName().equals("prometheus-k8s")) {
-            		 System.out.println(item.object + "\n\n\n\n\n\n");
+            		 System.out.println(item.object.getMetadata().getUid() + "\n\n\n\n\n\n");
             		// System.out.printf("%s%n", item.object.getStatus().getLoadBalancer().getIngress().get(0).getIp());
             	 //}
              }
@@ -46,33 +45,6 @@ public class TestSetWatch {
 			e1.printStackTrace();
 		}
 
-		/*
-		try {
-			test.setWatch();
-		} catch (ApiException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
-		/*
-		try {
-			test.setupPrometheus(new Long(2));
-		} catch (ApiException e) {
-			
-			e.printStackTrace();
-		} catch (IOException e) {
-			
-			e.printStackTrace();
-		}
-		
-		while(true) {
-			try {
-				Thread.sleep(1000*5);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 		
 
 	}

@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.google.gson.reflect.TypeToken;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
@@ -61,7 +61,6 @@ import io.kubernetes.client.models.V1beta1CustomResourceDefinition;
 import io.kubernetes.client.models.V1beta2DaemonSet;
 import io.kubernetes.client.models.V1beta2Deployment;
 import io.kubernetes.client.util.Config;
-import io.kubernetes.client.util.Watch;
 import io.kubernetes.client.util.Yaml;
 
 @Component
@@ -103,6 +102,7 @@ public class ClusterApi {
 
         client.setDebugging(false);	// watches do not work if set to true
         client.setBasePath(clusterUrl);
+        client.getHttpClient().setReadTimeout(100, TimeUnit.SECONDS);
         Configuration.setDefaultApiClient(client);
         coreInstance = new CoreV1Api(client);
         appsInstance = new AppsV1Api(client);
@@ -177,14 +177,11 @@ public class ClusterApi {
 		
         return result;
     }
-    public void setWatch() throws ApiException {
-    	Watch<V1Service> watch;
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        watch = Watch.createWatch(
-                client,
-                coreInstance.listNamespacedServiceCall("monitoring", pretty, null, null, Boolean.FALSE, null, null, null, 60, Boolean.TRUE, null, null),
-                new TypeToken<Watch.Response<V1Service>>() {}.getType());
-            executorService.execute(new WatchHandler(watch));
+    public void setWatch(String url, String user, String pass) throws ApiException {
+    	System.out.println("setwatch");
+    	Thread thread = new Thread(new WatchHandler(url, user, pass));
+    	thread.start();
+        System.out.println("finish set watch");
        
     }
     public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
@@ -242,7 +239,7 @@ public class ClusterApi {
         return readFile;
     }
     
-    public void setupPrometheus(Long providerId) throws ApiException, IOException {
+    public void setupPrometheus(Long providerId, String url, String user, String pass) throws ApiException, IOException {
     	settingPrometheus = true;
     	String filePath = "manifests/ultimate-prometheus-setup.yaml";
     	String namespace = "monitoring";
@@ -275,16 +272,20 @@ public class ClusterApi {
     	}
     	settingPrometheus = false;
     	V1ServiceList serviceList = getNamespacedV1ServiceList(namespace);
+    	String uid = new String();
+    	System.out.println("setting uid");
     	for(V1Service item : serviceList.getItems()) {
     		if(item.getMetadata().getName().equals("prometheus-k8s")) {
     			// save uid to db
-    			String uid = item.getMetadata().getUid();
+    			uid = item.getMetadata().getUid();
     			Cluster newCluster = clusterService.getCluster(client.getBasePath());
     			newCluster.setPrometheusUid(uid);
     			clusterService.updateEntry(newCluster);
+    			
     		}
     	}
-    	setWatch();
+    	
+    	setWatch(url,user,pass);
     	
     }
     public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {

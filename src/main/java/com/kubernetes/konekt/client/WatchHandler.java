@@ -1,16 +1,13 @@
 package com.kubernetes.konekt.client;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.service.ClusterService;
 
+import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
-import io.kubernetes.client.util.Watch;
+import io.kubernetes.client.models.V1ServiceList;
 
 
 public class WatchHandler implements Runnable {
@@ -18,53 +15,56 @@ public class WatchHandler implements Runnable {
 	@Autowired
 	private ClusterService clusterService;
 	
-	private Watch<V1Service> watch;
+	private ClusterApi clusterApi;
+
+	private String url;
+	private String user;
+	private String pass;
+
 	private Boolean shutDown = false;
 	
-	public WatchHandler(Watch<V1Service> watch) {
-		this.watch = watch;
+	public WatchHandler(String url, String user, String pass ) {
+		this.url = url;
+		this.user = user;
+		this.pass = pass;
+		clusterApi = new ClusterApi();
+		clusterApi.setupClient(url, user, pass);
 	}
+	
+	
+	
 	@Override
-	public void run() {
+	public void run() { 
 		while (!shutDown)
         {
-            System.out.println(new Date()+"WatchHandler Runnable");
-            try
-            {
-            	// Change database cluster status from pending to running 
-            	 for (Watch.Response<V1Service> item : watch) {
-                	 if(item.object.getStatus().getLoadBalancer().getIngress() != null && item.object.getMetadata().getName().equals("prometheus-k8s")) {
-                		 // get cluster using uid
-                		 Cluster cluster = clusterService.getClusterByPrometheusServiceUid(item.object.getMetadata().getUid());
-                		 // add prometheus load balancer ip to db
-                		 cluster.setPrometheusIp(item.object.getStatus().getLoadBalancer().getIngress().get(0).getIp());
-                		 // set cluster status to running
-                		 cluster.setStatus("Ready");
-                		 // update cluster 
-                		 // TODO: add logic to add cluster to master 
-                		 clusterService.updateEntry(cluster);
-                		 // shutdown thread
-                		 shutDown = true;
-                	 }
-                		
-                	 
-                 }
-                 
-            }
-            catch (Throwable e)
-            {
-                System.out.println(e);
-                try
-                {
-                    Thread.sleep(1000*5);
-                }
-                catch (InterruptedException e1)
-                {
-                    e1.printStackTrace();
-                }
-            }
-        }
-		
+            
+			
+			V1ServiceList result;
+			try {
+				result = clusterApi.getNamespacedV1ServiceList("monitoring");
+			System.out.println("Trying to get prometheus ip");
+			for(V1Service item :result.getItems()) {
+				if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
+					Cluster cluster = clusterService.getCluster(url);
+					System.out.println(item);
+					cluster.setPrometheusIp(item.getStatus().getLoadBalancer().getIngress().get(0).getIp());
+            		 // set cluster status to running
+            		 cluster.setStatus("Ready");
+            		 // update cluster 
+            		 // TODO: add logic to add cluster to master 
+            		 clusterService.updateEntry(cluster);
+            		 // shutdown thread
+            		 	shutDown = true;
+				}
+			}
+			} catch (ApiException e) {
+				try {
+					Thread.sleep(1000 * 60);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+				e.printStackTrace();
+			}
+        }	
 	}
-
 }

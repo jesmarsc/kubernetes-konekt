@@ -143,9 +143,12 @@ public class ProviderController {
 			// Update database to persist changes
 			accountService.updateAccountTables(currentAccount);
 			
+			clusterUrl = uploadClusterForm.getClusterUrl();
+			clusterUsername = uploadClusterForm.getClusterUsername();
+			clusterPassword = uploadClusterForm.getClusterPassword();
 			// Set up prometheus
 			clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
-			clusterApi.setupPrometheus(currentAccount.getId());
+			clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
 			
 			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";
@@ -157,6 +160,7 @@ public class ProviderController {
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 			
 		} catch(Exception e) {
+			e.printStackTrace();
 			String uploadClusterFailStatus = "Cluster Upload Failed:";
 			String uploadClusterFailMessage= "The URL entered is already registered to another cluster";
 			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
