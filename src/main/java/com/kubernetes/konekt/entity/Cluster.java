@@ -44,9 +44,6 @@ public class Cluster {
 	@JoinColumn(name="provider_account_id")
 	private Account account;
 	
-	@Column(name = "prometheus_uid")
-	private String prometheusUid;
-	
 	@Column(name = "prometheus_ip")
 	private String prometheusIp;
 	
@@ -117,14 +114,6 @@ public class Cluster {
 		return clusterUrl;
 	}
 
-	public void setPrometheusUid(String uid) {
-		this.prometheusUid = uid;
-		
-	}
-
-	public String getPrometheusUid() {
-		return prometheusUid;
-	}
 
 	public String getPrometheusIp() {
 		return prometheusIp;

@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
@@ -178,10 +177,10 @@ public class ClusterApi {
         return result;
     }
     public void setWatch(String url, String user, String pass) throws ApiException {
-    	System.out.println("setwatch");
+
     	Thread thread = new Thread(checkServices(url,user,pass));
     	thread.start();
-        System.out.println("finish set watch");
+
        
     }
     
@@ -200,17 +199,22 @@ public class ClusterApi {
         			V1ServiceList result;
         			try {
         				result = getNamespacedV1ServiceList("monitoring");
-        			System.out.println("Trying to get prometheus ip");
         			for(V1Service item :result.getItems()) {
         				if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
+        				
         					Cluster cluster = clusterService.getCluster(url);
-        					System.out.println(item);
+        					Account account = cluster.getAccount();
+        					List<Cluster> list = account.getClusters();
+        					list.remove(cluster);
+
         					cluster.setPrometheusIp(item.getStatus().getLoadBalancer().getIngress().get(0).getIp());
                     		 // set cluster status to running
                     		 cluster.setStatus("Ready");
                     		 // update cluster 
                     		 // TODO: add logic to add cluster to master 
-                    		 accountService.updateAccountTables(cluster.getAccount());
+                    		 list.add(cluster);
+                    		 account.setClusters(list);
+                    		 accountService.updateAccountTables(account);
                     		 // shutdown thread
                     		 	shutDown = true;
         				}
@@ -317,21 +321,7 @@ public class ClusterApi {
 	    		}
     		}
     	}
-    	settingPrometheus = false;
-    	V1ServiceList serviceList = getNamespacedV1ServiceList(namespace);
-    	String uid = new String();
-    	System.out.println("setting uid");
-    	for(V1Service item : serviceList.getItems()) {
-    		if(item.getMetadata().getName().equals("prometheus-k8s")) {
-    			// save uid to db
-    			uid = item.getMetadata().getUid();
-    			Cluster newCluster = clusterService.getCluster(client.getBasePath());
-    			newCluster.setPrometheusUid(uid);
-    			clusterService.updateEntry(newCluster);
-    			
-    		}
-    	}
-    	
+    	settingPrometheus = false;    	
     	setWatch(url,user,pass);
     	
     }
