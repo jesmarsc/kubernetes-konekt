@@ -2,6 +2,7 @@ package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
+import com.kubernetes.konekt.metric.Metric;
 import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
@@ -50,6 +52,9 @@ public class ProviderController {
 	@Autowired
 	private ClusterSecurity clusterSecurity;
 	
+	@Autowired
+	private Prometheus prometheus;
+	
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
 		StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
@@ -68,6 +73,18 @@ public class ProviderController {
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
 		
+		List<Cluster> clusters = currentAccount.getClusters();
+		List<Metric> metrics = new ArrayList<Metric>();
+		for(Cluster cluster:clusters) {
+		    try {
+                metrics.add(prometheus.getUsageMetric(cluster.getPrometheusIp()));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+		}
+
+		model.addAttribute("metrics", metrics);
 		return "provider/provider-dashboard";
 	}
 
@@ -87,7 +104,8 @@ public class ProviderController {
 		for(Container container : containers) {
 			String deploymentName = container.getContainerName();
 			String namespace = container.getAccount().getUserName();
-			try {	
+			try {
+				clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
 				clusterApi.deleteDeployment(namespace, deploymentName);
 			} catch( ApiException e) {
 					e.printStackTrace();
@@ -132,7 +150,7 @@ public class ProviderController {
 			Blob encryptedUsername = clusterSecurity.encodeCredential(clusterUsername);
 			Blob encryptedPassword = clusterSecurity.encodeCredential(clusterPassword);
 			
-			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0);	
+			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0, "35.233.197.146:9090");	
 	
 			// Get current user 
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -143,6 +161,15 @@ public class ProviderController {
 			
 			// Update database to persist changes
 			accountService.updateAccountTables(currentAccount);
+			
+			clusterUrl = uploadClusterForm.getClusterUrl();
+			clusterUsername = uploadClusterForm.getClusterUsername();
+			clusterPassword = uploadClusterForm.getClusterPassword();
+			// Set up prometheus
+			//clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
+			//clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
+			
+			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";
 			String uploadClusterSuccessMessage = "Cluster with URL: "+ newCluster.getClusterUrl() + " has been successfully uploaded";
 			
@@ -152,6 +179,7 @@ public class ProviderController {
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 			
 		} catch(Exception e) {
+			e.printStackTrace();
 			String uploadClusterFailStatus = "Cluster Upload Failed:";
 			String uploadClusterFailMessage= "The URL entered is already registered to another cluster";
 			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
@@ -175,8 +203,9 @@ public class ProviderController {
 			Cluster cluster = clusterService.getCluster(clusterUrl);
 			Blob encryptedUsername =cluster.getEncryptedUsername();
 			Blob encryptedPassword = cluster.getEncryptedPassword();
-			String userName = clusterSecurity.decodeCredential(encryptedUsername);
+			String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
 			String passWord = clusterSecurity.decodeCredential(encryptedPassword);
+			clusterApi.setupClient(clusterUrl, clusterUser, passWord);
 			clusterApi.deleteDeployment(username, deploymentName);
 			// Deleting Deployment from database
 			containerService.deleteContainer(containerTBD);
