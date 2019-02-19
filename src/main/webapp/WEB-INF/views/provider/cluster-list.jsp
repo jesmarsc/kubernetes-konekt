@@ -48,7 +48,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-		<div id="charts" style="width:200px; height: 150px;"></div>
 	</div>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   	<script type="text/javascript">
