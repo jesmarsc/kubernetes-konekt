@@ -1,7 +1,9 @@
 package com.kubernetes.konekt.controller;
 
+import java.io.IOException;
 import java.sql.Blob;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -22,6 +24,7 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
+import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
@@ -48,6 +51,9 @@ public class ProviderController {
 	@Autowired
 	private ClusterSecurity clusterSecurity;
 	
+	@Autowired
+	private Prometheus prometheus;
+	
 	@InitBinder
 	public void initBinder(WebDataBinder dataBinder) {
 		StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
@@ -65,7 +71,19 @@ public class ProviderController {
 		model.addAttribute("runningContainers", containers);
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
+		
+		List<Cluster> clusters = currentAccount.getClusters();
+		List<Map<String, Double>> metrics = null;
+		for(Cluster cluster:clusters) {
+		    try {
+                metrics.add(prometheus.getUsageMap(cluster.getPrometheusIp()));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+		}
 
+		model.addAttribute("metrics", metrics);
 		return "provider/provider-dashboard";
 	}
 

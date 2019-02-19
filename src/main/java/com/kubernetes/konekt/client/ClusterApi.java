@@ -24,6 +24,7 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
+import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
@@ -95,6 +96,9 @@ public class ClusterApi {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
+    
+    @Autowired
+    private Prometheus prometheus;
 
     public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
 
@@ -207,20 +211,23 @@ public class ClusterApi {
         					Account account = cluster.getAccount();
         					List<Cluster> list = account.getClusters();
         					list.remove(cluster);
-
-        					cluster.setPrometheusIp(item.getStatus().getLoadBalancer().getIngress().get(0).getIp());
-                    		 // set cluster status to running
-                    		 cluster.setStatus("Ready");
+        					
+        					String prometheusIp = item.getStatus().getLoadBalancer().getIngress().get(0).getIp();
+        					 cluster.setPrometheusIp(prometheusIp);
+                    		 
                     		 // update cluster 
                     		 // TODO: add logic to add cluster to master 
+                    		 prometheus.addPrometheusInstance(prometheusIp);
                     		 list.add(cluster);
                     		 account.setClusters(list);
+                    		// set cluster status to Ready
+                    		 cluster.setStatus("Ready");
                     		 accountService.updateAccountTables(account);
                     		 // shutdown thread
                     		 	shutDown = true;
         				}
         			}
-        			} catch (ApiException e) {
+        			} catch (ApiException | IOException e) {
         				
         				e.printStackTrace();
         			}

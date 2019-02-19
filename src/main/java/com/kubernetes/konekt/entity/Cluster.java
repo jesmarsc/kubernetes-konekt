@@ -57,7 +57,7 @@ public class Cluster {
 		this.encryptedPassword = encryptedPassword;
 		this.roundRobin = roundRobin;
 		this.status = "Pending";
-		
+		this.prometheusIp = "";
 	}
 
 	public Integer getRoundRobin() {
