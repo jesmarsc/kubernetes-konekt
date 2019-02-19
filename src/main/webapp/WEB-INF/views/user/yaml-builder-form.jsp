@@ -16,10 +16,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>YAML Builder</title>
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
-    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
     <link href="../css/theme.css" rel="stylesheet">
@@ -27,6 +23,7 @@
 </head>
 
 <body>
+<div class="view " style="background-image: url('images/background_image_goodfellas.png'); background-repeat: no-repeat; background-size: cover; background-position: initial;">
 
 	<!-- Navbar -->
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
@@ -144,7 +141,7 @@
 		
 		</table>
 	</div>
-		
+		</div>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
