@@ -12,7 +12,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Refresh" content="120"> <!-- used as a backup, will refresh entire page ever 100sec -->
+    <meta http-equiv="Refresh" content="120"> <!-- used as a backup, will refresh entire page ever 120sec -->
     
     <!-- Title at the Tab of the Browser -->
 	<title>Provider Dashboard</title>
@@ -101,32 +101,16 @@
 	    </c:otherwise>
 	</c:choose>
 	
-	
-	
-	<!-- <div class="row-offcanvas row-offcanvas-left">
-	  	<div id="sidebar" class="sidebar-offcanvas">
-	      <div class="col-md-12">
-	        <ul class="nav nav-pills nav-stacked">
-	          <li class="active"><a href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
-	          <li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
-	          <li><a href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
-	        </ul>
-	      </div>
-  		</div> -->
   		
-  		
-  		
-  		<div class="w3-sidebar w3-bar-block " style="display:none" id="mySidebar" >
-   <!-- <button  class="w3-btn w3-circle" >;</button> -->
-   
-   <button type="button" class="btn btn-circle btn-gray float-right" onclick="w3_close()"><i class="glyphicon glyphicon-remove"> <font color="white" >&times;</font></i></button>
-  <br/>
-  <ul>
-	          <li class="active"><a  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
-	          <li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
-	          <li><a  href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
-	        </ul>
-</div>
+  	<div class="w3-sidebar w3-bar-block " style="display:none" id="mySidebar" >
+
+  	<br/>
+  		<ul>
+	    	<li class="active"><a  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
+	    	<li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
+	    	<li><a  href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
+		</ul>
+	</div>
 
   		
 	
@@ -174,8 +158,8 @@
     	function w3_open() {
     		
     		if(document.getElementById("mySidebar").style.display !== 'block'){
-    			document.getElementById("main").style.marginLeft = "10%";
-      			document.getElementById("mySidebar").style.width = "10%";
+    			document.getElementById("main").style.marginLeft = "15%";
+      			document.getElementById("mySidebar").style.width = "15%";
       			document.getElementById("mySidebar").style.display = "block";
       		  	document.getElementById("openNav").style.display = 'none';
     		}else{
@@ -211,7 +195,7 @@
 	<script src="js/scripts.js"></script>
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>	
 	</div>
-		</div>
+	</div>
 	
 </body>
 
