@@ -2,8 +2,8 @@ package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -24,6 +24,7 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
+import com.kubernetes.konekt.metric.Metric;
 import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
@@ -73,10 +74,10 @@ public class ProviderController {
 		model.addAttribute("newClusterForm", newClusterForm);
 		
 		List<Cluster> clusters = currentAccount.getClusters();
-		List<Map<String, Double>> metrics = null;
+		List<Metric> metrics = new ArrayList<Metric>();
 		for(Cluster cluster:clusters) {
 		    try {
-                metrics.add(prometheus.getUsageMap(cluster.getPrometheusIp()));
+                metrics.add(prometheus.getUsageMetric(cluster.getPrometheusIp()));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -149,7 +150,7 @@ public class ProviderController {
 			Blob encryptedUsername = clusterSecurity.encodeCredential(clusterUsername);
 			Blob encryptedPassword = clusterSecurity.encodeCredential(clusterPassword);
 			
-			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0);	
+			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0, "35.233.197.146:9090");	
 	
 			// Get current user 
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -165,8 +166,8 @@ public class ProviderController {
 			clusterUsername = uploadClusterForm.getClusterUsername();
 			clusterPassword = uploadClusterForm.getClusterPassword();
 			// Set up prometheus
-			clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
-			clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
+			//clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
+			//clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
 			
 			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";
