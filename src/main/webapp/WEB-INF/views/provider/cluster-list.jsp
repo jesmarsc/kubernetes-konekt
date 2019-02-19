@@ -92,7 +92,7 @@
 
 	        var data = google.visualization.arrayToDataTable([
 	          ['Label', 'Value'],
-	          ['Memory', Math.round(100 * Math.random())],
+	          ['Memory', Math.round(50 * Math.random())],
 	          ['CPU', Math.round(89 * Math.random())],
 	          ['Network', Math.round(10 * Math.random())]
 	        ]);
@@ -109,17 +109,17 @@
 	        chart.draw(data, options);
 
 	        setInterval(function() {
-	          data.setValue(0, 1, 40 + Math.round(60 * Math.random()));
-	          chart.draw(data, options);
-	        }, 13000);
-	        setInterval(function() {
-	          data.setValue(1, 1, 40 + Math.round(60 * Math.random()));
+	          data.setValue(0, 1, 20 + Math.round(10 * Math.random()));
 	          chart.draw(data, options);
 	        }, 5000);
 	        setInterval(function() {
-	          data.setValue(2, 1, 60 + Math.round(20 * Math.random()));
+	          data.setValue(1, 1, 5 + Math.round(5 * Math.random()));
 	          chart.draw(data, options);
-	        }, 26000);
+	        }, 5000);
+	        setInterval(function() {
+	          data.setValue(2, 1, 30 + Math.round(20 * Math.random()));
+	          chart.draw(data, options);
+	        }, 5000);
 	      }  
 	    
 	    

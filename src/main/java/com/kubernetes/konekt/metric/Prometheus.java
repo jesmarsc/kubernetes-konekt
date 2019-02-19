@@ -94,7 +94,6 @@ public class Prometheus {
                 "http://" + masterInstance + "/api/v1/query?query="
                 + "1-avg(irate(node_cpu_seconds_total{instance}[2m]))", 
                 String.class, params);
-        System.out.println(query);
         JsonNode node = objectMapper.readTree(query);
         if(node.get("data").get("result").get(0) == null) {
             return 0;

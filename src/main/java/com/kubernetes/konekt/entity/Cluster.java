@@ -51,13 +51,14 @@ public class Cluster {
 	public Cluster() {
 	}
 	
-	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin) {
+	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, 
+	        Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin, String prometheusIp) {
 		this.clusterUrl = clusterUrl;
 		this.encryptedUsername = encryptedUsername;
 		this.encryptedPassword = encryptedPassword;
 		this.roundRobin = roundRobin;
 		this.status = "Pending";
-		this.prometheusIp = "";
+		this.prometheusIp = prometheusIp;
 	}
 
 	public Integer getRoundRobin() {
