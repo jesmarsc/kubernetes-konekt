@@ -9,10 +9,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <meta name="description" content="Tequila is a free, open source Bootstrap 4 theme" />
-    <meta name="generator" content="Themestr.app">
-    <link rel="icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="http://themes.guide/favicon.ico" type="image/x-icon" />
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
  	<link href="css/theme.css" rel="stylesheet">
@@ -25,6 +21,7 @@
 	-->
 
 <body>
+
 	<div class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -46,17 +43,17 @@
 					<sec:authorize access="hasRole('PROVIDER')">
 						<li class="nav-item"><a class="nav-link" href="${pageContext.request.contextPath}/provider"> Provider Dashboard</a></li>
 					</sec:authorize>
-					<li class="nav-item"><a class="nav-link" href="#">
-							Messages </a></li>
+					<!-- <li class="nav-item"><a class="nav-link" href="#">
+							Messages </a></li> -->
 
-					<li class="nav-item dropdown"><a
+					<!-- <li class="nav-item dropdown"><a
 						class="nav-link dropdown-toggle" href="#" id="navDropdown"
-						data-toggle="dropdown"> Alerts </a> <!-- later these alerts will be read from database for now theres a dummy dropdown menu -->
+						data-toggle="dropdown"> Alerts </a> later these alerts will be read from database for now theres a dummy dropdown menu
 						<div class="dropdown-menu">
 							<a class="dropdown-item" href="#"> Cluster 1 Started </a> <a
 								class="dropdown-item" href="#"> Cluster 2 Started </a> <a
 								class="dropdown-item" href="#"> Cluster 1 Stopped </a>
-						</div></li>
+						</div></li> -->
 
 					<li class="nav-item"><a class="nav-link" href="#">Profile </a>
 					</li>
@@ -119,13 +116,13 @@
 
 
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-		<table class="table table-hover table-bordered">
-			<thead class="thead-light">
+		<table class="table table-hover table-bordered table-striped">
+			<thead class="thead-transparent">
 				<tr>
 					<th align="center"><h5>Id</h5></th>
 					<th><h5>Container</h5></th>
 					<th><h5>Cluster URL</h5></th>
-					<th><h5><span class="badge badge-pill badge-light">Status</span></h5></th>
+					<th><h5>Status</h5></th>
 					<th><h5>Action</h5></th>
 				</tr>
 			</thead>
@@ -165,12 +162,12 @@
 			<!-- display selected file  -->
 			<div class="form-group row  mb-2">
 				 <label class="custom-file-label"
-					for="customFile">Upload New Container</label>
+					for="customFile"> <font face="Voltaire" color="#fff">Upload New Container</font></label>
 			</div>
 
 			<!-- Select cluster  -->
 			<div class="form-group row mx-1 my-2 col-sm-10 col-md-10 col-lg-12">
-				<label> Select An Available Cluster: </label>
+				<label><font face="Voltaire" color="#fff"> Select An Available Cluster: </font></label>
 				<form:select class="form-control row" path="clusterUrl">
 					<form:option value=""></form:option>
 					<form:options items="${availableClusters}" />
@@ -179,13 +176,13 @@
 			</div>
 			
 			<div class="form-group row mx-0 my-2 col-sm-10 col-md-10 col-lg-12 ">
-				<small>NOTE: If cluster is not specified it
-						will be chosen for you.</small>
+				<small> <font face="Voltaire" color="#fff">NOTE: If cluster is not specified it
+						will be chosen for you.</font></small>
 			</div>
 
 			<!-- submit -->
 			<div class="border-box row mx-0 my-2 col-sm-10 col-md-10 col-lg-12">
-				<input class="btn btn-primary text-center" type="submit"
+				<input class="btn btn-light text-center" type="submit"
 					value="Submit" />
 			</div>
 			
@@ -194,8 +191,45 @@
 
 	<sec:authorize access="hasRole('USER')">
 		<input type="button" onclick="location.href='user/build-yaml'"
-			value="Build A Yaml File" class="btn btn-primary mx-4 my-4">
+			value="Build A Yaml File" class="btn btn-light text-center mx-4 my-4">
 	</sec:authorize>
+	
+	
+<!-- 	
+		<script type="text/javascript">
+		var count = 0;
+		
+		function unhide(divID, otherDivId, otherDivId2,welcome) {
+		    var item = document.getElementById(divID);
+		    if (item) {
+		            item.className=(item.className=='hidden')?'unhidden container mx-1 my-4 col-sm-10 col-md-10 col-lg-12':'hidden';
+		        }
+		        document.getElementById(otherDivId).className = 'hidden';
+		        document.getElementById(otherDivId2).className = 'hidden';
+		        document.getElementById(welcome).className = 'hidden';
+		}
+    	function doRefresh(){
+        	$("#user-cluster1-div").load("user-cluster-list.jsp");
+        	$("#user-cluster2-div").load("user-yaml-builder.jsp");
+        	$("#user-cluster3-div").load("user-upload-cluster.jsp");
+        	/* $("#sample").html(count); */
+        	count++;
+    	}
+    	$(function() {
+        	setInterval(doRefresh, 5000);
+    	}); 
+    	
+    	
+    	function w3_open() {
+    		  document.getElementById("mySidebar").style.display = "block";
+    		}
+
+    		function w3_close() {
+    		  document.getElementById("mySidebar").style.display = "none";
+    		}
+    		
+    		
+    		</script> -->
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
