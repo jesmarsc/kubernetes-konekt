@@ -12,15 +12,15 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Refresh" content="120"> <!-- used as a backup, will refresh entire page ever 120sec -->
+    <!-- <meta http-equiv="Refresh" content="120"> --><!-- used as a backup, will refresh entire page ever 120sec -->
     
     <!-- Title at the Tab of the Browser -->
 	<title>Provider Dashboard</title>
    
-    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Maven+Pro:700" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-	<link href="css/theme.css" rel="stylesheet">
+	<link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet"> 
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	
         
@@ -33,7 +33,7 @@
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt   </a>
-			<button class="w3-button w3-transparent w3-xlarge" onclick="w3_open()" ><span class="navbar-toggler-icon"></span></button>
+			<button class="w3-button w3-transparent w3-large" onclick="w3_open()" ><span class="navbar-toggler-icon"></span></button>
   
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent">
@@ -47,16 +47,18 @@
 				<ul class="navbar-nav ml-auto">
 
 					<sec:authorize access="hasRole('USER')">
-						<li class="nav-item"><a class="nav-link"
+						<li class="nav-item"><a class="btn" style="color:white;"
 						href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
 					</sec:authorize>
 					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-item"><a class="nav-link"
+						<li class="nav-item"><a class="btn btn-warning" style="color:black;"
 						href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
 					</sec:authorize>
 					
 					<li class="nav-item">
-						<a class="nav-link" href="${pageContext.request.contextPath}/logout">Logout</a>
+						<form:form action="${pageContext.request.contextPath}/logout" method="POST">
+							<input type="submit" value="Logout" class="btn btn-danger"/>
+						</form:form> 
 					</li>
 				
 
@@ -102,13 +104,19 @@
 	</c:choose>
 	
   		
-  	<div class="w3-sidebar w3-bar-block " style="display:none" id="mySidebar" >
+  	<div class="w3-sidebar w3-bar-block " style="display:none; border-right: 1px solid gray;" id="mySidebar" >
 
   	<br/>
   		<ul>
-	    	<li class="active"><a  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
-	    	<li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
-	    	<li><a  href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
+	    	<li-side class="active" style="padding-bottom: 20px;" >
+	    		<a  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a>
+	    	</li-side>
+	    	<li-side style="padding-bottom: 20px;">
+	    		<a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a>
+	    	</li-side>
+	    	<li-side style="padding-bottom: 20px;">
+	    		<a  href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a>
+	    	</li-side>
 		</ul>
 	</div>
 

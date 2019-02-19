@@ -1,5 +1,5 @@
 /*! Themestr.app `Tequila` Bootstrap 4.1.3 theme */
-@import url(https://fonts.googleapis.com/css?family=Montserrat:200,300,400,700);
+@import url(https://fonts.googleapis.com/css?family=Maven+Pro:200,300,400,700);
 /*!
  * Bootstrap v4.1.1 (https://getbootstrap.com/)
  * Copyright 2011-2018 The Bootstrap Authors
@@ -33,7 +33,7 @@
   --breakpoint-md: 768px;
   --breakpoint-lg: 992px;
   --breakpoint-xl: 1200px;
-  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", 'Maven Pro', "Segoe UI Symbol";
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 
 *,
@@ -42,7 +42,7 @@
   box-sizing: border-box; }
 
 html {
-  font-family: sans-serif;
+  font-family: 'Maven Pro', sans-serif;
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -84,13 +84,18 @@ body,html,.row-offcanvas {
   overflow:auto;
 }
 
-li
+li-side
 {
    display:block;
-   width:200px; // adjust
+   width:190px; // adjust
    height:20px; // adjust
+   text-align: center;
+   
 }
-
+li-side:hover{
+	  background-color: #C0C0C0;
+	
+}
 /*
  * off Canvas sidebar
  * --------------------------------------------------
@@ -121,7 +126,7 @@ li
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, 'Maven Pro', sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -224,7 +229,7 @@ pre,
 code,
 kbd,
 samp {
-  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace, 'Maven Pro', sans-serif;
   font-size: 1em; }
 
 pre {
@@ -365,7 +370,7 @@ template {
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
   margin-bottom: 0.5rem;
-  font-family: Montserrat !important;
+  font-family: ''Maven Pro'' !important;
   font-weight: 500;
   line-height: 1.2;
   color: inherit; }
@@ -1103,7 +1108,7 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
   vertical-align: middle;
   user-select: none;
   border: 1px solid transparent;
-  padding: 0.375rem 0.75rem;
+  /* padding: 0.375rem 0.75rem; */
   font-size: 1rem;
   line-height: 1.5;
   border-radius: 0.25rem;
@@ -1221,8 +1226,8 @@ fieldset:disabled a.btn {
 
 .btn-warning {
   color: #212529;
-  background-color: #ff9933;
-  border-color: #ff9933; }
+  background-color: #FFDF00;
+  border-color: #FFDF00; }
   .btn-warning:hover {
     color: #212529;
     background-color: #ff860d;
@@ -1244,8 +1249,8 @@ fieldset:disabled a.btn {
 
 .btn-danger {
   color: #fff;
-  background-color: #f2460d;
-  border-color: #f2460d; }
+  background-color: #d93f0b;
+  border-color: #d93f0b; }
   .btn-danger:hover {
     color: #fff;
     background-color: #ce3c0b;
@@ -2198,7 +2203,7 @@ input[type="button"].btn-block {
 
 .nav-link {
   display: block;
-  padding: 0.5rem 1rem; }
+  padding: 0.5rem 0.5rem; }
   .nav-link:hover, .nav-link:focus {
     text-decoration: none; }
   .nav-link.disabled {
@@ -2252,7 +2257,7 @@ input[type="button"].btn-block {
   display: block; }
 
 .navbar {
-	font-family: Montserrat;
+	font-family: 'Maven Pro', sans-serif;
   position: relative;
   display: flex;
   flex-wrap: wrap;
@@ -3735,7 +3740,7 @@ button.close {
   vertical-align: text-top !important; }
 
 .bg-primary {
-  background-color: #2F414A !important; }
+  background-color: #007BFE !important; }
 
 a.bg-primary:hover, a.bg-primary:focus,
 button.bg-primary:hover,
@@ -5916,7 +5921,7 @@ a.text-dark:hover, a.text-dark:focus {
   -webkit-transition: all 0.5s ease;
   -moz-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
+  transition: all 0.5s ease;\
 }
 #wrapper.toggled #sidebar-wrapper {
   width: 250px;
