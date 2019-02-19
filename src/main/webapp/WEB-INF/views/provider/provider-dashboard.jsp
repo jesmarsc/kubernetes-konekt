@@ -148,7 +148,7 @@
 		        document.getElementById(welcome).className = 'hidden';
 		        
 		    	document.getElementById(otherDivID).style.display = "";
-    			if(document.getElementById(otherDivID).style.visibility == "hidden") {
+    			if(document.getElementById(otherDivID).style.visibility == "visible") {
     			document.getElementById(otherDivID).style.visibility = "visible";
     			}
     			else {
