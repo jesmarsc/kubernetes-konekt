@@ -33,7 +33,7 @@
 
 		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 			<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt   </a>
-			<button class="w3-button w3-transparent w3-xlarge" onclick="w3_open()" id="x"><span class="navbar-toggler-icon"></span></button>
+			<button class="w3-button w3-transparent w3-xlarge" onclick="w3_open()" ><span class="navbar-toggler-icon"></span></button>
   
 			<button class="navbar-toggler" type="button" data-toggle="collapse"
 				data-target="#navbarSupportedContent">
@@ -101,6 +101,8 @@
 	    </c:otherwise>
 	</c:choose>
 	
+	
+	
 	<!-- <div class="row-offcanvas row-offcanvas-left">
 	  	<div id="sidebar" class="sidebar-offcanvas">
 	      <div class="col-md-12">
@@ -120,9 +122,9 @@
    <button type="button" class="btn btn-circle btn-gray float-right" onclick="w3_close()"><i class="glyphicon glyphicon-remove"> <font color="white" >&times;</font></i></button>
   <br/>
   <ul>
-	          <li class="active"><a href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
-	          <li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
-	          <li><a href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
+	          <li class="active"><a data-toggle="collapse" data-target="#cluster1-div"  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
+	          <li><a data-toggle="collapse" data-target="#cluster2-div" href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
+	          <li><a  data-toggle="collapse" data-target="#cluster3-div"href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
 	        </ul>
 </div>
 
@@ -135,16 +137,26 @@
 		function unhide(divID, otherDivId, otherDivId2,welcome) {
 		    var item = document.getElementById(divID);
 		    if (item) {
+		    	
 		            item.className=(item.className=='hidden')?'unhidden container mx-1 my-4 col-sm-10 col-md-10 col-lg-12':'hidden';
+		            item.classList.toggle('hidden');
+		            
 		        }
+		    
 		        document.getElementById(otherDivId).className = 'hidden';
 		        document.getElementById(otherDivId2).className = 'hidden';
 		        document.getElementById(welcome).className = 'hidden';
+		        
+		        
 		}
+		
+		
     	function doRefresh(){
         	$("#cluster1-div").load("cluster-list.jsp");
         	$("#cluster2-div").load("cluster-workload.jsp");
         	$("#cluster3-div").load("upload-cluster.jsp");
+        	
+        	
         	/* $("#sample").html(count); */
         	count++;
     	}
@@ -165,23 +177,36 @@
     		  document.getElementById("mySidebar").style.display = "none";
     		  document.getElementById("openNav").style.display = "inline-block";
     		}
+    		function w3_toggle() {
+    	        if (document.getElementById("topMenu").style.display == "none") {
+    	            document.getElementById("topMenu").style.display = "block";
+    	        } else { 
+    	            document.getElementById("topMenu").style.display = "none";
+    	        }
+    	    }
+    		
+    		
+    		
+    		
+    		
+    		
+    		
+    		
 	</script>
 	
 	<div id="main">
 	
-	<div id="welcome" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12" >
-		<h3 align="center">Welcome to the Provider Dashboard!</h3>
-	</div>
+
 	
-	<div id="cluster1-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden" >
+	<div id="cluster1-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden collapse" >
 		<%@ include file="cluster-list.jsp" %>
 	</div>
 	
-	<div id="cluster2-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden" >
+	<div id="cluster2-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden collapse" >
 		<%@ include file="cluster-workload.jsp" %>
 	</div>
 	
-	<div id="cluster3-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden" >
+	<div id="cluster3-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 collapse" >
 		<%@ include file="upload-cluster.jsp" %>
 	</div> 
 	
