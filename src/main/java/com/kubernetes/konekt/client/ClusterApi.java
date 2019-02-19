@@ -53,6 +53,7 @@ import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
 import io.kubernetes.client.models.V1Role;
 import io.kubernetes.client.models.V1RoleBinding;
+import io.kubernetes.client.models.V1Secret;
 import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1ServiceAccount;
 import io.kubernetes.client.models.V1ServiceList;
@@ -323,7 +324,6 @@ public class ClusterApi {
     	}
     	settingPrometheus = false;    	
     	setWatch(url,user,pass);
-    	
     }
     public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {
     	V1ServiceList result = coreInstance.listNamespacedService(namespace, pretty, null, null, Boolean.FALSE, null, null, null, null, Boolean.FALSE);
@@ -415,6 +415,20 @@ public class ClusterApi {
         V1beta1CustomResourceDefinition result = null;
         result = apiExtensionsInstance.createCustomResourceDefinition(body, pretty);
 
+        return result;
+    }
+    
+    public V1Secret createSecret(String namespace, V1Secret body) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.createNamespacedSecret(namespace, body, pretty);
+        
+        return result;
+    }
+    
+    public V1Secret replaceSecret(String name, String namespace, V1Secret body) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.replaceNamespacedSecret(name, namespace, body, pretty);
+        
         return result;
     }
 
