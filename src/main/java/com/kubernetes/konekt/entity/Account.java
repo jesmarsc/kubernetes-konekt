@@ -41,10 +41,10 @@ public class Account {
 	@Column(name = "email")
 	private String email;
 	
-	@OneToMany(mappedBy="account",cascade= {CascadeType.ALL})
+	@OneToMany(mappedBy="account",fetch = FetchType.EAGER, cascade= {CascadeType.ALL})
 	private List<Cluster> clusters;
 
-	@OneToMany(mappedBy="account",cascade= {CascadeType.ALL})
+	@OneToMany(mappedBy="account",fetch = FetchType.LAZY, cascade= {CascadeType.ALL})
 	private List<Container> containers;
 	
 	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

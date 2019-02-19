@@ -62,5 +62,23 @@ public class ClusterDaoImpl implements ClusterDao {
 		Session currentSession = factory.unwrap(Session.class);
 		currentSession.saveOrUpdate(updateCluster) ;
 	}
+
+	@Override
+	public Cluster getClusterByPrometheusServiceUid(String uid) {
+		Session currentSession = factory.unwrap(Session.class);
+		
+		Query<Cluster> theQuery = 
+				currentSession.createQuery("FROM Cluster WHERE prometheus_uid = :uid ", Cluster.class);
+		theQuery.setParameter("uid", uid);
+		Cluster cluster = null;
+		
+		try {
+			cluster = theQuery.getSingleResult();
+		} catch (Exception e) {
+			cluster = null;
+		}
+		
+		return cluster;
+	}
   
 }

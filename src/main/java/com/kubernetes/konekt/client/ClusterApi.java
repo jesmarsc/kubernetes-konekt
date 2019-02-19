@@ -12,12 +12,15 @@ import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.YamlBuilderForm;
@@ -32,8 +35,12 @@ import io.kubernetes.client.ApiResponse;
 import io.kubernetes.client.Configuration;
 import io.kubernetes.client.apis.ApiextensionsV1beta1Api;
 import io.kubernetes.client.apis.AppsV1Api;
+import io.kubernetes.client.apis.AppsV1beta2Api;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.apis.CustomObjectsApi;
+import io.kubernetes.client.apis.RbacAuthorizationV1Api;
+import io.kubernetes.client.models.V1ClusterRole;
+import io.kubernetes.client.models.V1ClusterRoleBinding;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapList;
 import io.kubernetes.client.models.V1DeleteOptions;
@@ -44,10 +51,15 @@ import io.kubernetes.client.models.V1NamespaceList;
 import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
+import io.kubernetes.client.models.V1Role;
+import io.kubernetes.client.models.V1RoleBinding;
 import io.kubernetes.client.models.V1Secret;
 import io.kubernetes.client.models.V1Service;
+import io.kubernetes.client.models.V1ServiceAccount;
 import io.kubernetes.client.models.V1ServiceList;
 import io.kubernetes.client.models.V1beta1CustomResourceDefinition;
+import io.kubernetes.client.models.V1beta2DaemonSet;
+import io.kubernetes.client.models.V1beta2Deployment;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
@@ -63,8 +75,14 @@ public class ClusterApi {
     private ApiextensionsV1beta1Api apiExtensionsInstance;
 
     private CustomObjectsApi customObjectsInstance;
+    
+    private RbacAuthorizationV1Api rbacAuthApi;
+    
+    private AppsV1beta2Api appsBeta2Api;
 
     private static String pretty = "true";
+    
+    private Boolean settingPrometheus = false;
 
     @Autowired
     private ClusterService clusterService;
@@ -82,17 +100,20 @@ public class ClusterApi {
 
         client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
 
-        client.setDebugging(true);
+        client.setDebugging(false);	// watches do not work if set to true
         client.setBasePath(clusterUrl);
+        client.getHttpClient().setReadTimeout(100, TimeUnit.SECONDS);
         Configuration.setDefaultApiClient(client);
         coreInstance = new CoreV1Api(client);
         appsInstance = new AppsV1Api(client);
         customObjectsInstance = new CustomObjectsApi(client);
         apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
+        rbacAuthApi = new RbacAuthorizationV1Api();
+        appsBeta2Api = new AppsV1beta2Api();
 
     }
 
-    public List<Container> parseYaml(MultipartFile file, String namespace, Long providerId) throws IOException, ApiException {
+    public List<Container> parseYaml(MultipartFile file, String namespace, Long providerId) throws IOException, ApiException   {
 
         saveFileLocally(file); // save file in local directory so convertyamlToObject can find the file
 
@@ -100,29 +121,121 @@ public class ClusterApi {
         List<Object> objects = Yaml.loadAll(fr);
         List<Container> result = new ArrayList<Container>();
         String resource = null;
-
+        
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
-                resource = createDeployment(namespace, (V1Deployment) body).getMetadata().getName();
+            	namespace = settingPrometheus ? ((V1Deployment) body).getMetadata().getNamespace() : namespace;
+                resource = createDeploymentV1(namespace, (V1Deployment) body).getMetadata().getName();
                 result.add(new Container(resource, "Deployment", "Running", client.getBasePath(), providerId));
-
             } else if (body instanceof V1Service) {
+            	namespace = settingPrometheus ? ((V1Service) body).getMetadata().getNamespace() : namespace;
                 resource = createService(namespace, (V1Service) body).getMetadata().getName();
                 result.add(new Container(resource, "Service", "Running", client.getBasePath(), providerId));
-
             } else if (body instanceof V1ConfigMap) {
+            	namespace = settingPrometheus ? ((V1ConfigMap) body).getMetadata().getNamespace() : namespace;
                 resource = createConfigMap(namespace, (V1ConfigMap) body).getMetadata().getName();
                 result.add(new Container(resource, "ConfigMap", "Running", client.getBasePath(), providerId));
-
             } else if (body instanceof V1beta1CustomResourceDefinition) {
+            	namespace = settingPrometheus ? ((V1beta1CustomResourceDefinition) body).getMetadata().getNamespace() : namespace;
                 resource = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body).getMetadata().getName();
-                
+                result.add(new Container(resource, "CustomResourceDefinitions", "Running", client.getBasePath(), providerId));
+            }else if (body instanceof V1ClusterRole ) {
+            	namespace = settingPrometheus ? ((V1ClusterRole) body).getMetadata().getNamespace() : namespace;
+            	resource = createClusterRole((V1ClusterRole) body).getMetadata().getName();
+            	result.add(new Container(resource, "ClusterRole", "Running", client.getBasePath(), providerId));
+            }else if (body instanceof V1ClusterRoleBinding ) {
+            	namespace = settingPrometheus ? ((V1ClusterRoleBinding) body).getMetadata().getNamespace() : namespace;
+            	resource = createClusterRoleBinding((V1ClusterRoleBinding) body).getMetadata().getName();
+            	result.add(new Container(resource, "ClusterRoleBinding", "Running", client.getBasePath(), providerId));
+            }else if(body instanceof V1ServiceAccount) {
+            	namespace = settingPrometheus ? ((V1ServiceAccount) body).getMetadata().getNamespace() : namespace;
+            	 resource = createServiceAccount(namespace,(V1ServiceAccount)body).getMetadata().getName();
+            	 result.add(new Container(resource, "ServiceAccount", "Running", client.getBasePath(), providerId));
+            }else if(body instanceof V1Role){
+            	namespace = settingPrometheus ? ((V1Role) body).getMetadata().getNamespace() : namespace;
+            	resource = createRole(namespace,(V1Role)body).getMetadata().getName();
+            	result.add(new Container(resource, "Role", "Running", client.getBasePath(), providerId));
+            }else if(body instanceof V1beta2DaemonSet){
+            	namespace = settingPrometheus ? ((V1beta2DaemonSet) body).getMetadata().getNamespace() : namespace;
+            	resource = createDaemonSet((V1beta2DaemonSet)body,namespace).getMetadata().getName();
+            	result.add(new Container(resource, "V1beta2DaemonSet", "Running", client.getBasePath(), providerId));
+            }else if(body instanceof V1Namespace && settingPrometheus) {
+            	
+            	namespace = ((V1Namespace)body).getMetadata().getName();
+            	createNamespace(namespace);
+            }else if(body instanceof V1beta2Deployment) {
+            	namespace = settingPrometheus ? ((V1beta2Deployment) body).getMetadata().getNamespace() : namespace;
+            	resource = createDeploymentV1Beta2(namespace,(V1beta2Deployment)body).getMetadata().getName();
+            	result.add(new Container(resource, "V1beta2Deployment", "Running", client.getBasePath(), providerId));
+            }else if(body instanceof V1RoleBinding ) {
+            	namespace = settingPrometheus ? ((V1RoleBinding) body).getMetadata().getNamespace() : namespace;
+            	resource = createNamespacedRoleBinding((V1RoleBinding) body, namespace).getMetadata().getName();
+            	result.add(new Container(resource, "V1RoleBinding", "Running", client.getBasePath(), providerId));
             }
-        }
 
+        }
+		
         return result;
     }
+    public void setWatch(String url, String user, String pass) throws ApiException {
 
+    	Thread thread = new Thread(checkServices(url,user,pass));
+    	thread.start();
+
+       
+    }
+    
+    
+    public Runnable checkServices(String curl, String cuser, String cpass) {
+
+        return new Runnable() {
+        	private Boolean shutDown = false;
+        	private String url = curl;
+        	private String user = cuser;
+        	private String pass = cpass;
+            public void run() {
+            	while (!shutDown)
+                {
+            		setupClient(url, user, pass);
+        			V1ServiceList result;
+        			try {
+        				result = getNamespacedV1ServiceList("monitoring");
+        			for(V1Service item :result.getItems()) {
+        				if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
+        				
+        					Cluster cluster = clusterService.getCluster(url);
+        					Account account = cluster.getAccount();
+        					List<Cluster> list = account.getClusters();
+        					list.remove(cluster);
+
+        					cluster.setPrometheusIp(item.getStatus().getLoadBalancer().getIngress().get(0).getIp());
+                    		 // set cluster status to running
+                    		 cluster.setStatus("Ready");
+                    		 // update cluster 
+                    		 // TODO: add logic to add cluster to master 
+                    		 list.add(cluster);
+                    		 account.setClusters(list);
+                    		 accountService.updateAccountTables(account);
+                    		 // shutdown thread
+                    		 	shutDown = true;
+        				}
+        			}
+        			} catch (ApiException e) {
+        				
+        				e.printStackTrace();
+        			}
+        			try {
+    					Thread.sleep(1000 * 10);
+
+    				} catch (InterruptedException e1) {
+    					e1.printStackTrace();
+    				}
+                }	
+            }
+        };
+    }
+    
+    
     public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
 
         String tab = "  ";
@@ -156,11 +269,7 @@ public class ClusterApi {
         fileWriter.write(fileContent);
         fileWriter.close();
 
-        Path path = Paths.get(fileName);
-        String contentType = "text/plain";
-        byte[] content = null;
-        content = Files.readAllBytes(path);
-        MultipartFile readFile = new MockMultipartFile(fileName, fileName, contentType, content);
+        MultipartFile readFile = convertMultipartFile(fileName,fileName);
 
         return parseYaml(readFile, namespace, null);
     }
@@ -173,39 +282,120 @@ public class ClusterApi {
         fos.close();
         return convFile;
     }
+    private MultipartFile convertMultipartFile(String fileName, String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        String contentType = "text/plain";
+        byte[] content = null;
+        content = Files.readAllBytes(path);
+        MultipartFile readFile = new MockMultipartFile(fileName, filePath, contentType, content);
+        return readFile;
+    }
     
-    public void setupPrometheus() throws ApiException, IOException {
-    	File folder = new File("manifests/custom-resource-definitions/");
+    public void setupPrometheus(Long providerId, String url, String user, String pass) throws ApiException, IOException {
+    	settingPrometheus = true;
+    	String filePath = "manifests/ultimate-prometheus-setup.yaml";
+    	String namespace = "monitoring";
+    	
+    	File bigYamlFile = new File(filePath);
+		MultipartFile yamlFile = convertMultipartFile(bigYamlFile.getName(), filePath);
+		parseYaml(yamlFile, namespace,  providerId);
+		
+    	//run all yaml files in custom-objects directory
+    	String directoryPath = "manifests/custom-objects/";
+    	File folder = new File(directoryPath);
+    	
     	for(File file : folder.listFiles()) {
-    		System.out.println(file.getName());
-        	createCustomObject("manifests/custom-resource-definitions/" + file.getName());
+    		if(file.isFile() && !file.isHidden() ) {
+	    		filePath = directoryPath + file.getName();
+	    		FileReader fr = new FileReader(filePath);
+	    		file.getName();
+	    		@SuppressWarnings("rawtypes")
+				Map customObjectMap = Yaml.loadAs(fr, Map.class);
+	    		if(customObjectMap.containsValue("ServiceMonitor")) {
+	    			createServiceMonitor(customObjectMap);
+	    		}
+	    		if(customObjectMap.containsValue("Prometheus")) {
+	    			createPrometheus(customObjectMap);
+	    		}
+	    		if(customObjectMap.containsValue("PrometheusRule")) {
+	    			createPrometheusRule(customObjectMap);
+	    		}
+    		}
     	}
+    	settingPrometheus = false;    	
+    	setWatch(url,user,pass);
     }
+    public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {
+    	V1ServiceList result = coreInstance.listNamespacedService(namespace, pretty, null, null, Boolean.FALSE, null, null, null, null, Boolean.FALSE);
+    	return result;
+    }
+    public void createPrometheus(@SuppressWarnings("rawtypes") Map prometheusMap) throws ApiException, IOException {
+   
+        customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
+                "monitoring", "prometheuses", prometheusMap, pretty);
 
-    public void createCustomObject(String fileName) throws ApiException, IOException {
-        //FileReader fr = new FileReader("manifests/custom-objects/prometheus-prometheus.yaml");
-        //Map prometheusMap = Yaml.loadAs(fr, Map.class);
+    }
+    public void createServiceMonitor(@SuppressWarnings("rawtypes") Map serviceMonitorMap) throws ApiException, IOException {
 
-        FileReader fr1 = new FileReader(fileName);
-        V1beta1CustomResourceDefinition body = (V1beta1CustomResourceDefinition) Yaml.load(fr1); 
+        customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
+                "monitoring", "servicemonitors", serviceMonitorMap, pretty);
+
+    }
+    public void createPrometheusRule(@SuppressWarnings("rawtypes") Map prometheusRulesMap) throws ApiException, IOException {
+    	
+        customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
+                "monitoring", "prometheusrules", prometheusRulesMap, pretty);
+
+    }
+    public V1beta2DaemonSet createDaemonSet(V1beta2DaemonSet body, String namespace) throws ApiException {
+    	V1beta2DaemonSet result = appsBeta2Api.createNamespacedDaemonSet(namespace, body, pretty);
+    	return result;
+    }
+    public V1Role createRole(String namespace, V1Role body) throws ApiException {
+    	
+    	V1Role result = rbacAuthApi.createNamespacedRole(namespace, body, pretty);
+    	return result;
+    }
+    public V1ServiceAccount createServiceAccount(String namespace,V1ServiceAccount body) throws ApiException {
+    	V1ServiceAccount result = coreInstance.createNamespacedServiceAccount(namespace, body, pretty);
+    	
+    	return result;
+    }
+    public V1ClusterRoleBinding createClusterRoleBinding(V1ClusterRoleBinding body) throws ApiException {
+    	
+    	V1ClusterRoleBinding result = rbacAuthApi.createClusterRoleBinding(body, pretty);
+    	return result;
+    	
+    }
+    public V1RoleBinding createNamespacedRoleBinding(V1RoleBinding body,String namespace) throws ApiException {
+    	
+    	V1RoleBinding result = rbacAuthApi.createNamespacedRoleBinding(namespace, body, pretty);
+    	return result;
+    	
+    }
+    
+    public V1ClusterRole createClusterRole(V1ClusterRole body) throws ApiException {
+    	
+        V1ClusterRole result = rbacAuthApi.createClusterRole(body, pretty);
         
-        createCustomResourceDefinition(body);
-
-       // customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
-        //        "monitoring", "prometheuses", prometheusMap, pretty);
-
+        return result;
     }
-
-    public V1Deployment createDeployment(String namespace, V1Deployment body) throws ApiException {
+    public V1Deployment createDeploymentV1(String namespace, V1Deployment body) throws ApiException {
 
         V1Deployment result = null;
         result = appsInstance.createNamespacedDeployment(namespace, body, pretty);
 
         return result;
     }
+    public V1beta2Deployment createDeploymentV1Beta2(String namespace, V1beta2Deployment body) throws ApiException {
+
+    	V1beta2Deployment result = null;
+        result = appsBeta2Api.createNamespacedDeployment(namespace, body, pretty);
+        return result;
+    }
 
     public V1Service createService(String namespace, V1Service body) throws ApiException {
-
+    	
         V1Service result = null;
         result = coreInstance.createNamespacedService(namespace, body, pretty);
 
@@ -317,7 +507,6 @@ public class ClusterApi {
         V1ObjectMeta metadata = new V1ObjectMeta();
         metadata.setName(namespace);
         body.setMetadata(metadata);
-
         coreInstance.createNamespace(body, pretty);
 
     }
