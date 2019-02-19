@@ -67,14 +67,6 @@ public class ProviderController {
 		model.addAttribute("runningContainers", containers);
 		UploadClusterForm newClusterForm = new UploadClusterForm();
 		model.addAttribute("newClusterForm", newClusterForm);
-//		Prometheus clusterMetrics = new Prometheus();
-//		try {
-//			clusterMetrics.getCpuUsage("35.233.197.146:9090");
-//		} catch (IOException e) {
-//			// TODO Add error message
-//			e.printStackTrace();
-//		}
-//		model.addAttribute("clusterMetrics", clusterMetrics);
 		
 		return "provider/provider-dashboard";
 	}
