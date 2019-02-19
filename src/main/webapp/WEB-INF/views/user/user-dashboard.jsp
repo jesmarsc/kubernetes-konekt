@@ -12,7 +12,6 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link href="${pageContext.request.contextPath}/css/theme.css" rel="stylesheet">
-   
 </head>
 	<!-- 
 	 href"#" means clicking the text does not redirect the page to a new page.
