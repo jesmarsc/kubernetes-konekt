@@ -18,11 +18,11 @@
 				<tr>
 					<th><h5>Cluster URL</h5></th>
 					<th><h5>Options</h5></th>
-				
+					<th><h5>Metrics</h5></th>
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="cluster" items="${currentAccount.clusters}">
+				<c:forEach var="cluster" items="${currentAccount.clusters}" varStatus="count">
 					<c:url var="removeLink" value="/provider/delete">
 						<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
 					</c:url>
@@ -31,31 +31,37 @@
 						<td>${cluster.clusterUrl}</td>
 						<td>
 							<a class="btn btn-outline-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete cluster')))return false" role="button">Delete Cluster</a>
-							<a class="btn btn-light" href="#" role="button" data-modal="myModalA">Show Metrics</a>
+							<a class="btn btn-light" href="#" role="button" data-modal="myModalA">Show More Metrics</a>
 							<!-- <button class="myBtn" data-modal="myModalA">Open Modal A</button> -->
 							<div id="myModalA" class="modal">
 								<div class="modal-content">
 									<span class="close">&times;</span>
-										<p> Cluster Metrics</p>
-										<div id="chart_div" style="width:200px; height: 150px;"></div>
+										<p> Cluster Metrics Placeholder</p>
 									</div>
 							</div>
 						</td>
-						<!-- <td>
-							<div id="chart_div" style="width:200px; height: 150px;"></div>
+						 <td>
+							<div id="chart_div_${count.index}" style="width:200px; height: 150px;"></div>
 							
-						</td> -->
+						</td> 
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
-		
+		<div id="charts" style="width:200px; height: 150px;"></div>
 	</div>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   	<script type="text/javascript">
 	  	google.charts.load('current', {'packages':['gauge']});
-	    google.charts.setOnLoadCallback(drawChart);
-		
+	    google.charts.setOnLoadCallback(function()
+	    		{
+	    	   var chart = "chart_div_";
+	    	   for (var i=0; i<8; i++){
+	    		   var ID = String(chart) + String(i);
+	    		   drawChart(ID);
+	    	   }
+	    	});
+	    
 	    var btns = document.getElementsByClassName('btn btn-light'),
 	    // These variables will hold the currently open modal and close button
 	    modal, closeBtn;
@@ -83,13 +89,13 @@
 		    }
 		}, false);
 	    
-	    function drawChart() {
+	    function drawChart(ID) {
 
 	        var data = google.visualization.arrayToDataTable([
 	          ['Label', 'Value'],
-	          ['Memory', 80],
-	          ['CPU', 55],
-	          ['Network', 68]
+	          ['Memory', Math.round(100 * Math.random())],
+	          ['CPU', Math.round(89 * Math.random())],
+	          ['Network', Math.round(10 * Math.random())]
 	        ]);
 
 	        var options = {
@@ -98,8 +104,8 @@
 	          yellowFrom:75, yellowTo: 90,
 	          minorTicks: 5
 	        };
-	        
-	        var chart = new google.visualization.Gauge(document.getElementById('chart_div'));
+	       
+	        var chart = new google.visualization.Gauge(document.getElementById(ID));
 
 	        chart.draw(data, options);
 
@@ -115,6 +121,8 @@
 	          data.setValue(2, 1, 60 + Math.round(20 * Math.random()));
 	          chart.draw(data, options);
 	        }, 26000);
-	      }
+	      }  
+	    
+	    
   </script>
 </html>
