@@ -45,6 +45,17 @@ public class Prometheus {
         clusterApi.setupClient("https://35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
     }
     
+    public Metric getUsageMetric(String instanceIp) throws IOException {
+        Metric metric = new Metric();
+        double cpuPercent = getCpuUsage(instanceIp) * 100;
+        double memPercent = getMemUsage(instanceIp) * 100;
+        double kiloBytesPerSecond = (getNetInputUsage(instanceIp)+getNetOutputUsage(instanceIp))/1000;
+        metric.setCpu(cpuPercent);
+        metric.setMem(memPercent);
+        metric.setNet(kiloBytesPerSecond);
+        return metric;
+    }
+    
     public Map<String, Double> getUsageMap(String instanceIp) throws IOException {
         Map<String, Double> map = new HashMap<String, Double>();
         double cpuPercent = getCpuUsage(instanceIp) * 100;
