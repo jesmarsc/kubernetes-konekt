@@ -179,11 +179,58 @@ public class ClusterApi {
     }
     public void setWatch(String url, String user, String pass) throws ApiException {
     	System.out.println("setwatch");
-    	Thread thread = new Thread(new WatchHandler(url, user, pass));
+    	Thread thread = new Thread(checkServices(url,user,pass));
     	thread.start();
         System.out.println("finish set watch");
        
     }
+    
+    
+    public Runnable checkServices(String curl, String cuser, String cpass) {
+
+        return new Runnable() {
+        	private Boolean shutDown = false;
+        	private String url = curl;
+        	private String user = cuser;
+        	private String pass = cpass;
+            public void run() {
+            	while (!shutDown)
+                {
+            		setupClient(url, user, pass);
+        			V1ServiceList result;
+        			try {
+        				result = getNamespacedV1ServiceList("monitoring");
+        			System.out.println("Trying to get prometheus ip");
+        			for(V1Service item :result.getItems()) {
+        				if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
+        					Cluster cluster = clusterService.getCluster(url);
+        					System.out.println(item);
+        					cluster.setPrometheusIp(item.getStatus().getLoadBalancer().getIngress().get(0).getIp());
+                    		 // set cluster status to running
+                    		 cluster.setStatus("Ready");
+                    		 // update cluster 
+                    		 // TODO: add logic to add cluster to master 
+                    		 accountService.updateAccountTables(cluster.getAccount());
+                    		 // shutdown thread
+                    		 	shutDown = true;
+        				}
+        			}
+        			} catch (ApiException e) {
+        				
+        				e.printStackTrace();
+        			}
+        			try {
+    					Thread.sleep(1000 * 10);
+
+    				} catch (InterruptedException e1) {
+    					e1.printStackTrace();
+    				}
+                }	
+            }
+        };
+    }
+    
+    
     public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
 
         String tab = "  ";

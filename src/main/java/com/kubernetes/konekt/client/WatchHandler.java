@@ -1,9 +1,7 @@
 package com.kubernetes.konekt.client;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
+import com.kubernetes.konekt.dao.ClusterDaoImpl;
 import com.kubernetes.konekt.entity.Cluster;
-import com.kubernetes.konekt.service.ClusterService;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
@@ -12,8 +10,8 @@ import io.kubernetes.client.models.V1ServiceList;
 
 public class WatchHandler implements Runnable {
 	
-	@Autowired
-	private ClusterService clusterService;
+	
+	private ClusterDaoImpl clusterDao;
 	
 	private ClusterApi clusterApi;
 
@@ -29,6 +27,7 @@ public class WatchHandler implements Runnable {
 		this.pass = pass;
 		clusterApi = new ClusterApi();
 		clusterApi.setupClient(url, user, pass);
+		clusterDao = new ClusterDaoImpl();
 	}
 	
 	
@@ -45,14 +44,15 @@ public class WatchHandler implements Runnable {
 			System.out.println("Trying to get prometheus ip");
 			for(V1Service item :result.getItems()) {
 				if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
-					Cluster cluster = clusterService.getCluster(url);
+						
+					Cluster cluster = clusterDao.getCluster(url);
 					System.out.println(item);
 					cluster.setPrometheusIp(item.getStatus().getLoadBalancer().getIngress().get(0).getIp());
             		 // set cluster status to running
             		 cluster.setStatus("Ready");
             		 // update cluster 
             		 // TODO: add logic to add cluster to master 
-            		 clusterService.updateEntry(cluster);
+            		 clusterDao.updateEntry(cluster);
             		 // shutdown thread
             		 	shutDown = true;
 				}
