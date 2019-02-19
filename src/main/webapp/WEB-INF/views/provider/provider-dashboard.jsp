@@ -116,15 +116,15 @@
   		
   		
   		
-  		<div class="w3-sidebar w3-bar-block " style="display:none" id="mySidebar">
+  		<div class="w3-sidebar w3-bar-block " style="display:none" id="mySidebar" >
    <!-- <button  class="w3-btn w3-circle" >;</button> -->
    
    <button type="button" class="btn btn-circle btn-gray float-right" onclick="w3_close()"><i class="glyphicon glyphicon-remove"> <font color="white" >&times;</font></i></button>
   <br/>
   <ul>
-	          <li class="active"><a data-toggle="collapse" data-target="#cluster1-div"  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
-	          <li><a data-toggle="collapse" data-target="#cluster2-div" href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
-	          <li><a  data-toggle="collapse" data-target="#cluster3-div"href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
+	          <li class="active"><a  href="javascript:unhide('cluster1-div', 'cluster2-div', 'cluster3-div', 'welcome')" class="button">Cluster List</a></li>
+	          <li><a href="javascript:unhide('cluster2-div', 'cluster1-div', 'cluster3-div', 'welcome')" class="button">Cluster Workload</a></li>
+	          <li><a  href="javascript:unhide('cluster3-div', 'cluster1-div', 'cluster2-div', 'welcome')" class="button">Cluster Upload</a></li>
 	        </ul>
 </div>
 
@@ -147,7 +147,13 @@
 		        document.getElementById(otherDivId2).className = 'hidden';
 		        document.getElementById(welcome).className = 'hidden';
 		        
-		        
+		    	document.getElementById(otherDivID).style.display = "";
+    			if(document.getElementById(otherDivID).style.visibility == "hidden") {
+    			document.getElementById(otherDivID).style.visibility = "visible";
+    			}
+    			else {
+    			document.getElementById(otherDivID).style.visibility = "hidden";
+    			}
 		}
 		
 		
@@ -177,13 +183,6 @@
     		  document.getElementById("mySidebar").style.display = "none";
     		  document.getElementById("openNav").style.display = "inline-block";
     		}
-    		function w3_toggle() {
-    	        if (document.getElementById("topMenu").style.display == "none") {
-    	            document.getElementById("topMenu").style.display = "block";
-    	        } else { 
-    	            document.getElementById("topMenu").style.display = "none";
-    	        }
-    	    }
     		
     		
     		
@@ -198,15 +197,15 @@
 	
 
 	
-	<div id="cluster1-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden collapse" >
+	<div id="cluster1-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  " >
 		<%@ include file="cluster-list.jsp" %>
 	</div>
 	
-	<div id="cluster2-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden collapse" >
+	<div id="cluster2-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden  " >
 		<%@ include file="cluster-workload.jsp" %>
 	</div>
 	
-	<div id="cluster3-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 collapse" >
+	<div id="cluster3-div" class="container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden " >
 		<%@ include file="upload-cluster.jsp" %>
 	</div> 
 	
