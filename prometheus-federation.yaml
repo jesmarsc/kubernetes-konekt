@@ -1,0 +1,9 @@
+- job_name: federated-prometheus
+  metrics_path: /federate
+  params:
+    match[]:
+    - '{job=~"node.*"}'
+  static_configs:
+  - targets:
+    - 35.233.197.146:9090
+    - 35.247.41.79:9090

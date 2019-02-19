@@ -86,7 +86,7 @@ public class ProviderController {
 			String deploymentName = container.getContainerName();
 			String namespace = container.getAccount().getUserName();
 			try {	
-				clusterApi.deleteDeployment(deploymentName, namespace, clusterUrl, clusterUser, clusterPass);
+				clusterApi.deleteDeployment(namespace, deploymentName);
 			} catch( ApiException e) {
 					e.printStackTrace();
 					String deleteClusterSuccessStatus = "Delete Cluster Failed: ";
@@ -175,7 +175,7 @@ public class ProviderController {
 			Blob encryptedPassword = cluster.getEncryptedPassword();
 			String userName = clusterSecurity.decodeCredential(encryptedUsername);
 			String passWord = clusterSecurity.decodeCredential(encryptedPassword);
-			clusterApi.deleteDeployment(deploymentName, username, clusterUrl, userName, passWord);
+			clusterApi.deleteDeployment(username, deploymentName);
 			// Deleting Deployment from database
 			containerService.deleteContainer(containerTBD);
 		} catch (Exception e) {

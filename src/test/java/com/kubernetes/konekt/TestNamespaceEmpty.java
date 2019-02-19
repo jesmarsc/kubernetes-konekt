@@ -14,7 +14,7 @@ public class TestNamespaceEmpty {
 		String namespace = "mary";
 		ClusterApi clusterApi = new ClusterApi();
 		
-		Boolean isEmpty = clusterApi.namespaceEmpty(namespace, url, username, password);
+		Boolean isEmpty = clusterApi.namespaceEmpty(namespace);
 		if(isEmpty) {
 			System.out.println("\n\n namespace is empty \n\n");
 		}

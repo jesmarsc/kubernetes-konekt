@@ -30,8 +30,10 @@ import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.ApiResponse;
 import io.kubernetes.client.Configuration;
+import io.kubernetes.client.apis.ApiextensionsV1beta1Api;
 import io.kubernetes.client.apis.AppsV1Api;
 import io.kubernetes.client.apis.CoreV1Api;
+import io.kubernetes.client.apis.CustomObjectsApi;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapList;
 import io.kubernetes.client.models.V1DeleteOptions;
@@ -42,90 +44,111 @@ import io.kubernetes.client.models.V1NamespaceList;
 import io.kubernetes.client.models.V1ObjectMeta;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1PodList;
+import io.kubernetes.client.models.V1Secret;
 import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1ServiceList;
+import io.kubernetes.client.models.V1beta1CustomResourceDefinition;
 import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
 @Component
 public class ClusterApi {
 
-	
-	private ApiClient client;
-	
-	private CoreV1Api coreInstance;
-	
-	private AppsV1Api appsInstance;
-	
-	private static String pretty = "true";
-	
-	@Autowired
-	private ClusterService clusterService;
-	
-	@Autowired
-	private ContainerService containerService;
-	
-	@Autowired
-	private AccountService accountService;
-	
-	@Autowired
-	private ClusterSecurity clusterSecurity;
+    private ApiClient client;
 
-    public List<Container> parseYaml(MultipartFile file, String clusterUrl, 
-            String clusterUser, String clusterPass, String namespace, Long providerId) throws IOException, ApiException {
+    private CoreV1Api coreInstance;
 
-        setupClient(clusterUrl, clusterUser, clusterPass);
+    private AppsV1Api appsInstance;
+
+    private ApiextensionsV1beta1Api apiExtensionsInstance;
+
+    private CustomObjectsApi customObjectsInstance;
+
+    private static String pretty = "true";
+
+    @Autowired
+    private ClusterService clusterService;
+
+    @Autowired
+    private ContainerService containerService;
+
+    @Autowired
+    private AccountService accountService;
+
+    @Autowired
+    private ClusterSecurity clusterSecurity;
+
+    public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
+
+        client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+
+        client.setDebugging(true);
+        client.setBasePath(clusterUrl);
+        Configuration.setDefaultApiClient(client);
+        coreInstance = new CoreV1Api(client);
+        appsInstance = new AppsV1Api(client);
+        customObjectsInstance = new CustomObjectsApi(client);
+        apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
+
+    }
+
+    public List<Container> parseYaml(MultipartFile file, String namespace, Long providerId) throws IOException, ApiException {
+
         saveFileLocally(file); // save file in local directory so convertyamlToObject can find the file
 
         FileReader fr = new FileReader(file.getOriginalFilename());
         List<Object> objects = Yaml.loadAll(fr);
         List<Container> result = new ArrayList<Container>();
-        String name = null;
+        String resource = null;
 
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
-                name = createDeployment((V1Deployment) body, namespace).getMetadata().getName();
-                
-                result.add(new Container(name,"Deployment","Running", clusterUrl,  providerId));
+                resource = createDeployment(namespace, (V1Deployment) body).getMetadata().getName();
+                result.add(new Container(resource, "Deployment", "Running", client.getBasePath(), providerId));
+
             } else if (body instanceof V1Service) {
-                name = createService((V1Service) body, namespace).getMetadata().getName();
-                result.add(new Container(name, "Service", "Running",clusterUrl, providerId));
+                resource = createService(namespace, (V1Service) body).getMetadata().getName();
+                result.add(new Container(resource, "Service", "Running", client.getBasePath(), providerId));
+
             } else if (body instanceof V1ConfigMap) {
-                name = createConfigMap((V1ConfigMap) body, namespace).getMetadata().getName();
-                result.add(new Container(name, "ConfigMap", "Running", clusterUrl, providerId));
+                resource = createConfigMap(namespace, (V1ConfigMap) body).getMetadata().getName();
+                result.add(new Container(resource, "ConfigMap", "Running", client.getBasePath(), providerId));
+
+            } else if (body instanceof V1beta1CustomResourceDefinition) {
+                resource = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body).getMetadata().getName();
+                
             }
         }
 
         return result;
     }
 
-    public List<Container> deploymentFromUserInput(String clusterUrl, String clusterUser, String clusterPass,
-            String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
+    public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
 
         String tab = "  ";
         String label = form.getKey() + ": " + form.getValue();
         String fileContent =
                 "apiVersion: apps/v1 \n" 
-              + "kind: Deployment \n"
-              + "metadata: \n"
-              + tab + "name: " + form.getDeploymentName() + "\n"
-              + tab + "labels: \n"
-              + tab + tab + label + "\n"
-              + "spec: \n"
-              + tab + "replicas: " + form.getReplicas() + "\n"
-              + tab + "selector: \n"
-              + tab + tab + "matchLabels: \n"
-              + tab + tab + tab + label + "\n"
-              + tab +"template: \n"
-              + tab + tab + "metadata: \n"
-              + tab + tab + tab + "labels: \n"
-              + tab + tab + tab + tab + label + "\n"
-              + tab + tab + "spec: \n"
-              + tab + tab + tab + "containers: \n"
-              + tab + tab + tab + "- name: " + form.getValue() + "\n"
-              + tab + tab + tab + tab + "image: " + form.getImage() + "\n"
-              + tab + tab + tab + tab + "ports: \n"
-              + tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
+                        + "kind: Deployment \n"
+                        + "metadata: \n"
+                        + tab + "name: " + form.getDeploymentName() + "\n"
+                        + tab + "labels: \n"
+                        + tab + tab + label + "\n"
+                        + "spec: \n"
+                        + tab + "replicas: " + form.getReplicas() + "\n"
+                        + tab + "selector: \n"
+                        + tab + tab + "matchLabels: \n"
+                        + tab + tab + tab + label + "\n"
+                        + tab +"template: \n"
+                        + tab + tab + "metadata: \n"
+                        + tab + tab + tab + "labels: \n"
+                        + tab + tab + tab + tab + label + "\n"
+                        + tab + tab + "spec: \n"
+                        + tab + tab + tab + "containers: \n"
+                        + tab + tab + tab + "- name: " + form.getValue() + "\n"
+                        + tab + tab + tab + tab + "image: " + form.getImage() + "\n"
+                        + tab + tab + tab + tab + "ports: \n"
+                        + tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
 
         String fileName = form.getDeploymentName() + ".yaml";
         File file = new File(fileName);
@@ -139,45 +162,57 @@ public class ClusterApi {
         content = Files.readAllBytes(path);
         MultipartFile readFile = new MockMultipartFile(fileName, fileName, contentType, content);
 
-        return parseYaml(readFile, clusterUrl, clusterUser, clusterPass, namespace,providerId);
-    }
-  
-    public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
-		
-		client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-
-        client.setDebugging(true);
-
-        Configuration.setDefaultApiClient(client);
-        coreInstance = new CoreV1Api(client);
-        appsInstance = new AppsV1Api(client);
-
+        return parseYaml(readFile, namespace, null);
     }
 
     private File saveFileLocally(MultipartFile file) throws IOException {
-            File convFile = new File(file.getOriginalFilename());
-            convFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-            return convFile;
+        File convFile = new File(file.getOriginalFilename());
+        convFile.createNewFile();
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
+    }
+    
+    public void setupPrometheus() throws ApiException, IOException {
+    	File folder = new File("manifests/custom-resource-definitions/");
+    	for(File file : folder.listFiles()) {
+    		System.out.println(file.getName());
+        	createCustomObject("manifests/custom-resource-definitions/" + file.getName());
+    	}
     }
 
-    public V1Deployment createDeployment(V1Deployment body, String namespace) throws ApiException {
+    public void createCustomObject(String fileName) throws ApiException, IOException {
+        //FileReader fr = new FileReader("manifests/custom-objects/prometheus-prometheus.yaml");
+        //Map prometheusMap = Yaml.loadAs(fr, Map.class);
+
+        FileReader fr1 = new FileReader(fileName);
+        V1beta1CustomResourceDefinition body = (V1beta1CustomResourceDefinition) Yaml.load(fr1); 
+        
+        createCustomResourceDefinition(body);
+
+       // customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
+        //        "monitoring", "prometheuses", prometheusMap, pretty);
+
+    }
+
+    public V1Deployment createDeployment(String namespace, V1Deployment body) throws ApiException {
 
         V1Deployment result = null;
         result = appsInstance.createNamespacedDeployment(namespace, body, pretty);
+
         return result;
     }
 
-    public V1Service createService(V1Service body, String namespace) throws ApiException {
+    public V1Service createService(String namespace, V1Service body) throws ApiException {
 
         V1Service result = null;
         result = coreInstance.createNamespacedService(namespace, body, pretty);
+
         return result;
     }
 
-    public V1ConfigMap createConfigMap(V1ConfigMap body, String namespace) throws ApiException {
+    public V1ConfigMap createConfigMap(String namespace, V1ConfigMap body) throws ApiException {
 
         V1ConfigMap result = null;
         result = coreInstance.createNamespacedConfigMap(namespace, body, pretty);
@@ -185,92 +220,86 @@ public class ClusterApi {
         return result;
     }
 
-    public void deleteDeployment(String deploymentName, String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
+    public V1beta1CustomResourceDefinition createCustomResourceDefinition
+    (V1beta1CustomResourceDefinition body) throws ApiException {
+        V1beta1CustomResourceDefinition result = null;
+        result = apiExtensionsInstance.createCustomResourceDefinition(body, pretty);
 
-        setupClient(clusterUrl, clusterUser, clusterPass);
+        return result;
+    }
+    
+    public V1Secret createSecret(String namespace, V1Secret body) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.createNamespacedSecret(namespace, body, pretty);
+        
+        return result;
+    }
+    
+    public V1Secret replaceSecret(String name, String namespace, V1Secret body) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.replaceNamespacedSecret(name, namespace, body, pretty);
+        
+        return result;
+    }
+
+    public void deleteDeployment(String namespace, String deploymentName) throws ApiException {
 
         V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions |
-
         appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
-
 
     }
 
-    public void deleteService(String serviceName, String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
-
-        setupClient(clusterUrl, clusterUser, clusterPass);
+    public void deleteService(String namespace, String serviceName) throws ApiException {
 
         V1DeleteOptions body = new V1DeleteOptions();
-
         coreInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
 
     }
 
-    public void deleteConfigMap(String configName, String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
-
-        setupClient(clusterUrl, clusterUser, clusterPass);
+    public void deleteConfigMap(String namespace, String configName) throws ApiException {
 
         V1DeleteOptions body = new V1DeleteOptions();
         coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
-        
+
     }
 
-    public void deleteNamespace(String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
-
-        setupClient(clusterUrl, clusterUser, clusterPass);
+    public void deleteNamespace(String namespace) throws ApiException {
 
         V1DeleteOptions body = new V1DeleteOptions();
 
-        try {
-            // The following call "apiInstance.deleteNamespaceWithHttpInfo" is known to
-            // throw an exception
-            // https://github.com/kubernetes-client/java/issues/86
-            // When the function is called it does delete the namespace even though the
-            // exception is thrown
-            // There is no fix yet. The only solution is to make the call and catch the
-            // exception and move on.
-            //ApiResponse<V1Status> response = 	// For debugging to read response
-            coreInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, null);
-           //V1Status result = response.getData(); // For debugging
-        } catch (ApiException e) {
-            System.err.println("Exception when calling CoreV1Api#deleteNamespace");
-            e.printStackTrace();
-            throw e;
-        }
+        // The following call "apiInstance.deleteNamespaceWithHttpInfo" is known to
+        // throw an exception
+        // https://github.com/kubernetes-client/java/issues/86
+        // When the function is called it does delete the namespace even though the
+        // exception is thrown
+        // There is no fix yet. The only solution is to make the call and catch the
+        // exception and move on.
+        //ApiResponse<V1Status> response = 	// For debugging to read response
+        coreInstance.deleteNamespaceWithHttpInfo(namespace, body, pretty, null, null, null);
+        //V1Status result = response.getData(); // For debugging
+
     }
 
-    public Boolean namespaceEmpty(String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
+    public Boolean namespaceEmpty(String namespace) throws ApiException {
 
-        setupClient(clusterUrl, clusterUser, clusterPass);
+        ApiResponse<V1PodList> response = 
+                coreInstance.listNamespacedPodWithHttpInfo(namespace, pretty, 
+                        null, null, null, null, null, null, null, null);
 
-
-            ApiResponse<V1PodList> response = 
-                    coreInstance.listNamespacedPodWithHttpInfo(namespace, pretty, 
-                            null, null, null, null, null, null, null, null);
-            List<V1Pod> list = response.getData().getItems();
-            if (list.isEmpty()) {
-                return true;
-            }
-
-
+        List<V1Pod> list = response.getData().getItems();
+        if (list.isEmpty()) {
+            return true;
+        }
 
         return false;
     }
 
-    public Boolean checkNamespaceAlreadyExist(String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
+    public Boolean checkNamespaceAlreadyExist(String namespace) throws ApiException {
 
-        setupClient(clusterUrl, clusterUser, clusterPass);
-
-       
         ApiResponse<V1NamespaceList> response = 
                 coreInstance.listNamespaceWithHttpInfo(pretty, 
                         null, null, null, null, null, null, null, null);
+
         V1NamespaceList result = response.getData();
         List<V1Namespace> list = result.getItems();
         for (V1Namespace item : list) {
@@ -282,10 +311,7 @@ public class ClusterApi {
         return false; // reached end of list without finding namespace
     }
 
-    public void createNamespace(String namespace, String clusterUrl,
-            String clusterUser, String clusterPass) throws ApiException {
-
-        setupClient(clusterUrl, clusterUser, clusterPass);
+    public void createNamespace(String namespace) throws ApiException {
 
         V1Namespace body = new V1Namespace(); // V1Namespace |
         V1ObjectMeta metadata = new V1ObjectMeta();
@@ -296,13 +322,12 @@ public class ClusterApi {
 
     }
 
-    public List<String> getDeploymentsByNamespace(String namespace, String clusterUrl, 
-            String clusterUser, String clusterPass) throws ApiException {
+    public List<String> getDeploymentsByNamespace(String namespace) throws ApiException {
 
-        setupClient(clusterUrl, clusterUser, clusterPass);
         ApiResponse<V1DeploymentList> response = 
                 appsInstance.listNamespacedDeploymentWithHttpInfo(namespace, pretty, 
                         null, null, null, null, null, null, null, null);
+
         List<V1Deployment> result = response.getData().getItems();
         List<String> deploymentNames = new ArrayList<String>();
         for (V1Deployment item : result) {
@@ -312,65 +337,65 @@ public class ClusterApi {
         return deploymentNames;
     }
 
-	public void checkUserWorkload(List<Container> containers) {
-		Cluster cluster = null;
-		String username = null;
-		
-		for(Container container : containers) {
-			cluster = clusterService.getCluster(container.getClusterUrl());
-			username = container.getAccount().getUserName();
-			Boolean found = false;
-			Blob encryptedUsername = cluster.getEncryptedUsername();
-			Blob encryptedPassword = cluster.getEncryptedPassword();
-			String clusterUsername = clusterSecurity.decodeCredential(encryptedUsername);
-			String clusterPassword	= clusterSecurity.decodeCredential(encryptedPassword);
-			setupClient(cluster.getClusterUrl(),clusterUsername , clusterPassword);
-			try {
-				if (container.getKind().equals("Deployment")) {
-					// get list of deployments running on namespace
-					ApiResponse<V1DeploymentList> response = appsInstance.listNamespacedDeploymentWithHttpInfo(username,
-							pretty, null, null, null, null, null, null, null, null);
-					List<V1Deployment> results = response.getData().getItems();
-					// check if deployment is on cluster  
-					for (Iterator<V1Deployment> iterator = results.iterator(); iterator.hasNext() && !found;) {
-						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
-							found = true;
-						}
-					}
-					
-				} else if (container.getKind().equals("Service")) {
-					// get list of services running on namespace
-					ApiResponse<V1ServiceList> response = coreInstance.listNamespacedServiceWithHttpInfo(username,
-							pretty, null, null, null, null, null, null, null, null);
-					List<V1Service> results = response.getData().getItems();
-					// check if Service is on cluster
-					for (Iterator<V1Service> iterator = results.iterator(); iterator.hasNext() && !found;) {
-						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
-							found = true;
-						}
-					}
+    public void checkUserWorkload(List<Container> containers) {
+        Cluster cluster = null;
+        String username = null;
 
-				} else if (container.getKind().equals("ConfigMap")) {
-					// get list of config maps in namespace
-					ApiResponse<V1ConfigMapList> response = coreInstance.listNamespacedConfigMapWithHttpInfo(username,
-							pretty, null, null, null, null, null, null, null, null);
-					List<V1ConfigMap> results = response.getData().getItems();
-					// check if config map  is in namespace
-					for (Iterator<V1ConfigMap> iterator = results.iterator(); iterator.hasNext() && !found;) {
-						if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
-							found = true;
-						}
-					}
-				}
-			} catch (ApiException e) {
+        for(Container container : containers) {
+            cluster = clusterService.getCluster(container.getClusterUrl());
+            username = container.getAccount().getUserName();
+            Boolean found = false;
+            Blob encryptedUsername = cluster.getEncryptedUsername();
+            Blob encryptedPassword = cluster.getEncryptedPassword();
+            String clusterUsername = clusterSecurity.decodeCredential(encryptedUsername);
+            String clusterPassword	= clusterSecurity.decodeCredential(encryptedPassword);
+            setupClient(cluster.getClusterUrl(),clusterUsername , clusterPassword);
+            try {
+                if (container.getKind().equals("Deployment")) {
+                    // get list of deployments running on namespace
+                    ApiResponse<V1DeploymentList> response = appsInstance.listNamespacedDeploymentWithHttpInfo(username,
+                            pretty, null, null, null, null, null, null, null, null);
+                    List<V1Deployment> results = response.getData().getItems();
+                    // check if deployment is on cluster  
+                    for (Iterator<V1Deployment> iterator = results.iterator(); iterator.hasNext() && !found;) {
+                        if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+                            found = true;
+                        }
+                    }
 
-			}
-			if(!found) {
-				containerService.deleteContainer(container);
-				accountService.updateAccountTables(container.getAccount());
-				
-			}
-		}
+                } else if (container.getKind().equals("Service")) {
+                    // get list of services running on namespace
+                    ApiResponse<V1ServiceList> response = coreInstance.listNamespacedServiceWithHttpInfo(username,
+                            pretty, null, null, null, null, null, null, null, null);
+                    List<V1Service> results = response.getData().getItems();
+                    // check if Service is on cluster
+                    for (Iterator<V1Service> iterator = results.iterator(); iterator.hasNext() && !found;) {
+                        if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+                            found = true;
+                        }
+                    }
 
-	}
+                } else if (container.getKind().equals("ConfigMap")) {
+                    // get list of config maps in namespace
+                    ApiResponse<V1ConfigMapList> response = coreInstance.listNamespacedConfigMapWithHttpInfo(username,
+                            pretty, null, null, null, null, null, null, null, null);
+                    List<V1ConfigMap> results = response.getData().getItems();
+                    // check if config map  is in namespace
+                    for (Iterator<V1ConfigMap> iterator = results.iterator(); iterator.hasNext() && !found;) {
+                        if(iterator.next().getMetadata().getName().equals(container.getContainerName())) {
+                            found = true;
+                        }
+                    }
+                }
+            } catch (ApiException e) {
+
+            }
+            if(!found) {
+                containerService.deleteContainer(container);
+                accountService.updateAccountTables(container.getAccount());
+
+            }
+        }
+
+    }
 }
