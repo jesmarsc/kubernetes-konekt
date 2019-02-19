@@ -20,6 +20,12 @@ import io.kubernetes.client.util.Yaml;
 public class TestPrometheus {
     
     private ClusterApi clusterApi;
+    
+    private Prometheus prometheus;
+    
+    public TestPrometheus() {
+        prometheus = new Prometheus();
+    }
 
     public void addPrometheusInstance(String instanceIp) throws IOException {
         
@@ -72,7 +78,8 @@ public class TestPrometheus {
     public static void main(String[] args) throws IOException, ApiException {
         TestPrometheus temp = new TestPrometheus();
         
-        temp.addPrometheusInstance("35.247.41.79:9090");
+        
+        temp.addPrometheusInstance("35.192.209.72:9090");
         temp.updatePrometheusSecret();
     }
 

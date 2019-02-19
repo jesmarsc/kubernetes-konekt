@@ -63,7 +63,7 @@ public class UserController {
 		// Currently any entry on database not found on cluster is removed from database
 		clusterApi.checkUserWorkload(currentAccount.getContainers());
 		model.addAttribute("currentAccount", currentAccount);
-
+		
 		List<Cluster> availableClusters = clusterService.getAllClusters();
 		model.addAttribute("availableClusters", availableClusters);
 
@@ -128,7 +128,7 @@ public class UserController {
             e.printStackTrace();
             String uploadContainerFailStatus = "Deployment Failed";
             String uploadContainerFailMessage = "The YAML: '" + yamlBuildForm.getDeploymentName()
-                    + "' could not be uploaded. There was an error uploading the file content";
+                    + "' could not be uploaded. There was an error uploading the file content. Error Message: " + e.getMessage();;
             model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
@@ -200,7 +200,7 @@ public class UserController {
 		} catch (ApiException e1) {
             String uploadContainerFailStatus = "Upload Failed";
             String uploadContainerFailMessage = "The YAML: '" + file.getOriginalFilename()
-                    + "' could not be uploaded. Cluster is currently not available choose another cluster.";
+                    + "' could not be uploaded. Error Message: " + e1.getMessage();
             model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
 			e1.printStackTrace();
@@ -219,11 +219,13 @@ public class UserController {
             model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
-        } catch (ApiException e) {
+        } 
+        catch (ApiException e) {
             e.printStackTrace();
+            
             String uploadContainerFailStatus = "Upload Failed";
             String uploadContainerFailMessage = "The YAML: '" + file.getOriginalFilename()
-                    + "' could not be uploaded. There was a conflict with currently uploaded deployments. Check metadata (apps may not have the same name).";
+                    + "' could not be uploaded. There was a conflict with currently uploaded deployments. Error Message: " + e.getMessage();
             model.addAttribute("uploadContainerFailStatus", uploadContainerFailStatus);
             model.addAttribute("uploadContainerFailMessage", uploadContainerFailMessage);
             return this.showUserDashboard(model);
@@ -274,7 +276,7 @@ public class UserController {
         } catch (ApiException e) {
             e.printStackTrace();
             String deleteContainerToClusterStatus = "Delete Failed";
-            String deleteContainerToClusterMessage = "The deployment: '" + deploymentName + "' could not be deleted.";
+            String deleteContainerToClusterMessage = "The deployment: '" + deploymentName + "' could not be deleted. Error Message: " + e.getMessage();
             model.addAttribute("deleteContainerToClusterStatus", deleteContainerToClusterStatus);
             model.addAttribute("deleteContainerToClusterMessage", deleteContainerToClusterMessage);
             return this.showUserDashboard(model);

@@ -31,7 +31,4 @@ spec:
   serviceMonitorSelector:
     matchLabels:
       k8s-app: prometheus
-  additionalScrapeConfigs:
-    name: prometheus-additional-configs
-    key: prometheus-federation.yaml
   version: v2.5.0

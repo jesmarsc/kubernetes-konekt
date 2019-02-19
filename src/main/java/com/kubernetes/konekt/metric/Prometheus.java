@@ -36,8 +36,46 @@ public class Prometheus {
     @Autowired
     private ObjectMapper objectMapper;
     
-    @Autowired
     private ClusterApi clusterApi;
+    
+    public Prometheus() {
+        restTemplate = new RestTemplate();
+        objectMapper = new ObjectMapper();
+        clusterApi = new ClusterApi();
+        clusterApi.setupClient("https://35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
+    }
+    
+    public Map<String, Double> getUsageMap(String instanceIp) throws IOException {
+        Map<String, Double> map = new HashMap<String, Double>();
+        double cpuPercent = getCpuUsage(instanceIp) * 100;
+        map.put("cpu", cpuPercent);
+        double memPercent = getMemUsage(instanceIp) * 100;
+        map.put("mem", memPercent);
+        double kiloBytesPerSecond = (getNetInputUsage(instanceIp)+getNetOutputUsage(instanceIp))/1000;
+        map.put("net", kiloBytesPerSecond);
+        return map;
+    }
+    
+    public Map<String, Double> getCpuUsageMap(String instanceIp) throws IOException {
+        Map<String, Double> map = new HashMap<String, Double>();
+        double percent = getCpuUsage(instanceIp) * 100;
+        map.put("cpu", percent);
+        return map;
+    }
+    
+    public Map<String, Double> getMemUsageMap(String instanceIp) throws IOException {
+        Map<String, Double> map = new HashMap<String, Double>();
+        double percent = getMemUsage(instanceIp) * 100;
+        map.put("mem", percent);
+        return map;
+    }
+    
+    public Map<String, Double> getNetUsageMap(String instanceIp) throws IOException {
+        Map<String, Double> map = new HashMap<String, Double>();
+        double kiloBytesPerSecond = (getNetInputUsage(instanceIp)+getNetOutputUsage(instanceIp))/1000;
+        map.put("net", kiloBytesPerSecond);
+        return map;
+    }
     
     public double getCpuUsage(String instanceIp) throws IOException {
         String params = "{instance=\""+ instanceIp + "\",mode=\"idle\"}";
@@ -45,7 +83,11 @@ public class Prometheus {
                 "http://" + masterInstance + "/api/v1/query?query="
                 + "1-avg(irate(node_cpu_seconds_total{instance}[2m]))", 
                 String.class, params);
+        System.out.println(query);
         JsonNode node = objectMapper.readTree(query);
+        if(node.get("data").get("result").get(0) == null) {
+            return 0;
+        }
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
@@ -66,6 +108,9 @@ public class Prometheus {
         URI uri = uriComponents.toUri();
         String query = restTemplate.getForObject(uri, String.class);
         JsonNode node = objectMapper.readTree(query);
+        if(node.get("data").get("result").get(0) == null) {
+            return 0;
+        }
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
@@ -76,6 +121,9 @@ public class Prometheus {
                 + "sum(irate(node_network_receive_bytes_total{instance}[2m]))", 
                 String.class, params);
         JsonNode node = objectMapper.readTree(query);
+        if(node.get("data").get("result").get(0) == null) {
+            return 0;
+        }
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
@@ -86,6 +134,9 @@ public class Prometheus {
                 + "sum(irate(node_network_transmit_bytes_total{instance}[2m]))", 
                 String.class, params);
         JsonNode node = objectMapper.readTree(query);
+        if(node.get("data").get("result").get(0) == null) {
+            return 0;
+        }
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
@@ -104,10 +155,13 @@ public class Prometheus {
         URI uri = uriComponents.toUri();
         String query = restTemplate.getForObject(uri, String.class);
         JsonNode node = objectMapper.readTree(query);
+        if(node.get("data").get("result").get(0) == null) {
+            return 0;
+        }
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
-    public void addPrometheusInstance(String instanceIp) throws IOException {
+    public void addPrometheusInstance(String instanceIp) throws IOException, ApiException {
         
         FileReader fileReader = new FileReader("prometheus-federation.yaml");
         ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
@@ -121,9 +175,11 @@ public class Prometheus {
         FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
         Yaml.dump(topArray, fileWriter);
         fileWriter.close();
+        
+        this.replaceAdditionalConfigs();
     }
     
-    public void removePrometheusInstance(String instanceIp) throws IOException {
+    public void removePrometheusInstance(String instanceIp) throws IOException, ApiException {
         
         FileReader fileReader = new FileReader("prometheus-federation.yaml");
         ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
@@ -137,6 +193,8 @@ public class Prometheus {
         FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
         Yaml.dump(topArray, fileWriter);
         fileWriter.close();
+        
+        this.replaceAdditionalConfigs();
     }
     
     public void replaceAdditionalConfigs() throws IOException, ApiException {
@@ -151,6 +209,11 @@ public class Prometheus {
         body.setMetadata(meta);
         
         clusterApi.replaceSecret(meta.getName(), meta.getNamespace(), body);
+    }
+    
+    public static void main(String[] args) throws IOException, ApiException {
+        Prometheus temp = new Prometheus();
+        
     }
 
 }
