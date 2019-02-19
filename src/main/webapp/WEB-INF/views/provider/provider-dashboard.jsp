@@ -12,7 +12,7 @@
 
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Refresh" content="100"> <!-- used as a backup, will refresh entire page ever 100sec -->
+    <meta http-equiv="Refresh" content="120"> <!-- used as a backup, will refresh entire page ever 100sec -->
     
     <!-- Title at the Tab of the Browser -->
 	<title>Provider Dashboard</title>
@@ -172,25 +172,20 @@
     	
     	
     	function w3_open() {
-    		  document.getElementById("main").style.marginLeft = "25%";
-    		  document.getElementById("mySidebar").style.width = "25%";
-    		  document.getElementById("mySidebar").style.display = "block";
-    		  document.getElementById("openNav").style.display = 'none';
+    		
+    		if(document.getElementById("mySidebar").style.display !== 'block'){
+    			document.getElementById("main").style.marginLeft = "10%";
+      			document.getElementById("mySidebar").style.width = "10%";
+      			document.getElementById("mySidebar").style.display = "block";
+      		  	document.getElementById("openNav").style.display = 'none';
+    		}else{
+    			document.getElementById("main").style.marginLeft = "0%";
+      		  	document.getElementById("mySidebar").style.display = "none";
+      		  	document.getElementById("openNav").style.display = "inline-block";
+    		}
+    		  
     		}
 
-    		function w3_close() {
-    		  document.getElementById("main").style.marginLeft = "0%";
-    		  document.getElementById("mySidebar").style.display = "none";
-    		  document.getElementById("openNav").style.display = "inline-block";
-    		}
-    		
-    		
-    		
-    		
-    		
-    		
-    		
-    		
 	</script>
 	
 	<div id="main">
