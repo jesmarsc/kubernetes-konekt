@@ -126,55 +126,47 @@ public class ClusterApi {
         List<Container> result = new ArrayList<Container>();
         String resource = null;
         
+        if(settingPrometheus) {
+            namespace = "monitoring";
+        }
+        
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
-            	namespace = settingPrometheus ? ((V1Deployment) body).getMetadata().getNamespace() : namespace;
                 resource = createDeploymentV1(namespace, (V1Deployment) body).getMetadata().getName();
                 result.add(new Container(resource, "Deployment", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1Service) {
-            	namespace = settingPrometheus ? ((V1Service) body).getMetadata().getNamespace() : namespace;
                 resource = createService(namespace, (V1Service) body).getMetadata().getName();
                 result.add(new Container(resource, "Service", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1ConfigMap) {
-            	namespace = settingPrometheus ? ((V1ConfigMap) body).getMetadata().getNamespace() : namespace;
                 resource = createConfigMap(namespace, (V1ConfigMap) body).getMetadata().getName();
                 result.add(new Container(resource, "ConfigMap", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1beta1CustomResourceDefinition) {
-            	namespace = settingPrometheus ? ((V1beta1CustomResourceDefinition) body).getMetadata().getNamespace() : namespace;
                 resource = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body).getMetadata().getName();
                 result.add(new Container(resource, "CustomResourceDefinitions", "Running", client.getBasePath(), providerId));
-            }else if (body instanceof V1ClusterRole ) {
-            	namespace = settingPrometheus ? ((V1ClusterRole) body).getMetadata().getNamespace() : namespace;
+            } else if (body instanceof V1ClusterRole ) {
             	resource = createClusterRole((V1ClusterRole) body).getMetadata().getName();
             	result.add(new Container(resource, "ClusterRole", "Running", client.getBasePath(), providerId));
-            }else if (body instanceof V1ClusterRoleBinding ) {
-            	namespace = settingPrometheus ? ((V1ClusterRoleBinding) body).getMetadata().getNamespace() : namespace;
+            } else if (body instanceof V1ClusterRoleBinding ) {
             	resource = createClusterRoleBinding((V1ClusterRoleBinding) body).getMetadata().getName();
             	result.add(new Container(resource, "ClusterRoleBinding", "Running", client.getBasePath(), providerId));
-            }else if(body instanceof V1ServiceAccount) {
-            	namespace = settingPrometheus ? ((V1ServiceAccount) body).getMetadata().getNamespace() : namespace;
+            } else if(body instanceof V1ServiceAccount) {
             	 resource = createServiceAccount(namespace,(V1ServiceAccount)body).getMetadata().getName();
             	 result.add(new Container(resource, "ServiceAccount", "Running", client.getBasePath(), providerId));
-            }else if(body instanceof V1Role){
-            	namespace = settingPrometheus ? ((V1Role) body).getMetadata().getNamespace() : namespace;
+            } else if(body instanceof V1Role){
             	resource = createRole(namespace,(V1Role)body).getMetadata().getName();
             	result.add(new Container(resource, "Role", "Running", client.getBasePath(), providerId));
-            }else if(body instanceof V1beta2DaemonSet){
-            	namespace = settingPrometheus ? ((V1beta2DaemonSet) body).getMetadata().getNamespace() : namespace;
+            } else if(body instanceof V1RoleBinding ) {
+                resource = createNamespacedRoleBinding((V1RoleBinding) body, namespace).getMetadata().getName();
+                result.add(new Container(resource, "V1RoleBinding", "Running", client.getBasePath(), providerId));
+            } else if(body instanceof V1beta2DaemonSet){
             	resource = createDaemonSet((V1beta2DaemonSet)body,namespace).getMetadata().getName();
             	result.add(new Container(resource, "V1beta2DaemonSet", "Running", client.getBasePath(), providerId));
-            }else if(body instanceof V1Namespace && settingPrometheus) {
-            	
+            } else if(body instanceof V1Namespace && settingPrometheus) {
             	namespace = ((V1Namespace)body).getMetadata().getName();
             	createNamespace(namespace);
-            }else if(body instanceof V1beta2Deployment) {
-            	namespace = settingPrometheus ? ((V1beta2Deployment) body).getMetadata().getNamespace() : namespace;
+            } else if(body instanceof V1beta2Deployment) {
             	resource = createDeploymentV1Beta2(namespace,(V1beta2Deployment)body).getMetadata().getName();
             	result.add(new Container(resource, "V1beta2Deployment", "Running", client.getBasePath(), providerId));
-            }else if(body instanceof V1RoleBinding ) {
-            	namespace = settingPrometheus ? ((V1RoleBinding) body).getMetadata().getNamespace() : namespace;
-            	resource = createNamespacedRoleBinding((V1RoleBinding) body, namespace).getMetadata().getName();
-            	result.add(new Container(resource, "V1RoleBinding", "Running", client.getBasePath(), providerId));
             }
 
         }
@@ -259,7 +251,7 @@ public class ClusterApi {
                         + tab + "selector:\n"
                         + tab + tab + "matchLabels:\n"
                         + tab + tab + tab + label + "\n"
-                        + tab +"template:\n"
+                        + tab + "template:\n"
                         + tab + tab + "metadata:\n"
                         + tab + tab + tab + "labels:\n"
                         + tab + tab + tab + tab + label + "\n"
@@ -278,7 +270,7 @@ public class ClusterApi {
 
         MultipartFile readFile = convertMultipartFile(fileName,fileName);
 
-        return parseYaml(readFile, namespace, null);
+        return parseYaml(readFile, namespace, providerId);
     }
 
     private File saveFileLocally(MultipartFile file) throws IOException {

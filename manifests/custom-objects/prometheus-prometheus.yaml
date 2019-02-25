@@ -29,6 +29,10 @@ spec:
   serviceAccountName: prometheus-k8s
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector:
-    matchLabels:
-      k8s-app: prometheus
+    matchExpressions:
+    - key: k8s-app
+      operator: In
+      values:
+      - kubelet
+      - node-exporter
   version: v2.5.0

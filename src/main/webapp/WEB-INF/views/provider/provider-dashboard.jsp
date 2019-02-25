@@ -68,6 +68,8 @@
 	</div>
 
 	<!-- Begin Code for Forms -->
+	<iframe src="http://104.198.3.94:3000/d/85a562078cdf77779eaa1add43ccec1e/k8s-compute-resources-namespace?refresh=10s&orgId=1&theme=light&kiosk"
+	width="1200" height="1500"></iframe>
 	<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">

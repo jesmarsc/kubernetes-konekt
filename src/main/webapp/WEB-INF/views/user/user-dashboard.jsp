@@ -173,7 +173,7 @@
 	</div>
 
 	<sec:authorize access="hasRole('USER')">
-		<input type="button" onclick="location.href='user/build-yaml'"
+		<input type="button" onclick="location.href='/user/build-yaml'"
 			value="Build A Yaml File" class="btn btn-light text-center mx-4 my-4">
 	</sec:authorize>
 	
