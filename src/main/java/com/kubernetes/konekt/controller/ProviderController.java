@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,10 +64,9 @@ public class ProviderController {
 	
 	@RequestMapping(value = "/provider")
 	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, 
-			BindingResult theBindingResult, Model model) {
+			BindingResult theBindingResult, Model model, @AuthenticationPrincipal Account activeAccount) {
 		
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Account currentAccount = accountService.findByUserName(username);
+		//Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
 		model.addAttribute("runningContainers", containers);

@@ -51,7 +51,7 @@ public class Grafana {
         
         String query = restTemplate.postForObject("http://"+ masterGrafana + "/api/dashboards/db", entity, String.class);
         JsonNode node = objectMapper.readTree(query);
-        return node.get("uid").asText();
+        return node.get("url").asText();
     }
     
     public void addInstace(String instanceIp, String uid) throws IOException {
@@ -101,5 +101,6 @@ public class Grafana {
         test.setObjectMapper(new ObjectMapper());
         test.setRestTemplate(new RestTemplate());
         String uid = test.createDashboard("mary");
+        System.out.println(uid);
     }
 }
