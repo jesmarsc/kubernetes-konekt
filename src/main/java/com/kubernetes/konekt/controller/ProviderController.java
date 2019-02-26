@@ -64,9 +64,10 @@ public class ProviderController {
 	
 	@RequestMapping(value = "/provider")
 	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, 
-			BindingResult theBindingResult, Model model, @AuthenticationPrincipal Account activeAccount) {
+			BindingResult theBindingResult, Model model) {
 		
-		//Account currentAccount = accountService.findByUserName(username);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
 		model.addAttribute("runningContainers", containers);
