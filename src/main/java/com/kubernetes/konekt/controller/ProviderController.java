@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -63,10 +64,9 @@ public class ProviderController {
 	
 	@RequestMapping(value = "/provider")
 	public String showProviderDashboard(@Valid @ModelAttribute("newClusterForm") UploadClusterForm uploadClusterForm, 
-			BindingResult theBindingResult, Model model) {
+			BindingResult theBindingResult, Model model, @AuthenticationPrincipal Account activeAccount) {
 		
-		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Account currentAccount = accountService.findByUserName(username);
+		//Account currentAccount = accountService.findByUserName(username);
 		model.addAttribute("currentAccount", currentAccount);
 		List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
 		model.addAttribute("runningContainers", containers);
@@ -78,7 +78,6 @@ public class ProviderController {
 		for(Cluster cluster:clusters) {
 		    try {
                 metrics.add(prometheus.getUsageMetric(cluster.getPrometheusIp()));
-
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -152,7 +151,7 @@ public class ProviderController {
 			Blob encryptedUsername = clusterSecurity.encodeCredential(clusterUsername);
 			Blob encryptedPassword = clusterSecurity.encodeCredential(clusterPassword);
 			
-			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0);	
+			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0, "35.233.197.146:9090");	
 	
 			// Get current user 
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -168,8 +167,8 @@ public class ProviderController {
 			clusterUsername = uploadClusterForm.getClusterUsername();
 			clusterPassword = uploadClusterForm.getClusterPassword();
 			// Set up prometheus
-			clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
-			clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
+			//clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
+			//clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
 			
 			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";

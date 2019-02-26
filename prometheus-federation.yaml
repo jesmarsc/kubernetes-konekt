@@ -3,6 +3,8 @@
   params:
     match[]:
     - '{job=~"node.*"}'
+    - '{job=~"container.*"}'
+    - '{job=~"kube.*"}'
   static_configs:
   - targets:
     - 35.233.197.146:9090

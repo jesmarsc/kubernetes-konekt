@@ -2,6 +2,7 @@ package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -120,7 +121,7 @@ public class UserController {
             return this.showUserDashboard(model);
         }
         
-        List<Container> resources = null;
+        List<Container> resources = new ArrayList<Container>();
 
         try {
             resources = clusterApi.deploymentFromUserInput(username, yamlBuildForm, providerId);
@@ -175,7 +176,7 @@ public class UserController {
         // Choose cluster for the user.
         if(uploadForm.getClusterUrl().isEmpty()) {
         	chosenCluster = scheduler.getNextCluster();
-        }else {
+        } else {
         	chosenCluster = clusterService.getCluster(uploadForm.getClusterUrl());
         }
 
@@ -207,7 +208,7 @@ public class UserController {
 			return this.showUserDashboard(model);
 		}
 
-		List<Container> resources = null;
+		List<Container> resources = new ArrayList<Container>();
 
         try {
             resources = clusterApi.parseYaml(file, username, providerId);

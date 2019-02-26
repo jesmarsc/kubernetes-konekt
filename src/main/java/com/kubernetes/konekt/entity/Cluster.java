@@ -12,8 +12,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "cluster_info")
+@JsonIgnoreProperties({"account", "encryptedUsername", "encryptedPassword"})
 public class Cluster {
 
 	//TODO: add to database status, prometheus_uid, prometheus_ip
@@ -51,13 +54,14 @@ public class Cluster {
 	public Cluster() {
 	}
 	
-	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin) {
+	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, 
+	        Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin, String prometheusIp) {
 		this.clusterUrl = clusterUrl;
 		this.encryptedUsername = encryptedUsername;
 		this.encryptedPassword = encryptedPassword;
 		this.roundRobin = roundRobin;
 		this.status = "Pending";
-		this.prometheusIp = "";
+		this.prometheusIp = prometheusIp;
 	}
 
 	public Integer getRoundRobin() {
