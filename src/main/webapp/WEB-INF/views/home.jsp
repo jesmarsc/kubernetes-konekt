@@ -111,7 +111,7 @@
 				</div>
 				<div class="col-md-7">
 					<div class="slide-holder">
-						<div class="img-slide scroll-trigger"><img src="images/img-01.png" height="450" width="684" alt=""></div>
+						<div class="img-slide scroll-trigger"><img src="https://outcrawl.com/static/76acbf5eebdbc17b190ddb2d02988e64/b3b80/cover.jpg" height="365" width="650" alt=""></div>
 					</div>
 				</div>
 			</div>

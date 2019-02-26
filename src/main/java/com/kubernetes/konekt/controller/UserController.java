@@ -85,7 +85,7 @@ public class UserController {
     @RequestMapping(value = "/user/YamlBuildConfirmation")
     public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm,
             BindingResult theBindingResult, Model model)  {
-
+    	Model newModel;
         if (theBindingResult.hasErrors()) {
             return yamlBuilder(yamlBuildForm, model);
         }

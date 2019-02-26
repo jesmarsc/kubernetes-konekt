@@ -85,6 +85,7 @@ public class ProviderController {
 		}
 
 		model.addAttribute("metrics", metrics);
+
 		return "provider/provider-dashboard";
 	}
 

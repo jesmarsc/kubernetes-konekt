@@ -18,5 +18,8 @@ public class HomeController {
 	public String home(Model model) throws IOException {
 		return "home";
 	}
-	
+	@RequestMapping(value = "/java-script", method = RequestMethod.GET)
+	public String javaScriptDemo(Model model) throws IOException {
+		return "java-script-demo";
+	}
 }
