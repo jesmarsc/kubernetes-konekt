@@ -190,11 +190,23 @@
 	</div>
 
 	<sec:authorize access="hasRole('USER')">
-		<input type="button" onclick="location.href='user/build-yaml'"
+		<input type="button" 
+			onclick="location.href='/user/build-yaml'"
 			value="Build A Yaml File" class="btn btn-light text-center mx-4 my-4">
 	</sec:authorize>
-	
-	
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script
+		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+		<script type="application/javascript">
+		
+   			 $('input[type="file"]').change(function(e){
+       		 var fileName = e.target.files[0].name;
+        	$('.custom-file-label').html(fileName);
+   		 });
+		
+	</script>
 <!-- 	
 		<script type="text/javascript">
 		var count = 0;

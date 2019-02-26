@@ -30,7 +30,6 @@ public class AccountDaoImpl implements AccountDao {
 		} catch (Exception e) {
 			account = null;
 		}
-
 		return account;
 	}
 	
