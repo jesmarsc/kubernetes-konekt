@@ -52,6 +52,7 @@ public class ClusterDaoImpl implements ClusterDao {
 		Session currentSession = factory.unwrap(Session.class);
 		currentSession.delete(cluster);
 		
+		
 	}
 
 

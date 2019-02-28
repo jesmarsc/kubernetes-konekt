@@ -124,6 +124,11 @@ public class ProviderController {
 			accountService.updateAccountTables(container.getAccount());
 		}
 		clusterService.deleteCluster(TBDeletedCluster);
+		Account account = TBDeletedCluster.getAccount();
+		List<Cluster> clusterList = account.getClusters();
+		clusterList.remove(TBDeletedCluster);
+		account.setClusters(clusterList);
+		accountService.updateAccountTables(account);
 		
 		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
 		String deleteClusterSuccessMessage = "Cluster with URL: " + TBDeletedCluster.getClusterUrl() + " has been deleted";

@@ -6,7 +6,7 @@
 
 <html>
 	
-	<div id="clusterWork-div">
+	<div class="clusterWork-div" id="clusterWork-div">
 
 	<h3>Running On Your Clusters</h3>
 		<!-- Beginning of table -->
