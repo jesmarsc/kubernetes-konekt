@@ -34,7 +34,11 @@ public class ContainerDaoImpl implements ContainerDao {
 	@Override
 	public void deleteContainer(Container containerTBD) {
 		Session currentSession = factory.unwrap(Session.class);
-		currentSession.delete(containerTBD);
+		// cannot specify query type because query created is native thats why warning is being surpressed
+		@SuppressWarnings("rawtypes")
+		Query query = currentSession.createNativeQuery("DELETE FROM container_info WHERE id = :id ");
+		query.setParameter("id",containerTBD.getId());
+		query.executeUpdate();
 	}
 
 	@Override

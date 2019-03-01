@@ -17,7 +17,7 @@
     <!-- Title at the Tab of the Browser -->
 	<title>Provider Dashboard</title>
    
-    <link href="https://fonts.googleapis.com/css?family=Maven+Pro:700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Maven+Pro:bold|700" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -25,7 +25,10 @@
     <link href="/css/light-bootstrap-dashboard.css?v=2.0.1" rel="stylesheet" />
      <style>
      
-     
+     body {
+        font-family: 'Maven+Pro';
+        font-size: 20px;
+      }
      	.card-header-blue {
     background-color:#003d99;
     color:#FFFFFF;
@@ -44,6 +47,7 @@
 
 <!-- Begin Body -->
 <body>
+
 	    <div class="wrapper">
         <div class="sidebar"  data-color="blue" data-image="images/sidebar-6.jpg">
             <!--
@@ -80,7 +84,9 @@
                 </ul>
             </div>
         </div>
-       <div class="main-panel" >
+        <!-- the next line can be add to give blue background to main-panel -->
+        <!-- style="background:transparent url('images/sidebar-6.jpg') no-repeat center center /cover" -->
+       <div class="main-panel"  >
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg ">
                 <div class=" container  ">
@@ -126,39 +132,7 @@
 			
                 </div>
             </nav>
-            
-            	
-		
-	<div id="main">
-	
-
-	
-	<div id="cluster-list-div1" class=" cluster-list-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  " >
-	<%@ include file="cluster-list.jsp" %>
-	</div>
-	
-	<div id="cluster-workload-div1" class=" cluster-workload-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden  " >
-	<%@ include file="cluster-workload.jsp" %>
-	</div>
-	
-	<div id="cluster-upload-form-div1" class=" cluster-upload-form-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden " >
-	<%@ include file="upload-cluster.jsp" %>
-	</div> 
-	
-	<div id="cluster-metrics-div1" class=" cluster-metrics-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  " >
-		
-	</div>
-            
-            
-            
-            
-            
-            </div>
-
-
-	<!-- Begin Code for Forms -->
-
-	<c:choose>
+<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 	        <div class="alert alert-danger" role="alert">
@@ -192,13 +166,33 @@
 	
 	    </c:otherwise>
 	</c:choose>
-	
-	</div>
-	
+
+				<div id="cluster-list-div1"
+					class=" cluster-list-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  ">
+					<%@ include file="cluster-list.jsp"%>
+				</div>
+
+				<div id="cluster-workload-div1"
+					class=" cluster-workload-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden  ">
+					<%@ include file="cluster-workload.jsp"%>
+				</div>
+
+				<div id="cluster-upload-form-div1"
+					class=" cluster-upload-form-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden ">
+					<%@ include file="upload-cluster.jsp"%>
+				</div>
+
+				<div id="cluster-metrics-div1"
+					class=" cluster-metrics-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  ">
+
+				</div>
 
 
 
-	
+
+
+			</div>
+
 	<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
 	<script type="text/javascript">
 		
@@ -211,14 +205,14 @@
 		clusterListClone =  $(".clusterList-div").clone();
 		clusterWorkLoadClone = $(".clusterWork-div").clone();
 		clusterUploadFormClone = $(".clusterUpload-div").clone();
-		
-		remove();
+
 
 	}
 	$(window).on('load',function(){
 		clone();
 		show(1,'');
 		show(1,'');
+		
 		});
 
 	function remove(){
@@ -257,48 +251,6 @@
 		document.getElementById("clusterUploadFormNavLink").className="";
 		
 	}
-
-		function unhide(divID, otherDivId, otherDivId2,welcome) {
-		    var item = document.getElementById(divID);
-		    if (item) {
-		    	
-		            item.className=(item.className=='hidden')?'unhidden container mx-1 my-4 col-sm-10 col-md-10 col-lg-12':'hidden';
-		            item.classList.toggle('hidden');
-		            
-		        }
-		    	var clone = $(".clusterWork-div").clone();
-		        $( "div" ).remove( ".clusterList-div" );
-		        ("body").append(clone); 
-		        
-		        document.getElementById(otherDivId).className = 'hidden';
-		        document.getElementById(otherDivId2).className = 'hidden';
-
-		        
-		    	document.getElementById(otherDivId).style.display = "";
-    			if(document.getElementById(otherDivId).style.visibility == "hidden") {
-    			document.getElementById(otherDivId).style.visibility = "visible";
-    			}
-    			else {
-    			document.getElementById(otherDivId).style.visibility = "hidden";
-    			}
-		}
-		
-			
-		
-    	function doRefresh(){
-        	$("#cluster1-div").load("cluster-list.jsp");
-        	$("#cluster2-div").load("cluster-workload.jsp");
-        	$("#cluster3-div").load("upload-cluster.jsp");
-        	
-        	
-        	/* $("#sample").html(count); */
-        	count++;
-    	}
-    	$(function() {
-        	setInterval(doRefresh, 5000);
-    	}); 
-    	
-    	
 
 	</script>
 

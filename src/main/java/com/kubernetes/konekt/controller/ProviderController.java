@@ -92,7 +92,7 @@ public class ProviderController {
 
 	@RequestMapping(value = "/provider/delete{clusterUrl}")
 	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
-
+		System.out.println(clusterUrl);
 		Cluster TBDeletedCluster = clusterService.getCluster(clusterUrl);
 		Blob encryptedUsername = TBDeletedCluster.getEncryptedUsername();
 		Blob encryptedPassword = TBDeletedCluster.getEncryptedUsername();
@@ -124,6 +124,7 @@ public class ProviderController {
 			accountService.updateAccountTables(container.getAccount());
 		}
 		clusterService.deleteCluster(TBDeletedCluster);
+		
 		Account account = TBDeletedCluster.getAccount();
 		List<Cluster> clusterList = account.getClusters();
 		clusterList.remove(TBDeletedCluster);
@@ -173,8 +174,8 @@ public class ProviderController {
 			clusterUsername = uploadClusterForm.getClusterUsername();
 			clusterPassword = uploadClusterForm.getClusterPassword();
 			// Set up prometheus
-			//clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
-			//clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
+			clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
+			clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
 			
 			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";

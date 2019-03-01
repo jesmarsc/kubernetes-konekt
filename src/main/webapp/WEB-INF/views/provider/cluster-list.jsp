@@ -5,14 +5,8 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>	
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"/>
-	<style>
-		.modal{display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:#000;background-color:rgba(0,0,0,.4)}.modal-content{background-color:#fefefe;margin:auto;padding:20px;border:1px solid #888;width:80%}.close{color:#aaa;float:right;font-size:28px;font-weight:700}.close:focus,.close:hover{color:#000;text-decoration:none;cursor:pointer}
-		font-family: 'Maven Pro', sans-serif;
-		
 	
-	</style>
+
 	
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -39,12 +33,12 @@
   <div class="card-header " >
   <div class="card-header-blue">
     <h3>${cluster.clusterUrl}</h3>
-    <a class=" btn btn-danger mx-1 my-1" href="${removeLink}"
+    <a class=" btn active btn-danger mx-1 my-1" href="${removeLink}"
 						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
 						role="button">Delete Cluster</a> 
 						 <!-- show metrics graph hide everything else -->
 
-	<a class=" btn btn-dark mx-1 my-1" href="javascript:show(4,'${cluster.prometheusIp}')"
+	<a class=" btn active btn-dark mx-1 my-1" href="javascript:show(4,'${cluster.prometheusIp}')"
 						role="button">Show More Metric</a> 
   </div>
   </div>
@@ -308,9 +302,11 @@
 <script>
 
 $(window).load(function() {
+	
 	createGraphs();	
 });
 function createGraphs(){
+	console.log("drawing graphs")
 	for(var i = 0; i  <totalCluster; i++){
 		var ipInstanceID = "ip_instance_" + String(i)
 		drawMyGraphs(String(i),ipInstanceID)

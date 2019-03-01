@@ -64,11 +64,8 @@ public class UserController {
 		// Currently any entry on database not found on cluster is removed from database
 		clusterApi.checkUserWorkload(currentAccount.getContainers());
 		model.addAttribute("currentAccount", currentAccount);
-		
 		List<Cluster> availableClusters = clusterService.getAllClusters();
 		model.addAttribute("availableClusters", availableClusters);
-
-
 		return "user/user-dashboard";
 	}
 
@@ -85,7 +82,6 @@ public class UserController {
     @RequestMapping(value = "/user/YamlBuildConfirmation")
     public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm,
             BindingResult theBindingResult, Model model)  {
-    	Model newModel;
         if (theBindingResult.hasErrors()) {
             return yamlBuilder(yamlBuildForm, model);
         }
