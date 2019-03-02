@@ -37,8 +37,9 @@
 						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
 						role="button">Delete Cluster</a> 
 						 <!-- show metrics graph hide everything else -->
-
-	<a class=" btn active btn-dark mx-1 my-1" href="javascript:show(4,'${cluster.prometheusIp}')"
+						 
+	<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
+	<a class=" btn active btn-dark mx-1 my-1" href="javascript:show(4,'${cluster.clusterUrl}')"
 						role="button">Show More Metric</a> 
   </div>
   </div>
@@ -50,8 +51,9 @@
 					<div class="col-md-2">
 						<canvas id="myChart1_${count.index}" width="50" height="50"></canvas>
 						<object style="display:none;">
+						<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
 							<param id="ip_instance_${count.index}"
-								value="${cluster.prometheusIp}">
+								value="${cluster.clusterUrl}">
 						</object>
 						</div>
 					<div class="col-md-2">

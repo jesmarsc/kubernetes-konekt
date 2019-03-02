@@ -14,4 +14,19 @@
     password: 5hsiDOChHW9GW5Pw
   tls_config:
     insecure_skip_verify: true
-    
+- job_name: 35.238.200.50
+  metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
+  scheme: https
+  params:
+    match[]:
+    - '{job=~"node.*"}'
+    - '{job=~"container.*"}'
+    - '{job=~"kube.*"}'
+  static_configs:
+  - targets:
+    - 35.238.200.50
+  basic_auth:
+    username: admin
+    password: tWZqpc4D2oBZwlKd
+  tls_config:
+    insecure_skip_verify: true
