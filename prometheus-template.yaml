@@ -1,4 +1,4 @@
-- job_name: 35.247.84.239
+- job_name:
   metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
   scheme: https
   params:
@@ -7,10 +7,9 @@
     - '{job=~"container.*"}'
     - '{job=~"kube.*"}'
   static_configs:
-  - targets:
-    - 35.247.84.239
+  - targets: []
   basic_auth:
-    username: admin
-    password: 5hsiDOChHW9GW5Pw
+    username:
+    password:
   tls_config:
     insecure_skip_verify: true

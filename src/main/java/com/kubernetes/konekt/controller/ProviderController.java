@@ -48,9 +48,6 @@ public class ProviderController {
 	private ContainerService containerService;
 	
 	@Autowired
-	private ClusterApi clusterApi;
-	
-	@Autowired
 	private ClusterSecurity clusterSecurity;
 	
 	@Autowired
@@ -68,17 +65,19 @@ public class ProviderController {
 		
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		Account currentAccount = accountService.findByUserName(username);
-		model.addAttribute("currentAccount", currentAccount);
+		
 		List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
-		model.addAttribute("runningContainers", containers);
 		UploadClusterForm newClusterForm = new UploadClusterForm();
+		
+		model.addAttribute("currentAccount", currentAccount);
+		model.addAttribute("runningContainers", containers);
 		model.addAttribute("newClusterForm", newClusterForm);
 		
 		List<Cluster> clusters = currentAccount.getClusters();
 		List<Metric> metrics = new ArrayList<Metric>();
 		for(Cluster cluster:clusters) {
 		    try {
-                metrics.add(prometheus.getUsageMetric(cluster.getPrometheusIp()));
+                metrics.add(prometheus.getUsageMetric(cluster.getClusterUrl().substring(8)));
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -91,11 +90,11 @@ public class ProviderController {
 	}
 
 	@RequestMapping(value = "/provider/delete{clusterUrl}")
-	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
+	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) throws IOException, ApiException {
 
-		Cluster TBDeletedCluster = clusterService.getCluster(clusterUrl);
-		Blob encryptedUsername = TBDeletedCluster.getEncryptedUsername();
-		Blob encryptedPassword = TBDeletedCluster.getEncryptedUsername();
+		Cluster deleteCluster = clusterService.getCluster(clusterUrl);
+		Blob encryptedUsername = deleteCluster.getEncryptedUsername();
+		Blob encryptedPassword = deleteCluster.getEncryptedUsername();
 		String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
 		String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
 	
@@ -103,30 +102,35 @@ public class ProviderController {
 		// get list of users who have deployments on cluster
 		List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
 		// delete deployments from cluster
+		ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
 		for(Container container : containers) {
 			String deploymentName = container.getContainerName();
 			String namespace = container.getAccount().getUserName();
 			try {
-				clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
 				clusterApi.deleteDeployment(namespace, deploymentName);
-			} catch( ApiException e) {
-					e.printStackTrace();
-					String deleteClusterSuccessStatus = "Delete Cluster Failed: ";
-					String deleteClusterSuccessMessage = "Cluster with URL: " + TBDeletedCluster.getClusterUrl() + " was NOT deleted. There was a problem removing deployments from cluster";
-					
-					model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
-					model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
+				containerService.deleteContainer(container);
+				accountService.updateAccountTables(container.getAccount());
+			} catch(ApiException e) {
+				e.printStackTrace();
+				String deleteClusterSuccessMessage = "Delete Cluster Failed: ";
+				String deleteClusterSuccessStatus = "Cluster with URL: " + deleteCluster.getClusterUrl() + " was NOT deleted. There was a problem removing deployments from cluster";
+				
+				model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
+				model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
 			}
 		}
-		// delete deployments from database
-		for(Container container : containers) {
-			containerService.deleteContainer(container);
-			accountService.updateAccountTables(container.getAccount());
-		}
-		clusterService.deleteCluster(TBDeletedCluster);
+		
+		clusterService.deleteCluster(deleteCluster);
+		Account account = deleteCluster.getAccount();
+		List<Cluster> clusterList = account.getClusters();
+		clusterList.remove(deleteCluster);
+		account.setClusters(clusterList);
+		accountService.updateAccountTables(account);
+		
+		prometheus.removeCluster(clusterUrl.substring(8));
 		
 		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
-		String deleteClusterSuccessMessage = "Cluster with URL: " + TBDeletedCluster.getClusterUrl() + " has been deleted";
+		String deleteClusterSuccessMessage = "Cluster with URL: " + deleteCluster.getClusterUrl() + " has been deleted";
 		
 		model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
 		model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
@@ -140,19 +144,18 @@ public class ProviderController {
 
 		if(theBindingResult.hasErrors()) {
 			String uploadClusterFailStatus = "Cluster Upload Failed";
-			
 			model.addAttribute("uploadClusterFailStatus", uploadClusterFailStatus);
 			return this.showProviderDashboard(uploadClusterForm, theBindingResult, model);
 		}
 		
 		try {
 			String clusterUrl = uploadClusterForm.getClusterUrl();
-			String clusterUsername = uploadClusterForm.getClusterUsername();
-			String clusterPassword = uploadClusterForm.getClusterPassword();
-			Blob encryptedUsername = clusterSecurity.encodeCredential(clusterUsername);
-			Blob encryptedPassword = clusterSecurity.encodeCredential(clusterPassword);
+			String clusterUser = uploadClusterForm.getClusterUsername();
+			String clusterPass = uploadClusterForm.getClusterPassword();
+			Blob encryptedUsername = clusterSecurity.encodeCredential(clusterUser);
+			Blob encryptedPassword = clusterSecurity.encodeCredential(clusterPass);
 			
-			Cluster newCluster = new Cluster(clusterUrl, clusterUsername, clusterPassword, encryptedUsername, encryptedPassword, 0, "35.233.197.146:9090");	
+			Cluster newCluster = new Cluster(clusterUrl, clusterUser, clusterPass, encryptedUsername, encryptedPassword, 0);
 	
 			// Get current user 
 			String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -164,12 +167,9 @@ public class ProviderController {
 			// Update database to persist changes
 			accountService.updateAccountTables(currentAccount);
 			
-			clusterUrl = uploadClusterForm.getClusterUrl();
-			clusterUsername = uploadClusterForm.getClusterUsername();
-			clusterPassword = uploadClusterForm.getClusterPassword();
 			// Set up prometheus
-			//clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
-			//clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUsername, clusterPassword  );
+			ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+			clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUser, clusterPass);
 			
 			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";
@@ -206,8 +206,8 @@ public class ProviderController {
 			Blob encryptedUsername =cluster.getEncryptedUsername();
 			Blob encryptedPassword = cluster.getEncryptedPassword();
 			String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
-			String passWord = clusterSecurity.decodeCredential(encryptedPassword);
-			clusterApi.setupClient(clusterUrl, clusterUser, passWord);
+			String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
+			ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
 			clusterApi.deleteDeployment(username, deploymentName);
 			// Deleting Deployment from database
 			containerService.deleteContainer(containerTBD);

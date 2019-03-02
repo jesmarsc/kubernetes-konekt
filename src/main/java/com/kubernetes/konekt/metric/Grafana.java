@@ -100,7 +100,7 @@ public class Grafana {
         Grafana test = new Grafana();
         test.setObjectMapper(new ObjectMapper());
         test.setRestTemplate(new RestTemplate());
-        String uid = test.createDashboard("mary");
+        String uid = test.createDashboard("Global Metrics");
         System.out.println(uid);
     }
 }
