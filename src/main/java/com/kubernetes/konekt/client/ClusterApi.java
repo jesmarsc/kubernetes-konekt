@@ -83,8 +83,6 @@ public class ClusterApi {
 
     private static String pretty = "true";
 
-    private Boolean settingPrometheus = false;
-
     @Autowired
     private ClusterService clusterService;
 
@@ -99,14 +97,15 @@ public class ClusterApi {
 
     @Autowired
     private Prometheus prometheus;
-
-    public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
-
+    
+    public ClusterApi() {
+        
+    }
+    
+    public ClusterApi(String clusterUrl, String clusterUser, String clusterPass) {
         client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-
-        client.setDebugging(false);	// watches do not work if set to true
+        client.setDebugging(false); // watches do not work if set to true
         client.setBasePath(clusterUrl);
-        client.getHttpClient().setReadTimeout(100, TimeUnit.SECONDS);
         Configuration.setDefaultApiClient(client);
         coreInstance = new CoreV1Api(client);
         appsInstance = new AppsV1Api(client);
@@ -114,18 +113,27 @@ public class ClusterApi {
         apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
         rbacAuthApi = new RbacAuthorizationV1Api();
         appsBeta2Api = new AppsV1beta2Api();
-
     }
 
-    public List<Container> parseYaml(MultipartFile file, String namespace, Long providerId) throws IOException, ApiException   {
+    public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
+        client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
+        client.setDebugging(false);	// watches do not work if set to true
+        client.setBasePath(clusterUrl);
+        Configuration.setDefaultApiClient(client);
+        coreInstance = new CoreV1Api(client);
+        appsInstance = new AppsV1Api(client);
+        customObjectsInstance = new CustomObjectsApi(client);
+        apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
+        rbacAuthApi = new RbacAuthorizationV1Api();
+        appsBeta2Api = new AppsV1beta2Api();
+    }
 
-        saveFileLocally(file); // save file in local directory so convertyamlToObject can find the file
+    public List<Container> parseYaml(File file, String namespace, Long providerId) throws IOException, ApiException   {
+        FileReader yamlReader = new FileReader(file);
+        List<Object> objects = Yaml.loadAll(yamlReader);
+        List<Container> containers = new ArrayList<Container>();
+        String resourceName;
 
-        FileReader fr = new FileReader(file.getOriginalFilename());
-        List<Object> objects = Yaml.loadAll(fr);
-        List<Container> result = new ArrayList<Container>();
-        String resource = null;
-        
         for (Object body : objects) {
         	try {
             if (body instanceof V1Deployment) {
@@ -201,107 +209,8 @@ public class ClusterApi {
 		
         return result;
     }
-    public void setWatch(String url, String user, String pass) throws ApiException {
-
-        Thread thread = new Thread(checkServices(url,user,pass));
-        thread.start();
-
-
-    }
-
-
-    public Runnable checkServices(String curl, String cuser, String cpass) {
-
-        return new Runnable() {
-            private Boolean shutDown = false;
-            private String url = curl;
-            private String user = cuser;
-            private String pass = cpass;
-            public void run() {
-                while (!shutDown)
-                {
-                    setupClient(url, user, pass);
-                    V1ServiceList result;
-                    try {
-                        result = getNamespacedV1ServiceList("monitoring");
-                        for(V1Service item :result.getItems()) {
-                            if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
-
-                                Cluster cluster = clusterService.getCluster(url);
-                                Account account = cluster.getAccount();
-                                List<Cluster> list = account.getClusters();
-                                list.remove(cluster);
-
-                                String prometheusIp = item.getStatus().getLoadBalancer().getIngress().get(0).getIp();
-                                cluster.setPrometheusIp(prometheusIp);
-
-                                // update cluster 
-                                // TODO: add logic to add cluster to master 
-                                prometheus.addPrometheusInstance(prometheusIp);
-                                list.add(cluster);
-                                account.setClusters(list);
-                                // set cluster status to Ready
-                                cluster.setStatus("Ready");
-                                accountService.updateAccountTables(account);
-                                // shutdown thread
-                                shutDown = true;
-                            }
-                        }
-                    } catch (ApiException | IOException e) {
-
-                        e.printStackTrace();
-                    }
-                    try {
-                        Thread.sleep(1000 * 10);
-
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                }	
-            }
-        };
-    }
-
-
-    public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
-
-        String tab = "  ";
-        String label = form.getKey() + ": " + form.getValue();
-        String fileContent =
-                "apiVersion: apps/v1\n" 
-                        + "kind: Deployment\n"
-                        + "metadata:\n"
-                        + tab + "name: " + form.getDeploymentName() + "\n"
-                        + tab + "labels:\n"
-                        + tab + tab + label + "\n"
-                        + "spec:\n"
-                        + tab + "replicas: " + form.getReplicas() + "\n"
-                        + tab + "selector:\n"
-                        + tab + tab + "matchLabels:\n"
-                        + tab + tab + tab + label + "\n"
-                        + tab + "template:\n"
-                        + tab + tab + "metadata:\n"
-                        + tab + tab + tab + "labels:\n"
-                        + tab + tab + tab + tab + label + "\n"
-                        + tab + tab + "spec:\n"
-                        + tab + tab + tab + "containers:\n"
-                        + tab + tab + tab + "- name: " + form.getValue() + "\n"
-                        + tab + tab + tab + tab + "image: " + form.getImage() + "\n"
-                        + tab + tab + tab + tab + "ports:\n"
-                        + tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
-
-        String fileName = form.getDeploymentName() + ".yaml";
-        File file = new File(fileName);
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(fileContent);
-        fileWriter.close();
-
-        MultipartFile readFile = convertMultipartFile(fileName,fileName);
-
-        return parseYaml(readFile, namespace, providerId);
-    }
-
-    private File saveFileLocally(MultipartFile file) throws IOException {
+  
+    public File saveFileLocally(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         convFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(convFile);
@@ -309,23 +218,16 @@ public class ClusterApi {
         fos.close();
         return convFile;
     }
-    private MultipartFile convertMultipartFile(String fileName, String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        String contentType = "text/plain";
-        byte[] content = null;
-        content = Files.readAllBytes(path);
-        MultipartFile readFile = new MockMultipartFile(fileName, filePath, contentType, content);
-        return readFile;
-    }
 
     public void setupPrometheus(Long providerId, String url, String user, String pass) throws ApiException, IOException {
-        settingPrometheus = true;
+
         String filePath = "manifests/ultimate-prometheus-setup.yaml";
         String namespace = "monitoring";
+        
+        this.createNamespace(namespace);
 
         File bigYamlFile = new File(filePath);
-        MultipartFile yamlFile = convertMultipartFile(bigYamlFile.getName(), filePath);
-        parseYaml(yamlFile, namespace,  providerId);
+        parseYaml(bigYamlFile, namespace,  providerId);
 
         //run all yaml files in custom-objects directory
         String directoryPath = "manifests/custom-objects/";
@@ -349,9 +251,15 @@ public class ClusterApi {
                 }
             }
         }
+        
+        prometheus.addCluster(url.substring(8), user, pass);
+        
+        /*
         settingPrometheus = false;    	
         setWatch(url,user,pass);
+        */
     }
+    
     public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {
     	 V1ServiceList result = coreInstance.listNamespacedService(namespace, null, null,"", Boolean.FALSE,  null, null, null, null, Boolean.FALSE);
         return result;
@@ -387,84 +295,74 @@ public class ClusterApi {
     	
     	return new String();
     }
-    
+   
     public void createPrometheus(@SuppressWarnings("rawtypes") Map prometheusMap) throws ApiException, IOException {
-
         customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
                 "monitoring", "prometheuses", prometheusMap, pretty);
-
     }
+    
     public void createServiceMonitor(@SuppressWarnings("rawtypes") Map serviceMonitorMap) throws ApiException, IOException {
-
         customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
                 "monitoring", "servicemonitors", serviceMonitorMap, pretty);
-
     }
+    
     public void createPrometheusRule(@SuppressWarnings("rawtypes") Map prometheusRulesMap) throws ApiException, IOException {
-
         customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
                 "monitoring", "prometheusrules", prometheusRulesMap, pretty);
-
     }
-    public V1beta2DaemonSet createDaemonSet(V1beta2DaemonSet body, String namespace) throws ApiException {
+    
+    public V1beta2DaemonSet createDaemonSet(String namespace, V1beta2DaemonSet body) throws ApiException {
         V1beta2DaemonSet result = appsBeta2Api.createNamespacedDaemonSet(namespace, body, pretty);
         return result;
     }
+    
     public V1Role createRole(String namespace, V1Role body) throws ApiException {
-
         V1Role result = rbacAuthApi.createNamespacedRole(namespace, body, pretty);
         return result;
     }
+    
     public V1ServiceAccount createServiceAccount(String namespace,V1ServiceAccount body) throws ApiException {
         V1ServiceAccount result = coreInstance.createNamespacedServiceAccount(namespace, body, pretty);
-
         return result;
     }
+    
     public V1ClusterRoleBinding createClusterRoleBinding(V1ClusterRoleBinding body) throws ApiException {
-
         V1ClusterRoleBinding result = rbacAuthApi.createClusterRoleBinding(body, pretty);
         return result;
-
     }
-    public V1RoleBinding createNamespacedRoleBinding(V1RoleBinding body,String namespace) throws ApiException {
-
-        V1RoleBinding result = rbacAuthApi.createNamespacedRoleBinding(namespace, body, pretty);
+    
+    public V1RoleBinding createNamespacedRoleBinding(String namespace,V1RoleBinding body) throws ApiException {
+        V1RoleBinding result = null;
+        result = rbacAuthApi.createNamespacedRoleBinding(namespace, body, pretty);       
         return result;
-
     }
 
     public V1ClusterRole createClusterRole(V1ClusterRole body) throws ApiException {
-
         V1ClusterRole result = rbacAuthApi.createClusterRole(body, pretty);
         return result;
     }
+    
     public V1Deployment createDeploymentV1(String namespace, V1Deployment body) throws ApiException {
-
         V1Deployment result = null;
         result = appsInstance.createNamespacedDeployment(namespace, body, pretty);
-
-        return result;
+        return result;        
     }
+    
     public V1beta2Deployment createDeploymentV1Beta2(String namespace, V1beta2Deployment body) throws ApiException {
-
         V1beta2Deployment result = null;
         result = appsBeta2Api.createNamespacedDeployment(namespace, body, pretty);
         return result;
     }
 
     public V1Service createService(String namespace, V1Service body) throws ApiException {
-
         V1Service result = null;
         result = coreInstance.createNamespacedService(namespace, body, pretty);
-
         return result;
     }
 
     public V1ConfigMap createConfigMap(String namespace, V1ConfigMap body) throws ApiException {
-
         V1ConfigMap result = null;
         result = coreInstance.createNamespacedConfigMap(namespace, body, pretty);
-
         return result;
     }
 
@@ -472,43 +370,34 @@ public class ClusterApi {
     (V1beta1CustomResourceDefinition body) throws ApiException {
         V1beta1CustomResourceDefinition result = null;
         result = apiExtensionsInstance.createCustomResourceDefinition(body, pretty);
-
         return result;
     }
 
     public V1Secret createSecret(String namespace, V1Secret body) throws ApiException {
         V1Secret result = null;
         result = coreInstance.createNamespacedSecret(namespace, body, pretty);
-
         return result;
     }
 
     public V1Secret replaceSecret(String name, String namespace, V1Secret body) throws ApiException {
         V1Secret result = null;
         result = coreInstance.replaceNamespacedSecret(name, namespace, body, pretty);
-
         return result;
     }
 
     public void deleteDeployment(String namespace, String deploymentName) throws ApiException {
-
         V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions |
         appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
-
     }
 
     public void deleteService(String namespace, String serviceName) throws ApiException {
-
         V1DeleteOptions body = new V1DeleteOptions();
         coreInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
-
     }
 
     public void deleteConfigMap(String namespace, String configName) throws ApiException {
-
         V1DeleteOptions body = new V1DeleteOptions();
         coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
-
     }
 
     public void deleteNamespace(String namespace) throws ApiException {
@@ -640,9 +529,112 @@ public class ClusterApi {
             if(!found) {
                 containerService.deleteContainer(container);
                 accountService.updateAccountTables(container.getAccount());
-
             }
         }
+    }
+    
+    public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
+
+        String tab = "  ";
+        String label = form.getKey() + ": " + form.getValue();
+        String fileContent =
+                "apiVersion: apps/v1\n" 
+                        + "kind: Deployment\n"
+                        + "metadata:\n"
+                        + tab + "name: " + form.getDeploymentName() + "\n"
+                        + tab + "labels:\n"
+                        + tab + tab + label + "\n"
+                        + "spec:\n"
+                        + tab + "replicas: " + form.getReplicas() + "\n"
+                        + tab + "selector:\n"
+                        + tab + tab + "matchLabels:\n"
+                        + tab + tab + tab + label + "\n"
+                        + tab + "template:\n"
+                        + tab + tab + "metadata:\n"
+                        + tab + tab + tab + "labels:\n"
+                        + tab + tab + tab + tab + label + "\n"
+                        + tab + tab + "spec:\n"
+                        + tab + tab + tab + "containers:\n"
+                        + tab + tab + tab + "- name: " + form.getValue() + "\n"
+                        + tab + tab + tab + tab + "image: " + form.getImage() + "\n"
+                        + tab + tab + tab + tab + "ports:\n"
+                        + tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
+
+        String fileName = form.getDeploymentName() + ".yaml";
+        File file = new File(fileName);
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(fileContent);
+        fileWriter.close();
+
+        return parseYaml(file, namespace, providerId);
+    }
+    
+    /*
+    private MultipartFile convertMultipartFile(String fileName, String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        String contentType = "text/plain";
+        byte[] content = null;
+        content = Files.readAllBytes(path);
+        MultipartFile readFile = new MockMultipartFile(fileName, filePath, contentType, content);
+        return readFile;
+    }
+    
+    public void setWatch(String url, String user, String pass) throws ApiException {
+
+        Thread thread = new Thread(checkServices(url,user,pass));
+        thread.start();
 
     }
+
+    public Runnable checkServices(String curl, String cuser, String cpass) {
+
+        return new Runnable() {
+            private Boolean shutDown = false;
+            private String url = curl;
+            private String user = cuser;
+            private String pass = cpass;
+            public void run() {
+                while (!shutDown)
+                {
+                    setupClient(url, user, pass);
+                    V1ServiceList result;
+                    try {
+                        result = getNamespacedV1ServiceList("monitoring");
+                        for(V1Service item :result.getItems()) {
+                            if(item.getStatus().getLoadBalancer().getIngress() != null && item.getMetadata().getName().equals("prometheus-k8s")) {
+
+                                Cluster cluster = clusterService.getCluster(url);
+                                Account account = cluster.getAccount();
+                                List<Cluster> list = account.getClusters();
+                                list.remove(cluster);
+
+                                String prometheusIp = item.getStatus().getLoadBalancer().getIngress().get(0).getIp() + ":9090";
+
+                                // update cluster 
+                                // TODO: add logic to add cluster to master 
+                                prometheus.addPrometheusInstance(prometheusIp);
+                                list.add(cluster);
+                                account.setClusters(list);
+                                // set cluster status to Ready
+                                cluster.setStatus("Ready");
+                                accountService.updateAccountTables(account);
+                                // shutdown thread
+                                shutDown = true;
+                            }
+                        }
+                    } catch (ApiException | IOException e) {
+
+                        e.printStackTrace();
+                    }
+                    try {
+                        Thread.sleep(1000 * 10);
+
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }   
+            }
+        };
+    }
+    */
 }

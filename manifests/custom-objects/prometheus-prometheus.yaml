@@ -34,5 +34,6 @@ spec:
       operator: In
       values:
       - kubelet
+      - kube-state-metrics
       - node-exporter
   version: v2.5.0

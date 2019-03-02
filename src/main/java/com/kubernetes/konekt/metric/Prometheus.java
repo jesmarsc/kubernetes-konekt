@@ -1,12 +1,17 @@
 package com.kubernetes.konekt.metric;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -39,8 +44,7 @@ public class Prometheus {
     private static final String masterPrometheus = "35.247.41.79:9090";
     
     public Prometheus() {
-        clusterApi = new ClusterApi();
-        clusterApi.setupClient("https://35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
+        clusterApi = new ClusterApi("https://35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
     }
     
     public Metric getUsageMetric(String instanceIp) throws IOException {
@@ -66,7 +70,7 @@ public class Prometheus {
     }
     
     public double getCpuUsage(String instanceIp) throws IOException {
-        String params = "{instance=\""+ instanceIp + "\",mode=\"idle\"}";
+        String params = "{instance=\""+ instanceIp + ":443\",mode=\"idle\"}";
         String query = restTemplate.getForObject(
                 "http://" + masterPrometheus + "/api/v1/query?query="
                 + "1-avg(irate(node_cpu_seconds_total{instance}[2m]))", 
@@ -85,7 +89,7 @@ public class Prometheus {
      */
     public double getMemUsage(String instanceIp) throws IOException {
         // {instance="URL"}
-        String params = "%7Binstance%3D%22"+ instanceIp + "%22%7D";
+        String params = "%7Binstance%3D%22"+ instanceIp + ":443%22%7D";
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(
                 "http://" + masterPrometheus + "/api/v1/query?query="
                 + "1-sum(node_memory_MemFree_bytes" + params
@@ -103,7 +107,7 @@ public class Prometheus {
     }
     
     public double getNetInputUsage(String instanceIp) throws IOException {
-        String params = "{instance=\""+ instanceIp + "\",device=\"eth0\"}";
+        String params = "{instance=\""+ instanceIp + ":443\",device=\"eth0\"}";
         String query = restTemplate.getForObject(
                 "http://" + masterPrometheus + "/api/v1/query?query="
                 + "sum(irate(node_network_receive_bytes_total{instance}[2m]))", 
@@ -116,7 +120,7 @@ public class Prometheus {
     }
     
     public double getNetOutputUsage(String instanceIp) throws IOException {
-        String params = "{instance=\""+ instanceIp + "\",device=\"eth0\"}";
+        String params = "{instance=\""+ instanceIp + ":443\",device=\"eth0\"}";
         String query = restTemplate.getForObject(
                 "http://" + masterPrometheus + "/api/v1/query?query="
                 + "sum(irate(node_network_transmit_bytes_total{instance}[2m]))", 
@@ -135,7 +139,7 @@ public class Prometheus {
      */
     public double getNetSaturation(String instanceIp) throws IOException {
         // {instance="URL",device="eth0"}
-        String params = "%7Binstance%3D%22"+ instanceIp + "%22,device%3D%22eth0%22%7D";
+        String params = "%7Binstance%3D%22"+ instanceIp + ":443%22,device%3D%22eth0%22%7D";
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(
                 "http://" + masterPrometheus + "/api/v1/query?query="
                 + "sum(irate(node_network_receive_drop_total" + params + "%5B2m%5D))"
@@ -148,6 +152,55 @@ public class Prometheus {
             return 0;
         }
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
+    }
+    
+    public void addCluster(String instanceIp, String username, String password) throws IOException, ApiException {
+        
+        FileReader templateReader = new FileReader("prometheus-template.yaml");
+        
+        ArrayList<Object> yaml = Yaml.loadAs(templateReader, ArrayList.class);
+        Map<String, Object> map = (HashMap) yaml.get(0);
+        map.put("job_name", instanceIp);
+        
+        ArrayList<Object> static_configs = (ArrayList) map.get("static_configs");
+        Map<String, Object> targets = (HashMap) static_configs.get(0);
+        ArrayList<String> instances = (ArrayList) targets.get("targets");
+        instances.add(instanceIp);
+        
+        Map<String, Object> basic_auth = (HashMap) map.get("basic_auth");
+        basic_auth.put("username", username);
+        basic_auth.put("password", password);
+        templateReader.close();
+        
+        FileReader configReader = new FileReader("prometheus-federation.yaml");
+        ArrayList<Object> configYaml = Yaml.loadAs(configReader, ArrayList.class);
+        configYaml.add(map);
+        configReader.close();
+        
+        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
+        Yaml.dump(configYaml, fileWriter);
+        fileWriter.close();
+        this.updateAdditionalConfigs();
+    }
+    
+    public void removeCluster(String instanceIp) throws IOException, ApiException {
+        
+        FileReader configReader = new FileReader("prometheus-federation.yaml");
+        ArrayList<Map<String, Object>> configYaml = Yaml.loadAs(configReader, ArrayList.class);
+        Iterator<Map<String, Object>> iterator = configYaml.iterator();
+        
+        while(iterator.hasNext()) {
+            Map<String, Object> job = iterator.next();
+            if(job.get("job_name").equals(instanceIp)){
+                iterator.remove();
+                break;
+            }
+        }
+        
+        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
+        Yaml.dump(configYaml, fileWriter);
+        fileWriter.close();
+        this.updateAdditionalConfigs();
     }
     
     public void addPrometheusInstance(String instanceIp) throws IOException, ApiException {
@@ -216,10 +269,21 @@ public class Prometheus {
         this.objectMapper = objectMapper;
     }
 
+    public void listFiles() {
+        List<File> file = Arrays.asList(new File("manifests/custom-objects").listFiles());
+        //Collections.sort(file);
+        System.out.println(file);
+    }
     public static void main(String[] args) throws IOException, ApiException {
         Prometheus test = new Prometheus();
         test.setObjectMapper(new ObjectMapper());
         test.setRestTemplate(new RestTemplate());
+        test.listFiles();
+        /*
+        test.removeCluster("what");
+        test.addCluster("35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
+        test.updateAdditionalConfigs();
+        */
     }
 
 }

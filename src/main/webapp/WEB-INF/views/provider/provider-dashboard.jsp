@@ -129,7 +129,6 @@
 
 				</ul>
 			</div>
-			
                 </div>
             </nav>
 <c:choose>

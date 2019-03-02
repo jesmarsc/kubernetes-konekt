@@ -202,9 +202,8 @@
 	}
 
 	function makeHttpRequestForCpu(instanceIp) {
-		instanceIp = '35.247.41.79:9090';
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query=1-avg(irate(node_cpu_seconds_total{instance="'
-				+ instanceIp + '",mode="idle"}[2m]))';
+				+ instanceIp + ':443",mode="idle"}[2m]))';
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
 			cpuResponse = JSON.parse(response)
@@ -219,17 +218,14 @@
 
 	function makeHttpRequestForMemory(instanceIp) {
 
-		instanceIp = '35.247.41.79:9090';
-		//{instance="URL"}
-
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query=1-sum(node_memory_MemFree_bytes{instance="'
 				+ instanceIp
-				+ '"}%2Bnode_memory_Cached_bytes{instance="'
+				+ ':443"}%2Bnode_memory_Cached_bytes{instance="'
 				+ instanceIp
-				+ '"}%2Bnode_memory_Buffers_bytes{instance="'
+				+ ':443"}%2Bnode_memory_Buffers_bytes{instance="'
 				+ instanceIp
-				+ '"})/sum(node_memory_MemTotal_bytes{instance="'
-				+ instanceIp + '"})';
+				+ ':443"})/sum(node_memory_MemTotal_bytes{instance="'
+				+ instanceIp + ':443"})';
 
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
@@ -244,8 +240,7 @@
 	}
 
 	function makeHttpRequestForNetworkUpload(instanceIp) {
-		instanceIp = '35.247.41.79:9090';
-		var params = '{instance="' + instanceIp + '",device="eth0"}';
+		var params = '{instance="' + instanceIp + ':443",device="eth0"}';
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query='
 				+ 'sum(irate(node_network_transmit_bytes_total' + params
 				+ '[2m]))';
@@ -264,8 +259,7 @@
 	}
 
 	function makeHttpRequestForNetworkDownload(instanceIp) {
-		instanceIp = '35.247.41.79:9090';
-		var params = '{instance="' + instanceIp + '",device="eth0"}';
+		var params = '{instance="' + instanceIp + ':443",device="eth0"}';
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query='
 				+ 'sum(irate(node_network_receive_bytes_total' + params
 				+ '[2m]))';

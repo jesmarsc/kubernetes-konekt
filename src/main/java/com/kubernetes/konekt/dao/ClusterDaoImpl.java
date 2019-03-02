@@ -54,9 +54,6 @@ public class ClusterDaoImpl implements ClusterDao {
 		Query query = currentSession.createNativeQuery("DELETE FROM cluster_info WHERE id = :id ");
 		query.setParameter("id", cluster.getId());
 		query.executeUpdate();
-
-		
-		
 	}
 
 
