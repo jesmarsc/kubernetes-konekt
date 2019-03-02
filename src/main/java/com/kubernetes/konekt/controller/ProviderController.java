@@ -121,11 +121,6 @@ public class ProviderController {
 		}
 		
 		clusterService.deleteCluster(deleteCluster);
-		Account account = deleteCluster.getAccount();
-		List<Cluster> clusterList = account.getClusters();
-		clusterList.remove(deleteCluster);
-		account.setClusters(clusterList);
-		accountService.updateAccountTables(account);
 		
 		prometheus.removeCluster(clusterUrl.substring(8));
 		

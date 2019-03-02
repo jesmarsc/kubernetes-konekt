@@ -83,8 +83,6 @@ public class ClusterApi {
 
     private static String pretty = "true";
 
-    private Boolean settingPrometheus = false;
-
     @Autowired
     private ClusterService clusterService;
 
@@ -106,7 +104,6 @@ public class ClusterApi {
     
     public ClusterApi(String clusterUrl, String clusterUser, String clusterPass) {
         client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-
         client.setDebugging(false); // watches do not work if set to true
         client.setBasePath(clusterUrl);
         Configuration.setDefaultApiClient(client);
@@ -119,9 +116,7 @@ public class ClusterApi {
     }
 
     public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
-
         client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-
         client.setDebugging(false);	// watches do not work if set to true
         client.setBasePath(clusterUrl);
         Configuration.setDefaultApiClient(client);
@@ -131,105 +126,55 @@ public class ClusterApi {
         apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
         rbacAuthApi = new RbacAuthorizationV1Api();
         appsBeta2Api = new AppsV1beta2Api();
-
     }
 
-    public List<Container> parseYaml(MultipartFile file, String namespace, Long providerId) throws IOException, ApiException   {
+    public List<Container> parseYaml(File file, String namespace, Long providerId) throws IOException, ApiException   {
 
-        saveFileLocally(file); // save file in local directory so convertyamlToObject can find the file
-
-        FileReader fr = new FileReader(file.getOriginalFilename());
-        List<Object> objects = Yaml.loadAll(fr);
-        List<Container> result = new ArrayList<Container>();
-        String resource = null;
-
-        if(settingPrometheus) {
-            namespace = "monitoring";
-        }
+        FileReader yamlReader = new FileReader(file);
+        List<Object> objects = Yaml.loadAll(yamlReader);
+        List<Container> containers = new ArrayList<Container>();
+        String resourceName;
 
         for (Object body : objects) {
             if (body instanceof V1Deployment) {
-                resource = createDeploymentV1(namespace, (V1Deployment) body).getMetadata().getName();
-                result.add(new Container(resource, "Deployment", "Running", client.getBasePath(), providerId));
+                resourceName = createDeploymentV1(namespace, (V1Deployment) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "Deployment", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1Service) {
-                resource = createService(namespace, (V1Service) body).getMetadata().getName();
-                result.add(new Container(resource, "Service", "Running", client.getBasePath(), providerId));
+                resourceName = createService(namespace, (V1Service) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "Service", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1ConfigMap) {
-                resource = createConfigMap(namespace, (V1ConfigMap) body).getMetadata().getName();
-                result.add(new Container(resource, "ConfigMap", "Running", client.getBasePath(), providerId));
+                resourceName = createConfigMap(namespace, (V1ConfigMap) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "ConfigMap", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1beta1CustomResourceDefinition) {
-                resource = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body).getMetadata().getName();
-                result.add(new Container(resource, "CustomResourceDefinitions", "Running", client.getBasePath(), providerId));
+                resourceName = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "CustomResourceDefinitions", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1ClusterRole ) {
-                resource = createClusterRole((V1ClusterRole) body).getMetadata().getName();
-                result.add(new Container(resource, "ClusterRole", "Running", client.getBasePath(), providerId));
+                resourceName = createClusterRole((V1ClusterRole) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "ClusterRole", "Running", client.getBasePath(), providerId));
             } else if (body instanceof V1ClusterRoleBinding ) {
-                resource = createClusterRoleBinding((V1ClusterRoleBinding) body).getMetadata().getName();
-                result.add(new Container(resource, "ClusterRoleBinding", "Running", client.getBasePath(), providerId));
+                resourceName = createClusterRoleBinding((V1ClusterRoleBinding) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "ClusterRoleBinding", "Running", client.getBasePath(), providerId));
             } else if(body instanceof V1ServiceAccount) {
-                resource = createServiceAccount(namespace,(V1ServiceAccount)body).getMetadata().getName();
-                result.add(new Container(resource, "ServiceAccount", "Running", client.getBasePath(), providerId));
+                resourceName = createServiceAccount(namespace, (V1ServiceAccount) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "ServiceAccount", "Running", client.getBasePath(), providerId));
             } else if(body instanceof V1Role){
-                resource = createRole(namespace,(V1Role)body).getMetadata().getName();
-                result.add(new Container(resource, "Role", "Running", client.getBasePath(), providerId));
+                resourceName = createRole(namespace, (V1Role) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "Role", "Running", client.getBasePath(), providerId));
             } else if(body instanceof V1RoleBinding ) {
-                resource = createNamespacedRoleBinding((V1RoleBinding) body, namespace).getMetadata().getName();
-                result.add(new Container(resource, "V1RoleBinding", "Running", client.getBasePath(), providerId));
+                resourceName = createNamespacedRoleBinding(namespace, (V1RoleBinding) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "V1RoleBinding", "Running", client.getBasePath(), providerId));
             } else if(body instanceof V1beta2DaemonSet){
-                resource = createDaemonSet((V1beta2DaemonSet)body,namespace).getMetadata().getName();
-                result.add(new Container(resource, "V1beta2DaemonSet", "Running", client.getBasePath(), providerId));
-            } else if(body instanceof V1Namespace && settingPrometheus) {
-                namespace = ((V1Namespace)body).getMetadata().getName();
-                createNamespace(namespace);
+                resourceName = createDaemonSet(namespace, (V1beta2DaemonSet) body).getMetadata().getName();
+                containers.add(new Container(resourceName, "V1beta2DaemonSet", "Running", client.getBasePath(), providerId));
             } else if(body instanceof V1beta2Deployment) {
-                resource = createDeploymentV1Beta2(namespace,(V1beta2Deployment)body).getMetadata().getName();
-                result.add(new Container(resource, "V1beta2Deployment", "Running", client.getBasePath(), providerId));
+                resourceName = createDeploymentV1Beta2(namespace, (V1beta2Deployment)body).getMetadata().getName();
+                containers.add(new Container(resourceName, "V1beta2Deployment", "Running", client.getBasePath(), providerId));
             }
-
         }
-
-        return result;
-    }
-    
-    public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
-
-        String tab = "  ";
-        String label = form.getKey() + ": " + form.getValue();
-        String fileContent =
-                "apiVersion: apps/v1\n" 
-                        + "kind: Deployment\n"
-                        + "metadata:\n"
-                        + tab + "name: " + form.getDeploymentName() + "\n"
-                        + tab + "labels:\n"
-                        + tab + tab + label + "\n"
-                        + "spec:\n"
-                        + tab + "replicas: " + form.getReplicas() + "\n"
-                        + tab + "selector:\n"
-                        + tab + tab + "matchLabels:\n"
-                        + tab + tab + tab + label + "\n"
-                        + tab + "template:\n"
-                        + tab + tab + "metadata:\n"
-                        + tab + tab + tab + "labels:\n"
-                        + tab + tab + tab + tab + label + "\n"
-                        + tab + tab + "spec:\n"
-                        + tab + tab + tab + "containers:\n"
-                        + tab + tab + tab + "- name: " + form.getValue() + "\n"
-                        + tab + tab + tab + tab + "image: " + form.getImage() + "\n"
-                        + tab + tab + tab + tab + "ports:\n"
-                        + tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
-
-        String fileName = form.getDeploymentName() + ".yaml";
-        File file = new File(fileName);
-        FileWriter fileWriter = new FileWriter(file);
-        fileWriter.write(fileContent);
-        fileWriter.close();
-
-        MultipartFile readFile = convertMultipartFile(fileName,fileName);
-
-        return parseYaml(readFile, namespace, providerId);
+        return containers;
     }
 
-    private File saveFileLocally(MultipartFile file) throws IOException {
+    public File saveFileLocally(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         convFile.createNewFile();
         FileOutputStream fos = new FileOutputStream(convFile);
@@ -237,24 +182,16 @@ public class ClusterApi {
         fos.close();
         return convFile;
     }
-    
-    private MultipartFile convertMultipartFile(String fileName, String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        String contentType = "text/plain";
-        byte[] content = null;
-        content = Files.readAllBytes(path);
-        MultipartFile readFile = new MockMultipartFile(fileName, filePath, contentType, content);
-        return readFile;
-    }
 
     public void setupPrometheus(Long providerId, String url, String user, String pass) throws ApiException, IOException {
-        settingPrometheus = true;
+
         String filePath = "manifests/ultimate-prometheus-setup.yaml";
         String namespace = "monitoring";
+        
+        this.createNamespace(namespace);
 
         File bigYamlFile = new File(filePath);
-        MultipartFile yamlFile = convertMultipartFile(bigYamlFile.getName(), filePath);
-        parseYaml(yamlFile, namespace,  providerId);
+        parseYaml(bigYamlFile, namespace,  providerId);
 
         //run all yaml files in custom-objects directory
         String directoryPath = "manifests/custom-objects/";
@@ -307,7 +244,7 @@ public class ClusterApi {
                 "monitoring", "prometheusrules", prometheusRulesMap, pretty);
     }
     
-    public V1beta2DaemonSet createDaemonSet(V1beta2DaemonSet body, String namespace) throws ApiException {
+    public V1beta2DaemonSet createDaemonSet(String namespace, V1beta2DaemonSet body) throws ApiException {
         V1beta2DaemonSet result = appsBeta2Api.createNamespacedDaemonSet(namespace, body, pretty);
         return result;
     }
@@ -327,7 +264,7 @@ public class ClusterApi {
         return result;
     }
     
-    public V1RoleBinding createNamespacedRoleBinding(V1RoleBinding body,String namespace) throws ApiException {
+    public V1RoleBinding createNamespacedRoleBinding(String namespace,V1RoleBinding body) throws ApiException {
         V1RoleBinding result = null;
         result = rbacAuthApi.createNamespacedRoleBinding(namespace, body, pretty);       
         return result;
@@ -530,7 +467,52 @@ public class ClusterApi {
         }
     }
     
+    public List<Container> deploymentFromUserInput(String namespace, YamlBuilderForm form, Long providerId) throws IOException, ApiException {
+
+        String tab = "  ";
+        String label = form.getKey() + ": " + form.getValue();
+        String fileContent =
+                "apiVersion: apps/v1\n" 
+                        + "kind: Deployment\n"
+                        + "metadata:\n"
+                        + tab + "name: " + form.getDeploymentName() + "\n"
+                        + tab + "labels:\n"
+                        + tab + tab + label + "\n"
+                        + "spec:\n"
+                        + tab + "replicas: " + form.getReplicas() + "\n"
+                        + tab + "selector:\n"
+                        + tab + tab + "matchLabels:\n"
+                        + tab + tab + tab + label + "\n"
+                        + tab + "template:\n"
+                        + tab + tab + "metadata:\n"
+                        + tab + tab + tab + "labels:\n"
+                        + tab + tab + tab + tab + label + "\n"
+                        + tab + tab + "spec:\n"
+                        + tab + tab + tab + "containers:\n"
+                        + tab + tab + tab + "- name: " + form.getValue() + "\n"
+                        + tab + tab + tab + tab + "image: " + form.getImage() + "\n"
+                        + tab + tab + tab + tab + "ports:\n"
+                        + tab + tab + tab + tab + "- containerPort: " + form.getContainerPort();
+
+        String fileName = form.getDeploymentName() + ".yaml";
+        File file = new File(fileName);
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(fileContent);
+        fileWriter.close();
+
+        return parseYaml(file, namespace, providerId);
+    }
+    
     /*
+    private MultipartFile convertMultipartFile(String fileName, String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        String contentType = "text/plain";
+        byte[] content = null;
+        content = Files.readAllBytes(path);
+        MultipartFile readFile = new MockMultipartFile(fileName, filePath, contentType, content);
+        return readFile;
+    }
+    
     public void setWatch(String url, String user, String pass) throws ApiException {
 
         Thread thread = new Thread(checkServices(url,user,pass));

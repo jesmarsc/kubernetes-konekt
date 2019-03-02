@@ -1,13 +1,17 @@
 package com.kubernetes.konekt.metric;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -265,13 +269,21 @@ public class Prometheus {
         this.objectMapper = objectMapper;
     }
 
+    public void listFiles() {
+        List<File> file = Arrays.asList(new File("manifests/custom-objects").listFiles());
+        //Collections.sort(file);
+        System.out.println(file);
+    }
     public static void main(String[] args) throws IOException, ApiException {
         Prometheus test = new Prometheus();
         test.setObjectMapper(new ObjectMapper());
         test.setRestTemplate(new RestTemplate());
+        test.listFiles();
+        /*
         test.removeCluster("what");
         test.addCluster("35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
         test.updateAdditionalConfigs();
+        */
     }
 
 }
