@@ -169,7 +169,8 @@
 						<thead class="thead-transparent">
 							<tr>
 								<th align="center"><h5>Id</h5></th>
-								<th><h5>Container</h5></th>
+								<th><h5>Name</h5></th>
+								<th><h5>Kind</h5></th>
 								<th><h5>Cluster URL</h5></th>
 								<th><h5>Status</h5></th>
 								<th><h5>Action</h5></th>
@@ -180,16 +181,22 @@
 								<c:url var="removeLink" value="/user/delete">
 									<c:param name="containerId" value="${container.id}" />
 								</c:url>
-
+								<c:url var="statusLink" value="/user/get-status">
+									<c:param name="containerId" value="${container.id}" />
+								</c:url>
 								<tr>
 									<td>${container.id}</td>
 									<td>${container.containerName}</td>
+									<td>${container.kind}</td>
 									<td>${container.clusterUrl}</td>
 									<td><span class="badge badge-pill badge-primary">${container.status}</span></td>
 									<td><a class="btn btn-danger"
 										href="${removeLink}"
 										onclick="if(!(confirm('Are you sure you want to delete container')))return false"
-										role="button">Delete Container</a> </td>
+										role="button">Delete Container</a> 
+										<a class="btn btn-primary"
+										href="${statusLink}"
+										role="button">Get Status</a></td>
 								</tr>
 							</c:forEach>
 						</tbody>

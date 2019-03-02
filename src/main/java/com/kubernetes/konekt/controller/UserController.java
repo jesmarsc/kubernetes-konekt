@@ -30,6 +30,7 @@ import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
 
 import io.kubernetes.client.ApiException;
+import io.kubernetes.client.models.V1Service;
 
 @Controller
 public class UserController {
@@ -78,7 +79,39 @@ public class UserController {
 
 		return "user/yaml-builder-form";
 	}
+	@RequestMapping(value = "/user/get-status")
+	public String getWorkloadStatus(@RequestParam("containerId") Long id, Model model) {
+		// get account
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Account currentAccount = accountService.findByUserName(username);
+		model.addAttribute("currentAccount", currentAccount);
+		// get workload that user wants status on
+		Container container = containerService.getContainerById(id);
+		//get cluster info
+		Cluster cluster = clusterService.getCluster(container.getClusterUrl());
+		String clusterUrl = cluster.getClusterUrl();
+		String clusterUsername = clusterSecurity.decodeCredential(cluster.getEncryptedUsername());
+		String clusterPassword = clusterSecurity.decodeCredential(cluster.getEncryptedPassword());
+		// set up client
+		ClusterApi clusterApi = new ClusterApi();
+		clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
+		//request update
+		try {
+			String result = clusterApi.getStatusByKindAndUid(username, container.getKind(), container.getUid());
+			System.out.println(result);
+			model.addAttribute("statusResult", result);
+		} catch (ApiException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		model.addAttribute("currentAccount", currentAccount);
 
+		return "user/get-status";
+	}
     @RequestMapping(value = "/user/YamlBuildConfirmation")
     public String yamlBuilderConfirmation(@Valid @ModelAttribute("YamlBuilderForm") YamlBuilderForm yamlBuildForm,
             BindingResult theBindingResult, Model model)  {
