@@ -6,9 +6,9 @@
 
 <html>
 	
-	<div id="clusterUpload-div">
+	<div id="clusterUpload-div" class = "clusterUpload-div">
 	
-		<div class-"mx-4 my-4">
+		<div class="mx-4 my-4">
 			<h3>Upload New Cluster URL</h3>
 		</div>
 		

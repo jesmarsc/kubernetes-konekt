@@ -90,7 +90,7 @@ public class ProviderController {
 	}
 
 	@RequestMapping(value = "/provider/delete{clusterUrl}")
-	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) throws IOException, ApiException {
+	public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
 
 		Cluster deleteCluster = clusterService.getCluster(clusterUrl);
 		Blob encryptedUsername = deleteCluster.getEncryptedUsername();
@@ -123,6 +123,12 @@ public class ProviderController {
 		clusterService.deleteCluster(deleteCluster);
 		
 		prometheus.removeCluster(clusterUrl.substring(8));
+		
+		Account account = TBDeletedCluster.getAccount();
+		List<Cluster> clusterList = account.getClusters();
+		clusterList.remove(TBDeletedCluster);
+		account.setClusters(clusterList);
+		accountService.updateAccountTables(account);
 		
 		String deleteClusterSuccessStatus = "Deleted Cluster Success: ";
 		String deleteClusterSuccessMessage = "Cluster with URL: " + deleteCluster.getClusterUrl() + " has been deleted";
@@ -165,7 +171,6 @@ public class ProviderController {
 			// Set up prometheus
 			ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
 			clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUser, clusterPass);
-			
 			
 			String uploadClusterSuccessStatus = "Cluster Upload Success:";
 			String uploadClusterSuccessMessage = "Cluster with URL: "+ newCluster.getClusterUrl() + " has been successfully uploaded";

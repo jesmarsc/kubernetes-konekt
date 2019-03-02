@@ -49,11 +49,11 @@ public class ClusterDaoImpl implements ClusterDao {
 
 	@Override
 	public void deleteCluster(Cluster cluster) {
-	    Session currentSession = factory.unwrap(Session.class);
-        @SuppressWarnings("rawtypes")
-        Query query = currentSession.createNativeQuery("DELETE FROM cluster_info WHERE id = :id ");
-        query.setParameter("id", cluster.getId());
-        query.executeUpdate();
+		Session currentSession = factory.unwrap(Session.class);
+		@SuppressWarnings("rawtypes")
+		Query query = currentSession.createNativeQuery("DELETE FROM cluster_info WHERE id = :id ");
+		query.setParameter("id", cluster.getId());
+		query.executeUpdate();
 	}
 
 

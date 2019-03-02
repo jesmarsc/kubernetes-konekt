@@ -10,7 +10,12 @@
 	<title>Kubernetes Konekt</title>
 	
 	<link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16">
-	<link rel="stylesheet" href="css/bootstrap.css">
+
+    
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
+
 	<link rel="stylesheet" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="css/all.css">
 	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
@@ -18,44 +23,42 @@
 <body>
 
 		
-	<header id="header">
-			<div class="container">
-				<div class="logo"><a href="#"><img src="images/kubernetes.png" style="height:60px;"></a></div>
-				<nav id="nav">
-					<div class="opener-holder">
-						<a href="#" class="nav-opener"><span></span></a>
-					</div>
-	
-					<div class="nav-drop">
-						<ul>
-							<li class="active visible-sm visible-xs"><a href="#">Home</a></li>
-								<sec:authorize access="isAnonymous()">
-										<input type="button" onclick="location.href='register'" value="Register" class="btn btn-primary">
-										<input type="button" onclick="location.href='login'" value="Login" class="btn btn-primary">
-								</sec:authorize>
-								<sec:authorize access="hasAnyRole('USER, PROVIDER')">
-									<a class="nav-link" href="${pageContext.request.contextPath}/logout"><input type="button" value="Logout" class="btn btn-danger"></a>
-									<input type="button" onclick="location.href='user/list'" value="User List" class="btn btn-primary">
-								</sec:authorize>
-								<sec:authorize access="hasRole('USER')">
-										<input type="button" onclick="location.href='user'" value="User Dashboard" class="btn btn-primary">
-								</sec:authorize>
-								<sec:authorize access="hasRole('PROVIDER')">
-										<input type="button" onclick="location.href='provider'" value="Provider Dashboard" class="btn btn-primary">
-								</sec:authorize>
-						</ul>
-						<div class="drop-holder visible-sm visible-xs">
-							<span>Follow Us</span>
-							<ul class="social-networks">
-								<li><a class="fa fa-github" href="#"></a></li>
-								<li><a class="fa fa-twitter" href="#"></a></li>
-								<li><a class="fa fa-facebook" href="#"></a></li>
-							</ul>
-						</div>
-					</div>
-				</nav>
+	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
+
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+			<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt   </a>
+			<button class="navbar-toggler" type="button" data-toggle="collapse"
+				data-target="#navbarSupportedContent">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			
+				
+				<ul class="navbar-nav ml-auto">
+
+					<sec:authorize access="hasRole('USER')">
+						<li class="nav-item"><a class="btn" style="color:white;"
+						href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
+					</sec:authorize>
+					<sec:authorize access="hasRole('PROVIDER')">
+						<li class="nav-item"><a class="btn btn-warning" style="color:black;"
+						href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
+					</sec:authorize>
+					
+					<li class="nav-item">
+						<form:form action="${pageContext.request.contextPath}/logout" method="POST">
+							<input type="submit" value="Logout" class="btn btn-danger"/>
+						</form:form> 
+					</li>
+				
+
+				</ul>
 			</div>
-		</header>
+		</nav>
+	</div>
+
 	
 		<section class="visual">
 		<div class="container">
@@ -68,7 +71,7 @@
 				<span class="info">Get connected now</span>
 			</div>
 		</div>
-		<img src="images/5940.jpg" alt="" class="bg-stretch">
+
 	</section>
 
 	

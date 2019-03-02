@@ -6,7 +6,7 @@
 
 <html>
 	
-	<div id="clusterWork-div">
+	<div class="clusterWork-div" id="clusterWork-div">
 
 	<h3>Running On Your Clusters</h3>
 		<!-- Beginning of table -->
@@ -29,7 +29,7 @@
 						<td>${container.containerName}</td>
 						<td>${container.kind}</td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-danger" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
 						</td>
 					</tr>
 				</c:forEach>

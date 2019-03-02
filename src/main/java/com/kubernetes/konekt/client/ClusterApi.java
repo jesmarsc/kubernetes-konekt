@@ -129,51 +129,87 @@ public class ClusterApi {
     }
 
     public List<Container> parseYaml(File file, String namespace, Long providerId) throws IOException, ApiException   {
-
         FileReader yamlReader = new FileReader(file);
         List<Object> objects = Yaml.loadAll(yamlReader);
         List<Container> containers = new ArrayList<Container>();
         String resourceName;
 
         for (Object body : objects) {
+        	try {
             if (body instanceof V1Deployment) {
-                resourceName = createDeploymentV1(namespace, (V1Deployment) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "Deployment", "Running", client.getBasePath(), providerId));
+            	namespace = settingPrometheus ? ((V1Deployment) body).getMetadata().getNamespace() : namespace;
+            	V1Deployment response = createDeploymentV1(namespace, (V1Deployment) body);
+                resource = response.getMetadata().getName();
+                result.add(new Container(resource, "Deployment", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
             } else if (body instanceof V1Service) {
-                resourceName = createService(namespace, (V1Service) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "Service", "Running", client.getBasePath(), providerId));
+            	namespace = settingPrometheus ? ((V1Service) body).getMetadata().getNamespace() : namespace;
+            	V1Service response = createService(namespace, (V1Service) body);
+            	resource = response.getMetadata().getName();
+                result.add(new Container(resource, "Service", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            
             } else if (body instanceof V1ConfigMap) {
-                resourceName = createConfigMap(namespace, (V1ConfigMap) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "ConfigMap", "Running", client.getBasePath(), providerId));
+            	namespace = settingPrometheus ? ((V1ConfigMap) body).getMetadata().getNamespace() : namespace;
+            	V1ConfigMap response = createConfigMap(namespace, (V1ConfigMap) body);
+                resource = response.getMetadata().getName();
+                result.add(new Container(resource, "ConfigMap", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
             } else if (body instanceof V1beta1CustomResourceDefinition) {
-                resourceName = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "CustomResourceDefinitions", "Running", client.getBasePath(), providerId));
-            } else if (body instanceof V1ClusterRole ) {
-                resourceName = createClusterRole((V1ClusterRole) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "ClusterRole", "Running", client.getBasePath(), providerId));
-            } else if (body instanceof V1ClusterRoleBinding ) {
-                resourceName = createClusterRoleBinding((V1ClusterRoleBinding) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "ClusterRoleBinding", "Running", client.getBasePath(), providerId));
-            } else if(body instanceof V1ServiceAccount) {
-                resourceName = createServiceAccount(namespace, (V1ServiceAccount) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "ServiceAccount", "Running", client.getBasePath(), providerId));
-            } else if(body instanceof V1Role){
-                resourceName = createRole(namespace, (V1Role) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "Role", "Running", client.getBasePath(), providerId));
-            } else if(body instanceof V1RoleBinding ) {
-                resourceName = createNamespacedRoleBinding(namespace, (V1RoleBinding) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "V1RoleBinding", "Running", client.getBasePath(), providerId));
-            } else if(body instanceof V1beta2DaemonSet){
-                resourceName = createDaemonSet(namespace, (V1beta2DaemonSet) body).getMetadata().getName();
-                containers.add(new Container(resourceName, "V1beta2DaemonSet", "Running", client.getBasePath(), providerId));
-            } else if(body instanceof V1beta2Deployment) {
-                resourceName = createDeploymentV1Beta2(namespace, (V1beta2Deployment)body).getMetadata().getName();
-                containers.add(new Container(resourceName, "V1beta2Deployment", "Running", client.getBasePath(), providerId));
+            	namespace = settingPrometheus ? ((V1beta1CustomResourceDefinition) body).getMetadata().getNamespace() : namespace;
+            	V1beta1CustomResourceDefinition response = createCustomResourceDefinition((V1beta1CustomResourceDefinition) body);
+                resource = response.getMetadata().getName();
+                result.add(new Container(resource, "CustomResourceDefinitions", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if (body instanceof V1ClusterRole ) {
+            	namespace = settingPrometheus ? ((V1ClusterRole) body).getMetadata().getNamespace() : namespace;
+            	V1ClusterRole response = createClusterRole((V1ClusterRole) body);
+            	resource = response.getMetadata().getName();
+            	result.add(new Container(resource, "ClusterRole", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if (body instanceof V1ClusterRoleBinding ) {
+            	namespace = settingPrometheus ? ((V1ClusterRoleBinding) body).getMetadata().getNamespace() : namespace;
+            	V1ClusterRoleBinding response = createClusterRoleBinding((V1ClusterRoleBinding) body);
+            	resource = response.getMetadata().getName();
+            	result.add(new Container(resource, "ClusterRoleBinding", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if(body instanceof V1ServiceAccount) {
+            	namespace = settingPrometheus ? ((V1ServiceAccount) body).getMetadata().getNamespace() : namespace;
+            	V1ServiceAccount response =createServiceAccount(namespace,(V1ServiceAccount)body);
+            	resource = response.getMetadata().getName();
+            	 result.add(new Container(resource, "ServiceAccount", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if(body instanceof V1Role){
+            	namespace = settingPrometheus ? ((V1Role) body).getMetadata().getNamespace() : namespace;
+            	V1Role response = createRole(namespace,(V1Role)body);
+            	resource = response.getMetadata().getName();
+            	result.add(new Container(resource, "Role", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if(body instanceof V1beta2DaemonSet){
+            	namespace = settingPrometheus ? ((V1beta2DaemonSet) body).getMetadata().getNamespace() : namespace;
+            	V1beta2DaemonSet response = createDaemonSet((V1beta2DaemonSet)body,namespace);
+            	resource = response.getMetadata().getName();
+            	result.add(new Container(resource, "V1beta2DaemonSet", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if(body instanceof V1Namespace && settingPrometheus) {
+            	namespace = ((V1Namespace)body).getMetadata().getName();
+            	createNamespace(namespace);
+            }else if(body instanceof V1beta2Deployment) {
+            	namespace = settingPrometheus ? ((V1beta2Deployment) body).getMetadata().getNamespace() : namespace;
+            	V1beta2Deployment response = createDeploymentV1Beta2(namespace,(V1beta2Deployment)body);
+            	resource = response.getMetadata().getName();
+            	result.add(new Container(resource, "V1beta2Deployment", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
+            }else if(body instanceof V1RoleBinding ) {
+            	namespace = settingPrometheus ? ((V1RoleBinding) body).getMetadata().getNamespace() : namespace;
+            	V1RoleBinding response = createNamespacedRoleBinding((V1RoleBinding) body, namespace);
+            	resource = response.getMetadata().getName();
+            	result.add(new Container(resource, "V1RoleBinding", "Running", client.getBasePath(), providerId,response.getMetadata().getUid()));
             }
-        }
-        return containers;
-    }
+        	}catch(Exception e ) {
+        		if(settingPrometheus) {
+        			e.printStackTrace();
+        			continue;
+        		}else {
+        			return null;
+        		}
+        	}
 
+        }
+		
+        return result;
+    }
+  
     public File saveFileLocally(MultipartFile file) throws IOException {
         File convFile = new File(file.getOriginalFilename());
         convFile.createNewFile();
@@ -225,10 +261,41 @@ public class ClusterApi {
     }
     
     public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {
-        V1ServiceList result = coreInstance.listNamespacedService(namespace, pretty, null, null, Boolean.FALSE, null, null, null, null, Boolean.FALSE);
+    	 V1ServiceList result = coreInstance.listNamespacedService(namespace, null, null,"", Boolean.FALSE,  null, null, null, null, Boolean.FALSE);
         return result;
     }
     
+    public V1DeploymentList getNamespacedV1DeploymentList(String namespace) throws ApiException {
+    	V1DeploymentList result = appsInstance.listNamespacedDeployment(namespace, pretty, null, null, Boolean.FALSE, null, null, null, null, Boolean.FALSE);
+    	return result;
+   }
+    
+    public String getStatusByKindAndUid(String namespace, String kind, String uid ) throws ApiException {
+    	
+    	if(kind.equals("Service")) {
+    		V1ServiceList result = getNamespacedV1ServiceList(namespace);
+    		System.out.println(result);
+    		for(V1Service item : result.getItems()) {
+    			if(item.getMetadata().getUid().equals(uid)) {
+    				return item.toString();
+    			}
+    		}
+    	}
+    	
+    	if(kind.equals("Deployment")) {
+    		V1DeploymentList result = getNamespacedV1DeploymentList(namespace);
+    		System.out.println(result);
+    		for(V1Deployment item : result.getItems()) {
+    			System.out.println(item.getMetadata().getUid());
+    			if(item.getMetadata().getUid().equals(uid)) {
+    				return item.toString();
+    			}
+    		}
+    	}
+    	
+    	return new String();
+    }
+   
     public void createPrometheus(@SuppressWarnings("rawtypes") Map prometheusMap) throws ApiException, IOException {
         customObjectsInstance.createNamespacedCustomObject("monitoring.coreos.com", "v1", 
                 "monitoring", "prometheuses", prometheusMap, pretty);
@@ -271,9 +338,8 @@ public class ClusterApi {
     }
 
     public V1ClusterRole createClusterRole(V1ClusterRole body) throws ApiException {
-        V1ClusterRole result = null;
-        result = rbacAuthApi.createClusterRole(body, pretty);        
-        return result;        
+        V1ClusterRole result = rbacAuthApi.createClusterRole(body, pretty);
+        return result;
     }
     
     public V1Deployment createDeploymentV1(String namespace, V1Deployment body) throws ApiException {

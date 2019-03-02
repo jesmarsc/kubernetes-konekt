@@ -5,15 +5,78 @@
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <html>	
-	<style>
-		.modal{display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:#000;background-color:rgba(0,0,0,.4)}.modal-content{background-color:#fefefe;margin:auto;padding:20px;border:1px solid #888;width:80%}.close{color:#aaa;float:right;font-size:28px;font-weight:700}.close:focus,.close:hover{color:#000;text-decoration:none;cursor:pointer}
-		font-family: 'Maven Pro', sans-serif;
-		
-	</style>
+	
+
+	
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<div id="clusterList-div" class= "clusterList-div">
+	<script>
+		totalCluster = 0;
+		</script>
+	<h3>My Clusters</h3>
+	<!-- Beginning of table -->
+	<c:forEach var="cluster" items="${currentAccount.clusters}"
+		varStatus="count">
+		<c:url var="removeLink" value="/provider/delete">
+			<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
+		</c:url>
+		<script>
+					totalCluster += 1;
+		</script>
+		
+		
+<div class="card text-center">
+  <div class="card-header " >
+  <div class="card-header-blue">
+    <h3>${cluster.clusterUrl}</h3>
+    <a class=" btn active btn-danger mx-1 my-1" href="${removeLink}"
+						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
+						role="button">Delete Cluster</a> 
+						 <!-- show metrics graph hide everything else -->
+
+	<a class=" btn active btn-dark mx-1 my-1" href="javascript:show(4,'${cluster.prometheusIp}')"
+						role="button">Show More Metric</a> 
+  </div>
+  </div>
+  <div class="card-body">
+	<div class=" form-group">
+				<div class="row">
+				<div class="col-md-3">
+				</div>
+					<div class="col-md-2">
+						<canvas id="myChart1_${count.index}" width="50" height="50"></canvas>
+						<object style="display:none;">
+							<param id="ip_instance_${count.index}"
+								value="${cluster.prometheusIp}">
+						</object>
+						</div>
+					<div class="col-md-2">
+						<canvas id="myChart2_${count.index}" width="50" height="50"
+							></canvas>
+						
+					</div>
+					<div class="col-md-2">
+						<canvas id="myChart3_${count.index}" width="50" height="50"
+							></canvas>
+					</div>
+				</div>
+			</div>
+
+
+    
+  </div>
+  <div class="card-footer text-muted">
+    Healthy
+  </div>
+</div>
+	
+	</c:forEach>
+</div>
+
 <script type="text/javascript">
 	var totalCluster = 0;
 	Chart.pluginService
@@ -32,7 +95,7 @@
 						var sidePaddingCalculated = (sidePadding / 100)
 								* (chart.innerRadius * 2)
 						//Start with a base font of 30px
-						ctx.font = "30px " + fontStyle;
+						ctx.font = "25px " + fontStyle;
 
 						//Get the width of the string and also the width of the element minus 10 to give it 5px side padding
 						var stringWidth = ctx.measureText(txt).width;
@@ -64,7 +127,6 @@
 	function createChart(elementID, ChartName, ChartValue, TextUnits,
 			graphColor) {
 		var myChart = document.getElementById(elementID).getContext('2d');
-
 		var theChart = new Chart(myChart, {
 			type : 'doughnut', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
 			data : {
@@ -185,8 +247,8 @@
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
 			networkUploadResponse = JSON.parse(response);
-			console.log("upload")
-			console.log(response)
+			//console.log("upload")
+			//console.log(response)
 		});
 
 		var networkUsage = 0;
@@ -204,16 +266,16 @@
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
 			networkDownloadResponse = JSON.parse(response);
-			console.log("download")
-			console.log(response);
+			//console.log("download")
+			//console.log(response);
 		});
 
 		var networkUsage = 0;
 		if (networkDownloadResponse != null) {
 			networkUsage = Number((networkDownloadResponse.data.result[0].value)[1]);
 		}
-		console.log('download network');
-		console.log(networkUsage);
+		//console.log('download network');
+		//console.log(networkUsage);
 		return networkUsage;
 	}
 
@@ -230,88 +292,20 @@
 
 	}
 </script>
-<div id="clusterList-div">
-
-	<h3>My Clusters</h3>
-	<!-- Beginning of table -->
-	<c:forEach var="cluster" items="${currentAccount.clusters}"
-		varStatus="count">
-		<c:url var="removeLink" value="/provider/delete">
-			<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
-		</c:url>
-		<script>
-					totalCluster += 1;
-		</script>
-		<div class="jumbotron rounded form-group ">
-			<div class="row form-group">
-				<div class="col-lg-6 d-flex flex-wrap align-content-center border  border-top-0 border-bottom-0">
-					<div class="text-secondary">
-						<h1>Cluster Url</h1>
-					</div>
-
-				</div>
-				<div class="col-lg-6 d-flex flex-wrap align-content-center border  border-top-0 border-bottom-0">
-					<div class="text-secondary">
-						<h1>Options</h1>
-					</div>
-
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-lg-6 align-content-center border border-top-0 border-bottom-0 ">
-					<h3>${cluster.clusterUrl}</h3>
-				</div>
-				<div class="col-lg-6 d-flex flex-wrap align-content-center border border-top-0 border-bottom-0">
-					<div class="mt-2 mr-1">
-					<a class=" btn btn-danger" href="${removeLink}"
-						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
-						role="button">Delete Cluster</a> 
-					</div>
-					<div class="mt-2 mr-1">
-					<a class="btn btn-dark" href="#"
-						role="button" data-modal="myModalA">Show More Metrics</a>
-					</div>
-				</div>
-			</div>
-			<div class="container form-group">
-				<div class="row">
-					<div class="col-md-4">
-						<canvas id="myChart1_${count.index}" width="100" height="100"></canvas>
-						<object>
-						<!-- @@@@@@@@@@TODO - NEED CLUSTER IP 255.255.255.255 NOT HTTPS://255.255.255.255@@@@@@@@@@ 
-								METERS DO NOT WORK BECAUSE OF THIS-->
-							<param id="ip_instance_${count.index}"
-								value="${cluster.clusterUrl}">
-						</object>
-						</div>
-					<div class="col-md-4">
-						<canvas id="myChart2_${count.index}" width="200" height="200"
-							></canvas>
-						
-					</div>
-					<div class="col-md-4">
-						<canvas id="myChart3_${count.index}" width="200" height="200"
-							></canvas>
-					</div>
-				</div>
-			</div>
-		</div>
-	</c:forEach>
-</div>
-
-<!-- TESTING GRAPHS -->
-
-<!-- END OF TESTING GRAPHS -->
 
 <script>
 
 $(window).load(function() {
+	
+	createGraphs();	
+});
+function createGraphs(){
+	console.log("drawing graphs")
 	for(var i = 0; i  <totalCluster; i++){
 		var ipInstanceID = "ip_instance_" + String(i)
 		drawMyGraphs(String(i),ipInstanceID)
-	}	
-});
-
+	}
+}
 function drawMyGraphs(chartID,ipInstanceID){
 	var ipInstance = document.getElementById(ipInstanceID).value;
 	var chart1 = createChart("myChart1_"+chartID, "CPU", 0, ' %','#00d2f9')
@@ -323,21 +317,21 @@ function drawMyGraphs(chartID,ipInstanceID){
 		var percentOfGraph = networkValue/10;
 		chart3.data.datasets[0].data[0] = percentOfGraph;
 		chart3.data.datasets[0].data[1]= 100 - percentOfGraph;
-		chart3.options.elements.center.text = networkValue +' KB/s';
+		chart3.options.elements.center.text = networkValue +'KB/s';
 		chart3.update();
 	},2000);
     setInterval(function(){
     	var cpuValue = getCpu(ipInstance);
     	chart1.data.datasets[0].data[0] = cpuValue;
     	chart1.data.datasets[0].data[1]= 100 - cpuValue;
-    	chart1.options.elements.center.text = cpuValue +' %';
+    	chart1.options.elements.center.text = cpuValue +'%';
     	chart1.update();
     }, 2000);
     setInterval(function(){
     	var memoryValue = getMemory(ipInstance);
     	chart2.data.datasets[0].data[0] = memoryValue;
     	chart2.data.datasets[0].data[1]= 100 - memoryValue;
-    	chart2.options.elements.center.text = memoryValue +' %';
+    	chart2.options.elements.center.text = memoryValue +'%';
     	chart2.update();
     }, 2000);	
 }
