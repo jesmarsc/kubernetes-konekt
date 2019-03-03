@@ -139,7 +139,7 @@
 			<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-	        <div class="alert alert-danger" role="alert">
+	        <div class="alert alert-danger alert-dismissible fade show" role="alert">
 			<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
 			</div>
 			</div>
@@ -177,12 +177,12 @@
 				</div>
 
 				<div id="cluster-workload-div1"
-					class=" cluster-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12 hidden  ">
+					class=" cluster-workload-div  d-none container mx-1  col-sm-10 col-md-10 col-lg-12">
 					<%@ include file="cluster-workload.jsp"%>
 				</div>
 
 				<div id="cluster-upload-form-div1"
-					class=" cluster-upload-form-div container mx-1  col-sm-10 col-md-10 col-lg-12 hidden ">
+					class=" cluster-upload-form-div d-none container mx-1  col-sm-10 col-md-10 col-lg-12">
 					<%@ include file="upload-cluster.jsp"%>
 				</div>
 
@@ -201,28 +201,15 @@
 	<script type="text/javascript">
 		
   	var count = 0;
-	var clusterListClone;
-	var clusterWorkLoadClone;
-	var clusterUploadFormClone;
 	
-	function clone(){
-		clusterListClone =  $(".clusterList-div").clone();
-		clusterWorkLoadClone = $(".clusterWork-div").clone();
-		clusterUploadFormClone = $(".clusterUpload-div").clone();
-
-
-	}
 	$(window).on('load',function(){
-		clone();
-		show(1,'');
-		show(1,'');
-		
+		show(1,'');		
 		});
 
 	function remove(){
-		$( "div" ).remove( ".clusterList-div" );
-		$( "div" ).remove( ".clusterWork-div" );
-		$( "div" ).remove( ".clusterUpload-div" );
+		document.getElementById("cluster-list-div1").className= "d-none";
+		document.getElementById("cluster-workload-div1").className="d-none";
+		document.getElementById("cluster-upload-form-div1").className="d-none";
 		$( "div" ).remove( ".clusterMetric-div" );
 	}
 	
@@ -233,15 +220,13 @@
 		setActiveEmpty();
 		if(showId == 1){
 			document.getElementById("clusterListNavLink").className="active";
-			$(".cluster-list-div").append(clusterListClone);
-			createGraphs();
-			
+			document.getElementById("cluster-list-div1").className= "cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ";
 		}else if(showId == 2){
 			document.getElementById("clusterWorkloadNavLink").className="active";
-			$(".cluster-workload-div").append(clusterWorkLoadClone);
+			document.getElementById("cluster-workload-div1").className="cluster-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12";
 		}else if(showId == 3){
 			document.getElementById("clusterUploadFormNavLink").className="active";
-			$(".cluster-upload-form-div").append(clusterUploadFormClone);
+			document.getElementById("cluster-upload-form-div1").className="cluster-upload-form-div container mx-1  col-sm-10 col-md-10 col-lg-12";
 		}else if(showId == 4){
 			document.getElementById("clusterListNavLink").className="active";
 			console.log("ipInstance");

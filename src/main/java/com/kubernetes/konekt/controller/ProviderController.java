@@ -71,30 +71,17 @@ public class ProviderController {
 
         List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
         UploadClusterForm newClusterForm = new UploadClusterForm();
-
+        System.out.println(currentAccount.getClusters());
         model.addAttribute("currentAccount", currentAccount);
         model.addAttribute("runningContainers", containers);
         model.addAttribute("newClusterForm", newClusterForm);
-
-        List<Cluster> clusters = currentAccount.getClusters();
-        List<Metric> metrics = new ArrayList<Metric>();
-        for(Cluster cluster:clusters) {
-            try {
-                metrics.add(prometheus.getUsageMetric(cluster.getClusterUrl().substring(8)));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        model.addAttribute("metrics", metrics);
-
+        
         return "provider/provider-dashboard";
     }
 
     @RequestMapping(value = "/provider/delete{clusterUrl}")
     public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
-
+        
         Cluster deleteCluster = clusterService.getCluster(clusterUrl);
         Blob encryptedUsername = deleteCluster.getEncryptedUsername();
         Blob encryptedPassword = deleteCluster.getEncryptedUsername();
@@ -144,8 +131,13 @@ public class ProviderController {
 
         model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
         model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
+        Account account = deleteCluster.getAccount();
+        List<Cluster> list = account.getClusters();
+        list.remove(deleteCluster);
+        account.setClusters(list);
+        accountService.updateAccountTables(account);
         clusterService.deleteCluster(deleteCluster);
-    
+        
         return this.showProviderDashboard(null, null, model);
     }
 
