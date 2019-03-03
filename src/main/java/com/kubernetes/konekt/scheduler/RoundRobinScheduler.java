@@ -34,7 +34,7 @@ public class RoundRobinScheduler {
 		// if no cluster was selected choose next cluster
 		if(oldNextCluster == null) {	
 			Random random = new Random();
-			Integer next = random.nextInt() % clusterList.size();
+			Integer next = Math.abs(random.nextInt()) % clusterList.size();
 			oldNextCluster = clusterList.get(next);
 			newNextCluster = clusterList.get((next + 1) % clusterList.size());
 		}

@@ -172,7 +172,7 @@
 	</c:choose>
 
 				<div id="cluster-list-div1"
-					class=" cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ">
+					class=" cluster-list-div d-none container mx-1  col-sm-10 col-md-10 col-lg-12  ">
 					<%@ include file="cluster-list.jsp"%>
 				</div>
 
@@ -201,9 +201,16 @@
 	<script type="text/javascript">
 		
   	var count = 0;
-	
-	$(window).on('load',function(){
-		show(1,'');		
+  	var url = new URL(window.location.href );
+  	var showThisId = url.searchParams.get("value");
+$(window).on('load',function(){
+		
+		if(showThisId != null){
+			show(showThisId,'');
+		}else{
+			show(1,'');
+		}
+		
 		});
 
 	function remove(){
@@ -221,19 +228,19 @@
 		if(showId == 1){
 			document.getElementById("clusterListNavLink").className="active";
 			document.getElementById("cluster-list-div1").className= "cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ";
+			window.history.pushState("","","/provider?value=1");
 		}else if(showId == 2){
 			document.getElementById("clusterWorkloadNavLink").className="active";
 			document.getElementById("cluster-workload-div1").className="cluster-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12";
+			window.history.pushState("","","/provider?value=2");
 		}else if(showId == 3){
 			document.getElementById("clusterUploadFormNavLink").className="active";
 			document.getElementById("cluster-upload-form-div1").className="cluster-upload-form-div container mx-1  col-sm-10 col-md-10 col-lg-12";
+			window.history.pushState("","","/provider?value=3");
 		}else if(showId == 4){
 			document.getElementById("clusterListNavLink").className="active";
-			console.log("ipInstance");
-			console.log(ipInstance);
 			ipInstance = ipInstance.substring(8);
-			console.log("ipInstance");
-			console.log(ipInstance);
+			window.history.pushState("","","/provider?value=4");
 			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+ipInstance+':443&var-namespace=monitoring&kiosk&theme=light" width="1150" height="775" frameborder="0"></iframe></div>');
 				
 		}
