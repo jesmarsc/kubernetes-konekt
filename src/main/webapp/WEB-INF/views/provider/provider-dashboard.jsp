@@ -88,53 +88,58 @@
         <!-- style="background:transparent url('images/sidebar-6.jpg') no-repeat center center /cover" -->
        <div class="main-panel"  >
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg ">
-                <div class=" container  ">
-                <a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt   </a>
-                    <div class="collapse navbar-collapse" id="navigation">
-                        
-                    </div>
-                    
-                    <button  class=" navbar-toggler navbar-toggler-right " type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-bar burger-lines"></span>
-                        <span class="navbar-toggler-bar burger-lines"></span>
-                        <span class="navbar-toggler-bar burger-lines"></span>
-                    </button>
-                    
-			
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#TopNavBarContent">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			
-			<div class="collapse navbar-collapse" id="TopNavBarContent">
-				
-				<ul class="navbar-nav ml-auto">
+			<nav class="navbar navbar-expand-lg ">
+				<div class=" container  ">
+					<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes
+						Konekt </a>
+					<div class="collapse navbar-collapse" id="navigation"></div>
 
-					<sec:authorize access="hasRole('USER')">
-					<li class="nav-link"><a class="tocxref btn" style="color:black;"
-						href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
-					</sec:authorize>
-					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-btn"><a class="btn btn-warning" style="color:black;"
-						href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
-					</sec:authorize>
-					
-					<li class="nav-item">
-						<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-							<input type="submit" value="Logout" class="btn btn-danger"/>
-						</form:form> 
-					</li>
-				
+					<button class=" navbar-toggler navbar-toggler-right " type="button"
+						data-toggle="collapse" aria-controls="navigation-index"
+						aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-bar burger-lines"></span> <span
+							class="navbar-toggler-bar burger-lines"></span> <span
+							class="navbar-toggler-bar burger-lines"></span>
+					</button>
 
-				</ul>
-			</div>
-                </div>
-            </nav>
-<c:choose>
+
+					<button class="navbar-toggler" type="button" data-toggle="collapse"
+						data-target="#TopNavBarContent">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+
+					<div class="collapse navbar-collapse" id="TopNavBarContent">
+
+						<ul class="navbar-nav ml-auto">
+
+							<sec:authorize access="hasRole('USER')">
+								<li class="nav-link"><a class="tocxref btn"
+									style="color: black;"
+									href="${pageContext.request.contextPath}/user"> User
+										Dashboard </a></li>
+							</sec:authorize>
+							<sec:authorize access="hasRole('PROVIDER')">
+								<li class="nav-btn"><a class="btn btn-warning"
+									style="color: black;"
+									href="${pageContext.request.contextPath}/provider">
+										Provider Dashboard </a></li>
+							</sec:authorize>
+
+							<li class="nav-item"><form:form
+									action="${pageContext.request.contextPath}/logout"
+									method="POST">
+									<input type="submit" value="Logout" class="btn btn-danger" />
+								</form:form></li>
+
+
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<c:choose>
 	    <c:when test="${not empty uploadClusterFailStatus}">
 	    	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
-	        <div class="alert alert-danger" role="alert">
+	        <div class="alert alert-danger alert-dismissible fade show" role="alert">
 			<strong>${uploadClusterFailStatus}</strong> ${uploadClusterFailMessage}
 			</div>
 			</div>
@@ -167,22 +172,22 @@
 	</c:choose>
 
 				<div id="cluster-list-div1"
-					class=" cluster-list-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  ">
+					class=" cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ">
 					<%@ include file="cluster-list.jsp"%>
 				</div>
 
 				<div id="cluster-workload-div1"
-					class=" cluster-workload-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden  ">
+					class=" cluster-workload-div  d-none container mx-1  col-sm-10 col-md-10 col-lg-12">
 					<%@ include file="cluster-workload.jsp"%>
 				</div>
 
 				<div id="cluster-upload-form-div1"
-					class=" cluster-upload-form-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12 hidden ">
+					class=" cluster-upload-form-div d-none container mx-1  col-sm-10 col-md-10 col-lg-12">
 					<%@ include file="upload-cluster.jsp"%>
 				</div>
 
 				<div id="cluster-metrics-div1"
-					class=" cluster-metrics-div container mx-1 my-4 col-sm-10 col-md-10 col-lg-12  ">
+					class=" cluster-metrics-div container mx-1 col-sm-10 col-md-10 col-lg-12  ">
 
 				</div>
 
@@ -196,50 +201,41 @@
 	<script type="text/javascript">
 		
   	var count = 0;
-	var clusterListClone;
-	var clusterWorkLoadClone;
-	var clusterUploadFormClone;
 	
-	function clone(){
-		clusterListClone =  $(".clusterList-div").clone();
-		clusterWorkLoadClone = $(".clusterWork-div").clone();
-		clusterUploadFormClone = $(".clusterUpload-div").clone();
-
-
-	}
 	$(window).on('load',function(){
-		clone();
-		show(1,'');
-		show(1,'');
-		
+		show(1,'');		
 		});
 
 	function remove(){
-		$( "div" ).remove( ".clusterList-div" );
-		$( "div" ).remove( ".clusterWork-div" );
-		$( "div" ).remove( ".clusterUpload-div" );
+		document.getElementById("cluster-list-div1").className= "d-none";
+		document.getElementById("cluster-workload-div1").className="d-none";
+		document.getElementById("cluster-upload-form-div1").className="d-none";
 		$( "div" ).remove( ".clusterMetric-div" );
 	}
 	
 	
 	function show(showId, ipInstance){
-		ipInstance = '35.247.41.79:9090';
+		
 		remove();
 		setActiveEmpty();
 		if(showId == 1){
 			document.getElementById("clusterListNavLink").className="active";
-			$(".cluster-list-div").append(clusterListClone);
-			createGraphs();
-			
+			document.getElementById("cluster-list-div1").className= "cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ";
 		}else if(showId == 2){
 			document.getElementById("clusterWorkloadNavLink").className="active";
-			$(".cluster-workload-div").append(clusterWorkLoadClone);
+			document.getElementById("cluster-workload-div1").className="cluster-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12";
 		}else if(showId == 3){
 			document.getElementById("clusterUploadFormNavLink").className="active";
-			$(".cluster-upload-form-div").append(clusterUploadFormClone);
+			document.getElementById("cluster-upload-form-div1").className="cluster-upload-form-div container mx-1  col-sm-10 col-md-10 col-lg-12";
 		}else if(showId == 4){
 			document.getElementById("clusterListNavLink").className="active";
-			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-instance='+ipInstance+'&theme=light&kiosk" width="1150" height="300" frameborder="0"></iframe></div>');
+			console.log("ipInstance");
+			console.log(ipInstance);
+			ipInstance = ipInstance.substring(8);
+			console.log("ipInstance");
+			console.log(ipInstance);
+			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+ipInstance+':443&var-namespace=monitoring&kiosk&theme=light" width="1150" height="775" frameborder="0"></iframe></div>');
+				
 		}
 		
 	}

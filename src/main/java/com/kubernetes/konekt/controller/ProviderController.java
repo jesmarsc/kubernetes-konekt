@@ -68,17 +68,16 @@ public class ProviderController {
         Account currentAccount = accountService.findByUserName(username);
         List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
         UploadClusterForm newClusterForm = new UploadClusterForm();
-
+        System.out.println(currentAccount.getClusters());
         model.addAttribute("currentAccount", currentAccount);
         model.addAttribute("runningContainers", containers);
         model.addAttribute("newClusterForm", newClusterForm);
-
         return "provider/provider-dashboard";
     }
 
     @RequestMapping(value = "/provider/delete")
     public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
-
+        
         Cluster deleteCluster = clusterService.getCluster(clusterUrl);
         Blob encryptedUsername = deleteCluster.getEncryptedUsername();
         Blob encryptedPassword = deleteCluster.getEncryptedUsername();
@@ -93,7 +92,6 @@ public class ProviderController {
             String containerName = container.getContainerName();
             String namespace = container.getAccount().getUserName();
             String kind = container.getKind();
-            
             try {
                 if (kind.equals("Deployment")) {
                     clusterApi.deleteDeployment(namespace, containerName);
@@ -115,7 +113,7 @@ public class ProviderController {
             }
         }
 
-        clusterService.deleteCluster(deleteCluster);
+        
 
         try {
             prometheus.removeCluster(clusterUrl.substring(8));
@@ -129,7 +127,13 @@ public class ProviderController {
 
         model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
         model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
-
+        Account account = deleteCluster.getAccount();
+        List<Cluster> list = account.getClusters();
+        list.remove(deleteCluster);
+        account.setClusters(list);
+        accountService.updateAccountTables(account);
+        clusterService.deleteCluster(deleteCluster);
+        
         return this.showProviderDashboard(null, null, model);
     }
 

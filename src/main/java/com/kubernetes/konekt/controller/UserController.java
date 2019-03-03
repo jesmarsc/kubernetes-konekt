@@ -290,7 +290,7 @@ public class UserController {
         Blob ecnryptedPassword = cluster.getEncryptedPassword();
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(ecnryptedPassword);
-
+        System.out.println(clusterUrl + " " + clusterUser + "   " + clusterPass);
         clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);;
 
         try {

@@ -15,48 +15,79 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
-
 	<link rel="stylesheet" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="css/all.css">
 	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+	   <link href="https://fonts.googleapis.com/css?family=Maven+Pro:bold|700" rel="stylesheet">
+    
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link href="/css/light-bootstrap-dashboard.css?v=2.0.1" rel="stylesheet" />
 </head>
 <body>
 
 		
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-			<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes Konekt   </a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse"
-				data-target="#navbarSupportedContent">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+		<nav class="navbar navbar-expand-lg ">
+				<div class=" container  ">
+					<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes
+						Konekt </a>
+					<div class="collapse navbar-collapse" id="navigation"></div>
+
+					<button class=" navbar-toggler navbar-toggler-right " type="button"
+						data-toggle="collapse" aria-controls="navigation-index"
+						aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-bar burger-lines"></span> <span
+							class="navbar-toggler-bar burger-lines"></span> <span
+							class="navbar-toggler-bar burger-lines"></span>
+					</button>
 
 
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			
-				
-				<ul class="navbar-nav ml-auto">
+					<button class="navbar-toggler" type="button" data-toggle="collapse"
+						data-target="#TopNavBarContent">
+						<span class="navbar-toggler-icon"></span>
+					</button>
 
-					<sec:authorize access="hasRole('USER')">
-						<li class="nav-item"><a class="btn" style="color:white;"
-						href="${pageContext.request.contextPath}/user"> User Dashboard </a></li>
-					</sec:authorize>
-					<sec:authorize access="hasRole('PROVIDER')">
-						<li class="nav-item"><a class="btn btn-warning" style="color:black;"
-						href="${pageContext.request.contextPath}/provider"> Provider Dashboard </a></li>
-					</sec:authorize>
-					
-					<li class="nav-item">
-						<form:form action="${pageContext.request.contextPath}/logout" method="POST">
-							<input type="submit" value="Logout" class="btn btn-danger"/>
-						</form:form> 
-					</li>
-				
+					<div class="collapse navbar-collapse" id="TopNavBarContent">
 
-				</ul>
-			</div>
-		</nav>
+						<ul class="navbar-nav ml-auto">
+
+							<sec:authorize access="hasRole('USER')">
+								<li class="nav-link"><a class="tocxref btn"
+									style="color: black;"
+									href="${pageContext.request.contextPath}/user"> User
+										Dashboard </a></li>
+							</sec:authorize>
+							<sec:authorize access="hasRole('PROVIDER')">
+								<li class="nav-btn"><a class="btn btn-warning"
+									style="color: black;"
+									href="${pageContext.request.contextPath}/provider">
+										Provider Dashboard </a></li>
+							</sec:authorize>
+							
+							<sec:authorize access="hasAnyRole('PROVIDER','USER')">
+							<li class="nav-item"><form:form
+									action="${pageContext.request.contextPath}/logout"
+									method="POST">
+									<input type="submit" value="Logout" class="btn btn-danger" />
+								</form:form></li>
+							</sec:authorize>
+							<sec:authorize access="hasRole('ANONYMOUS')">
+							<li class="nav-item"><form:form
+									action="/login"
+									method="POST">
+									<input type="submit" value="Login" class="btn btn-primary" />
+								</form:form></li>
+							</sec:authorize>
+
+						</ul>
+					</div>
+
+				</div>
+			</nav>
 	</div>
 
 	
