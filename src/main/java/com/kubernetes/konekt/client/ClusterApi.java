@@ -216,32 +216,35 @@ public class ClusterApi {
     public void setupPrometheus(Long providerId, String url, String user, String pass) throws ApiException, IOException {
         
         settingPrometheus = true;
-
-        String filePath = "manifests/ultimate-prometheus-setup.yaml";
-        String namespace = "monitoring";
-
-        File bigYamlFile = new File(filePath);
-        parseYaml(bigYamlFile, namespace,  providerId);
-
-        //run all yaml files in custom-objects directory
-        String directoryPath = "manifests/custom-objects/";
-        File folder = new File(directoryPath);
-
-        for(File file : folder.listFiles()) {
-            if(file.isFile() && !file.isHidden()) {
-                filePath = directoryPath + file.getName();
-                FileReader fr = new FileReader(filePath);
-                System.out.println(file.getName());
-                @SuppressWarnings("rawtypes")
-                Map customObjectMap = Yaml.loadAs(fr, Map.class);
-                if(customObjectMap.containsValue("ServiceMonitor")) {
-                    createServiceMonitor(customObjectMap);
-                }
-                if(customObjectMap.containsValue("Prometheus")) {
-                    createPrometheus(customObjectMap);
-                }
-                if(customObjectMap.containsValue("PrometheusRule")) {
-                    createPrometheusRule(customObjectMap);
+        
+        if(!this.checkNamespaceAlreadyExist("monitoring")) {
+    
+            String filePath = "manifests/ultimate-prometheus-setup.yaml";
+            String namespace = "monitoring";
+    
+            File bigYamlFile = new File(filePath);
+            parseYaml(bigYamlFile, namespace,  providerId);
+    
+            //run all yaml files in custom-objects directory
+            String directoryPath = "manifests/custom-objects/";
+            File folder = new File(directoryPath);
+    
+            for(File file : folder.listFiles()) {
+                if(file.isFile() && !file.isHidden()) {
+                    filePath = directoryPath + file.getName();
+                    FileReader fr = new FileReader(filePath);
+                    System.out.println(file.getName());
+                    @SuppressWarnings("rawtypes")
+                    Map customObjectMap = Yaml.loadAs(fr, Map.class);
+                    if(customObjectMap.containsValue("ServiceMonitor")) {
+                        createServiceMonitor(customObjectMap);
+                    }
+                    if(customObjectMap.containsValue("Prometheus")) {
+                        createPrometheus(customObjectMap);
+                    }
+                    if(customObjectMap.containsValue("PrometheusRule")) {
+                        createPrometheusRule(customObjectMap);
+                    }
                 }
             }
         }
