@@ -20,52 +20,53 @@
 	</script>
 	<h3>My Clusters</h3>
 	<!-- Beginning of table -->
-	<c:forEach var="cluster" items="${currentAccount.clusters}"
-		varStatus="count">
-		<c:url var="removeLink" value="/provider/delete">
-			<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
-		</c:url>
-		<script>
-			totalCluster += 1;
-		</script>
+	<div class="card-deck">
+		<c:forEach var="cluster" items="${currentAccount.clusters}"
+			varStatus="count">
+			<c:url var="removeLink" value="/provider/delete">
+				<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
+			</c:url>
+			<script>
+				totalCluster += 1;
+			</script>
 
 
-		<div class="card text-center">
-			<div class="card-header ">
-				<div class="card-header-blue">
-					<h3>${cluster.clusterUrl}</h3>
-					<a class=" btn active btn-danger mx-1 my-1" href="${removeLink}"
-						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
-						role="button">Delete Cluster</a>
-					<!-- show metrics graph hide everything else -->
+			<div class="card text-center  col-sm-3 col-md-3 col-lg-6">
+				<div class="card-header ">
+					<div class="card-header-blue">
+						<h3>${cluster.clusterUrl}</h3>
+						<a class=" btn active btn-danger mx-1 my-1" href="${removeLink}"
+							onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
+							role="button">Delete Cluster</a>
+						<!-- show metrics graph hide everything else -->
 
-					<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
-					<a class=" btn active btn-dark mx-1 my-1"
-						href="javascript:show(4,'${cluster.clusterUrl}')" role="button">Show
-						More Metric</a>
+						<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
+						<a class=" btn active btn-dark mx-1 my-1"
+							href="javascript:show(4,'${cluster.clusterUrl}')" role="button">Show
+							More Metric</a>
+					</div>
 				</div>
-			</div>
-			<div class="card-body">
-				<div class=" form-group">
+				<div class="card-body">
+					<div class=" form-group">
 
-					<div class="row">
-						
-						<c:set var="clusterUrl" value="${cluster.clusterUrl}" />
-						<c:set var="ipAddress"
-							value="${fn:substringAfter(clusterUrl,'https://')}" />
-						<iframe
-							src="http://104.198.3.94:3000/d/g1Q_TZjmk/gauges?refresh=10s&orgId=1&var-datasource=prometheus&var-instance=${ipAddress}:443&kiosk&theme=light"
-							width="1150" height="300"></iframe>
+						<div class="row">
 
+							<c:set var="clusterUrl" value="${cluster.clusterUrl}" />
+							<c:set var="ipAddress"
+								value="${fn:substringAfter(clusterUrl,'https://')}" />
+							<iframe
+								src="http://104.198.3.94:3000/d/g1Q_TZjmk/gauges?refresh=10s&orgId=1&var-datasource=prometheus&var-instance=${ipAddress}:443&kiosk&theme=light"
+								width="1150" height="300"></iframe>
 
 
+
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-	</c:forEach>
+		</c:forEach>
+	</div>
 </div>
-
 
 
 
