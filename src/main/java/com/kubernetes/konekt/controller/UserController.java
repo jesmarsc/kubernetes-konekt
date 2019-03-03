@@ -48,6 +48,9 @@ public class UserController {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
+    
+    @Autowired
+    private ClusterApi clusterApi;
 
     @RequestMapping(value = "/user")
     public String showUserDashboard(Model model) {
@@ -59,7 +62,7 @@ public class UserController {
         Account currentAccount = accountService.findByUserName(username);
         // check if expected workload is still running
         // Currently any entry on database not found on cluster is removed from database
-        new ClusterApi().checkUserWorkload(currentAccount.getContainers());
+        clusterApi.checkUserWorkload(currentAccount.getContainers());
         model.addAttribute("currentAccount", currentAccount);
 
         List<Cluster> availableClusters = clusterService.getAllClusters();
@@ -91,7 +94,6 @@ public class UserController {
         String clusterUsername = clusterSecurity.decodeCredential(cluster.getEncryptedUsername());
         String clusterPassword = clusterSecurity.decodeCredential(cluster.getEncryptedPassword());
         // set up client
-        ClusterApi clusterApi = new ClusterApi();
         clusterApi.setupClient(clusterUrl, clusterUsername, clusterPassword);
         //request update
         try {
@@ -128,7 +130,7 @@ public class UserController {
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
 
-        ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
 
         try {
             // check if namespace already exist
@@ -214,7 +216,7 @@ public class UserController {
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
 
-        ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
 
         // Check if namespace already exist.
         Boolean doesExist;
@@ -289,7 +291,7 @@ public class UserController {
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(ecnryptedPassword);
 
-        ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);;
 
         try {
             if (kind.equals("Deployment")) {

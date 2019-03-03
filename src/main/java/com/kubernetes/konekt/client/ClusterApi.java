@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,9 +89,6 @@ public class ClusterApi {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
-
-    @Autowired
-    private Prometheus prometheus;
 
     private Boolean settingPrometheus = false;
 
@@ -479,7 +477,7 @@ public class ClusterApi {
             Blob encryptedPassword = cluster.getEncryptedPassword();
             String clusterUsername = clusterSecurity.decodeCredential(encryptedUsername);
             String clusterPassword	= clusterSecurity.decodeCredential(encryptedPassword);
-            setupClient(cluster.getClusterUrl(),clusterUsername , clusterPassword);
+            setupClient(cluster.getClusterUrl(), clusterUsername , clusterPassword);
             try {
                 if (container.getKind().equals("Deployment")) {
                     // get list of deployments running on namespace

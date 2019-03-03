@@ -48,9 +48,13 @@ public class ProviderController {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
+    
+    @Autowired
+    private ClusterApi clusterApi;
 
     @Autowired
     private Prometheus prometheus;
+    
 
     @InitBinder
     public void initBinder(WebDataBinder dataBinder) {
@@ -101,7 +105,7 @@ public class ProviderController {
         // get list of users who have deployments on cluster
         List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
         // delete deployments from cluster
-        ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+        clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
         for(Container container : containers) {
             String deploymentName = container.getContainerName();
             String namespace = container.getAccount().getUserName();
@@ -167,7 +171,7 @@ public class ProviderController {
             accountService.updateAccountTables(currentAccount);
 
             // Set up prometheus
-            ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+            clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
             clusterApi.setupPrometheus(currentAccount.getId(), clusterUrl, clusterUser, clusterPass);
 
             String uploadClusterSuccessStatus = "Cluster Upload Success:";
@@ -205,7 +209,7 @@ public class ProviderController {
             Blob encryptedPassword = cluster.getEncryptedPassword();
             String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
             String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
-            ClusterApi clusterApi = new ClusterApi(clusterUrl, clusterUser, clusterPass);
+            clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
             clusterApi.deleteDeployment(username, deploymentName);
             // Deleting Deployment from database
             containerService.deleteContainer(containerTBD);

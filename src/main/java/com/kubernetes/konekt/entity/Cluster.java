@@ -108,9 +108,11 @@ public class Cluster {
 	}
 
 	@Override
-	public String toString() {
-		return clusterUrl;
-	}
+    public String toString() {
+        return "Cluster [id=" + id + ", clusterUrl=" + clusterUrl + ", encryptedUsername=" + encryptedUsername
+                + ", encryptedPassword=" + encryptedPassword + ", status=" + status + ", roundRobin=" + roundRobin
+                + ", account=" + account + "]";
+    }
 
 	public String getStatus() {
 		return status;
@@ -120,5 +122,5 @@ public class Cluster {
 		this.status = status;
 	}
 	
-
+	
 }
