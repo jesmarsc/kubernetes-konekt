@@ -109,8 +109,15 @@ public class ProviderController {
         for(Container container : containers) {
             String deploymentName = container.getContainerName();
             String namespace = container.getAccount().getUserName();
+            String kind = container.getKind();
             try {
-                clusterApi.deleteDeployment(namespace, deploymentName);
+                if (kind.equals("Deployment")) {
+                    clusterApi.deleteDeployment(namespace, deploymentName);
+                } else if (kind.equals("Service")) {
+                    clusterApi.deleteService(namespace, deploymentName);
+                } else if (kind.equals("ConfigMap")) {
+                    clusterApi.deleteConfigMap(namespace, deploymentName);
+                }
                 containerService.deleteContainer(container);
                 accountService.updateAccountTables(container.getAccount());
             } catch(ApiException e) {
@@ -123,7 +130,7 @@ public class ProviderController {
             }
         }
 
-        clusterService.deleteCluster(deleteCluster);
+        
 
         try {
             prometheus.removeCluster(clusterUrl.substring(8));
@@ -137,7 +144,8 @@ public class ProviderController {
 
         model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
         model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
-
+        clusterService.deleteCluster(deleteCluster);
+    
         return this.showProviderDashboard(null, null, model);
     }
 

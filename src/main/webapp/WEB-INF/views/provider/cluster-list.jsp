@@ -3,6 +3,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
 <html>	
 	
@@ -13,10 +14,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
-<div id="clusterList-div" class= "clusterList-div">
+<div id="clusterList-div" class="clusterList-div">
 	<script>
 		totalCluster = 0;
-		</script>
+	</script>
 	<h3>My Clusters</h3>
 	<!-- Beginning of table -->
 	<c:forEach var="cluster" items="${currentAccount.clusters}"
@@ -25,36 +26,43 @@
 			<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
 		</c:url>
 		<script>
-					totalCluster += 1;
+			totalCluster += 1;
 		</script>
-		
-		
-<div class="card text-center">
-  <div class="card-header " >
-  <div class="card-header-blue">
-    <h3>${cluster.clusterUrl}</h3>
-    <a class=" btn active btn-danger mx-1 my-1" href="${removeLink}"
+
+
+		<div class="card text-center">
+			<div class="card-header ">
+				<div class="card-header-blue">
+					<h3>${cluster.clusterUrl}</h3>
+					<a class=" btn active btn-danger mx-1 my-1" href="${removeLink}"
 						onclick="if(!(confirm('Are you sure you want to delete cluster')))return false"
-						role="button">Delete Cluster</a> 
-						 <!-- show metrics graph hide everything else -->
-						 
-	<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
-	<a class=" btn active btn-dark mx-1 my-1" href="javascript:show(4,'${cluster.clusterUrl}')"
-						role="button">Show More Metric</a> 
-  </div>
-  </div>
-  <div class="card-body">
-	<div class=" form-group">
-				<div class="row">
+						role="button">Delete Cluster</a>
+					<!-- show metrics graph hide everything else -->
+
+					<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
+					<a class=" btn active btn-dark mx-1 my-1"
+						href="javascript:show(4,'${cluster.clusterUrl}')" role="button">Show
+						More Metric</a>
+				</div>
+			</div>
+			<div class="card-body">
+				<div class=" form-group">
+
+					<div class="row">
+						<!-- 
 				<div class="col-md-3">
 				</div>
 					<div class="col-md-2">
 						<canvas id="myChart1_${count.index}" width="50" height="50"></canvas>
 						<object style="display:none;">
-						<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
+						<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 - ->
 							<param id="ip_instance_${count.index}"
 								value="${cluster.clusterUrl}">
 						</object>
+						<script>
+							console.log('${count.index}');
+							console.log('${cluster.clusterUrl}')
+						</script>
 						</div>
 					<div class="col-md-2">
 						<canvas id="myChart2_${count.index}" width="50" height="50"
@@ -66,16 +74,20 @@
 							></canvas>
 					</div>
 				</div>
+				-->
+						<c:set var="clusterUrl" value="${cluster.clusterUrl}" />
+						<c:set var="ipAddress"
+							value="${fn:substringAfter(clusterUrl,'https://')}" />
+						<iframe
+							src="http://104.198.3.94:3000/d/g1Q_TZjmk/gauges?refresh=10s&orgId=1&var-datasource=prometheus&var-instance=${ipAddress}:443&kiosk&theme=light"
+							width="1150" height="300"></iframe>
+
+
+
+					</div>
+				</div>
 			</div>
-
-
-    
-  </div>
-  <div class="card-footer text-muted">
-    Healthy
-  </div>
-</div>
-	
+		</div>
 	</c:forEach>
 </div>
 
@@ -204,6 +216,8 @@
 	}
 
 	function makeHttpRequestForCpu(instanceIp) {
+		
+
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query=1-avg(irate(node_cpu_seconds_total{instance="'
 				+ instanceIp + ':443",mode="idle"}[2m]))';
 		var client = new HttpClient();
@@ -212,9 +226,15 @@
 		});
 		var cpuUsage = 0;
 
-		if (cpuResponse != null) {
+		if (cpuResponse!= null) {
 			cpuUsage = (cpuResponse.data.result[0].value)[1] * 100;
 		}
+		console.log("instanceIp")
+		console.log(instanceIp)
+		console.log("cpu value")
+		console.log(cpuResponse)
+		console.log(cpuUsage)
+		cpuResponse = null;
 		return cpuUsage
 	}
 
@@ -232,16 +252,24 @@
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
 			memoryResponse = JSON.parse(response);
+			console.log("memory");
+			console.log(memoryResponse);
 		});
 		var memoryUsage = 0;
 		if (memoryResponse != null) {
 			memoryUsage = (memoryResponse.data.result[0].value)[1] * 100;
 		}
-
+		console.log("instanceIp")
+		console.log(instanceIp)
+		console.log("memory value")
+		console.log(memoryResponse)
+		console.log(memoryUsage)
+		memoryResponse = null;
 		return memoryUsage;
 	}
 
 	function makeHttpRequestForNetworkUpload(instanceIp) {
+
 		var params = '{instance="' + instanceIp + ':443",device="eth0"}';
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query='
 				+ 'sum(irate(node_network_transmit_bytes_total' + params
@@ -249,18 +277,24 @@
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
 			networkUploadResponse = JSON.parse(response);
-			//console.log("upload")
-			//console.log(response)
+
 		});
 
 		var networkUsage = 0;
 		if (networkUploadResponse != null) {
 			networkUsage = Number((networkUploadResponse.data.result[0].value)[1]);
 		}
+		console.log("instanceIp")
+		console.log(instanceIp)
+		console.log("upload value")
+		console.log(networkUploadResponse)
+		console.log(networkUsage)
+		networkUploadResponse = null;
 		return networkUsage;
 	}
 
 	function makeHttpRequestForNetworkDownload(instanceIp) {
+
 		var params = '{instance="' + instanceIp + ':443",device="eth0"}';
 		var theurl = 'http://35.247.41.79:9090/api/v1/query?query='
 				+ 'sum(irate(node_network_receive_bytes_total' + params
@@ -268,28 +302,34 @@
 		var client = new HttpClient();
 		client.get(theurl, function(response) {
 			networkDownloadResponse = JSON.parse(response);
-			//console.log("download")
-			//console.log(response);
+
 		});
 
 		var networkUsage = 0;
 		if (networkDownloadResponse != null) {
 			networkUsage = Number((networkDownloadResponse.data.result[0].value)[1]);
 		}
-		//console.log('download network');
-		//console.log(networkUsage);
+		console.log("instanceIp")
+		console.log(instanceIp)
+		console.log("download value")
+		console.log(networkDownloadResponse)
+		console.log(networkUsage)
+		networkDownloadResponse = null;
 		return networkUsage;
 	}
 
 	function getCpu(instanceIp) {
+		instanceIp = instanceIp.substring(8);
 		return Math.round(makeHttpRequestForCpu(instanceIp));
 
 	}
 	function getMemory(instanceIp) {
+		instanceIp = instanceIp.substring(8);
 		return Math.round(makeHttpRequestForMemory(instanceIp));
 
 	}
 	function getNetwork(instanceIp) {
+		instanceIp = instanceIp.substring(8);
 		return Math.round((makeHttpRequestForNetworkUpload(instanceIp) + makeHttpRequestForNetworkDownload(instanceIp)) / 1000);
 
 	}
