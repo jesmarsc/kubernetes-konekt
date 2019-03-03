@@ -2,7 +2,6 @@ package com.kubernetes.konekt.controller;
 
 import java.io.IOException;
 import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -24,7 +23,6 @@ import com.kubernetes.konekt.entity.Account;
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
 import com.kubernetes.konekt.form.UploadClusterForm;
-import com.kubernetes.konekt.metric.Metric;
 import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
@@ -68,7 +66,6 @@ public class ProviderController {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         Account currentAccount = accountService.findByUserName(username);
-
         List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
         UploadClusterForm newClusterForm = new UploadClusterForm();
 
@@ -76,23 +73,10 @@ public class ProviderController {
         model.addAttribute("runningContainers", containers);
         model.addAttribute("newClusterForm", newClusterForm);
 
-        List<Cluster> clusters = currentAccount.getClusters();
-        List<Metric> metrics = new ArrayList<Metric>();
-        for(Cluster cluster:clusters) {
-            try {
-                metrics.add(prometheus.getUsageMetric(cluster.getClusterUrl().substring(8)));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        model.addAttribute("metrics", metrics);
-
         return "provider/provider-dashboard";
     }
 
-    @RequestMapping(value = "/provider/delete{clusterUrl}")
+    @RequestMapping(value = "/provider/delete")
     public String deleteCluster(@RequestParam("clusterUrl") String clusterUrl, Model model) {
 
         Cluster deleteCluster = clusterService.getCluster(clusterUrl);
@@ -101,22 +85,30 @@ public class ProviderController {
         String clusterUser = clusterSecurity.decodeCredential(encryptedUsername);
         String clusterPass = clusterSecurity.decodeCredential(encryptedPassword);
 
-
-        // get list of users who have deployments on cluster
+        //Delete containers on cluster
         List<Container> containers = containerService.getContainerByClusterUrl(clusterUrl);
-        // delete deployments from cluster
+        
         clusterApi.setupClient(clusterUrl, clusterUser, clusterPass);
         for(Container container : containers) {
-            String deploymentName = container.getContainerName();
+            String containerName = container.getContainerName();
             String namespace = container.getAccount().getUserName();
+            String kind = container.getKind();
+            
             try {
-                clusterApi.deleteDeployment(namespace, deploymentName);
+                if (kind.equals("Deployment")) {
+                    clusterApi.deleteDeployment(namespace, containerName);
+                } else if (kind.equals("Service")) {
+                    clusterApi.deleteService(namespace, containerName);
+                } else if (kind.equals("ConfigMap")) {
+                    clusterApi.deleteConfigMap(namespace, containerName);
+                }
                 containerService.deleteContainer(container);
                 accountService.updateAccountTables(container.getAccount());
             } catch(ApiException e) {
                 e.printStackTrace();
                 String deleteClusterSuccessMessage = "Delete Cluster Failed: ";
-                String deleteClusterSuccessStatus = "Cluster with URL: " + deleteCluster.getClusterUrl() + " was NOT deleted. There was a problem removing deployments from cluster";
+                String deleteClusterSuccessStatus = "Cluster with URL: " + deleteCluster.getClusterUrl() 
+                + " was NOT deleted. There was a problem removing " + containerName +  " from cluster";
 
                 model.addAttribute("deleteClusterSuccessMessage", deleteClusterSuccessMessage);
                 model.addAttribute("deleteClusterSuccessStatus", deleteClusterSuccessStatus);
