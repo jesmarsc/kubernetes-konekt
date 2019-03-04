@@ -54,15 +54,19 @@ public class UserController {
 
     @RequestMapping(value = "/user")
     public String showUserDashboard(Model model) {
-
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Account currentAccount = accountService.findByUserName(username);
         UploadContainerToClusterForm uploadContainerClusterForm = new UploadContainerToClusterForm();
         model.addAttribute("uploadContainerClusterForm", uploadContainerClusterForm);
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Account currentAccount = accountService.findByUserName(username);
-        // check if expected workload is still running
-        // Currently any entry on database not found on cluster is removed from database
-        clusterApi.checkUserWorkload(currentAccount.getContainers());
+        
+        /* 
+         *TODO: The next line of code make loading user really slow it needs to go somewhere else
+         *clusterApi.checkUserWorkload(currentAccount.getContainers());
+         * it checks if expected workload is still running
+         * and any entry on database not found on cluster is removed from database
+         * 
+         */
         model.addAttribute("currentAccount", currentAccount);
 
         List<Cluster> availableClusters = clusterService.getAllClusters();

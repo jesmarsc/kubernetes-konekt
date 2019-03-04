@@ -156,7 +156,7 @@
     </c:otherwise>
 </c:choose>
 			<div id="user-workload-div"
-				class=" user-workload-div d-none container mx-1  col-sm-10 col-md-10 col-lg-12  ">
+				class=" user-workload-div  container mx-1  col-sm-10 col-md-10 col-lg-12  ">
 				<div
 					class="userWorkload-div container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 					<table class="table table-hover table-bordered table-striped">

@@ -9,14 +9,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Kubernetes Konekt</title>
 	
-	<link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16">
-
+	
     
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" >
 	<link rel="stylesheet" href="fonts/font-awesome-4.3.0/css/font-awesome.min.css">
-	<link rel="stylesheet" href="css/all.css">
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Maven+Pro" />
 	<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700|Source+Sans+Pro:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
 	   <link href="https://fonts.googleapis.com/css?family=Maven+Pro:bold|700" rel="stylesheet">
     
@@ -25,16 +24,38 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link href="/css/light-bootstrap-dashboard.css?v=2.0.1" rel="stylesheet" />
+	<style>
+	*{
+		font-family: "Maven Pro";  
+		font-style: normal; 
+		font-variant: normal;
+		
+	}
+	body {
+		background-color: #326CE5;
+		
+	}
+	h1 { font-family: "Maven Pro"; font-size: 40px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; } 
+	h3 { font-family: "Maven Pro"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 15.4px; }
+	p { font-family: "Maven Pro"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 20px; } 
+	blockquote { font-family: "Maven Pro"; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px; }
+	pre { font-family: "Maven Pro"; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 18.5714px; }
+	.navbar-inner {
+    background:transparent;
+}
+	
+	</style>
 </head>
 <body>
 
 		
 	<div class="container  mx-1 my-4 col-sm-10 col-md-10 col-lg-12">
 
-		<nav class="navbar navbar-expand-lg ">
+		<nav class="navbar navbar-inner navbar-expand-lg ">
 				<div class=" container  ">
-					<a class="navbar-brand" href="${pageContext.request.contextPath}/">Kubernetes
-						Konekt </a>
+				
+					<a class="navbar-brand" style="color:white !important;" href="${pageContext.request.contextPath}/"><font size="6">Kubernetes
+						Konekt </font></a>
 					<div class="collapse navbar-collapse" id="navigation"></div>
 
 					<button class=" navbar-toggler navbar-toggler-right " type="button"
@@ -56,15 +77,15 @@
 						<ul class="navbar-nav ml-auto">
 
 							<sec:authorize access="hasRole('USER')">
-								<li class="nav-link"><a class="tocxref btn"
-									style="color: black;"
-									href="${pageContext.request.contextPath}/user"> User
+								<li class="nav-link"><a class="tocxref btn btn-round"
+									style=" background-color: #ffffff !important; font-size: 24px;"
+									href="/user"> User
 										Dashboard </a></li>
 							</sec:authorize>
 							<sec:authorize access="hasRole('PROVIDER')">
-								<li class="nav-btn"><a class="btn btn-warning"
-									style="color: black;"
-									href="${pageContext.request.contextPath}/provider">
+								<li class="nav-btn"><a class="btn btn-warning btn-round"
+									style=" background-color: #ffffff !important; font-size: 24px;"
+									href="/provider">
 										Provider Dashboard </a></li>
 							</sec:authorize>
 							
@@ -72,14 +93,14 @@
 							<li class="nav-item"><form:form
 									action="${pageContext.request.contextPath}/logout"
 									method="POST">
-									<input type="submit" value="Logout" class="btn btn-danger" />
+									<input type="submit" value="Logout" class="btn btn-danger btn-round"style=" background-color: #ffffff !important; font-size: 24px;" />
 								</form:form></li>
 							</sec:authorize>
 							<sec:authorize access="hasRole('ANONYMOUS')">
 							<li class="nav-item"><form:form
 									action="/login"
 									method="POST">
-									<input type="submit" value="Login" class="btn btn-primary" />
+									<input type="submit" value="Login" class="btn btn-primary btn-round" style=" background-color: #ffffff !important; font-size: 24px;"/>
 								</form:form></li>
 							</sec:authorize>
 
@@ -90,98 +111,39 @@
 			</nav>
 	</div>
 
-	
-		<section class="visual">
-		<div class="container">
-			<div class="text-block">
-				<div class="heading-holder">
-					<h1>Welcome to Kubernetes Konekt!</h1>
-					
-				</div>
-				<p class="tagline">Connecting containers to clusters!</p>
-				<span class="info">Get connected now</span>
-			</div>
-		</div>
 
-	</section>
+	<div class="row">
+		<div class="col-lg-6 ">
+		<div class="container ">
+			
+			<div class="text-block text-center " style="color: #fff;">
+				
 
-	
-		
-		<p> </p>
-		
-		<section class="area">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-5">
-					<ul class="visual-list">
-						<li>
-							<div class="img-holder">
-								<img src="images/online-payment.svg" width="110" alt="">
-							</div>
-							<div class="text-holder">
-								<h3>Easy Payment</h3>
-								<p>With most major credit cards accepted and PayPal being set up, easy payment is only minutes away! *Soon to Accept Venmo, etc. </p>
-							</div>
-						</li>
-						<li>
-							<div class="img-holder">
-								<img class="pull-left" src="images/integration.svg" width="90" alt="">
-							</div>
-							<div class="text-holder">
-								<h3>Seamless Cluster Integration</h3>
-								<p>Kubernetes Konekt allows for multiple connections with multiple purchases. No more need to connect with different clients to support large apps! </p>
-							</div>
-						</li>
-						<li>
-							<div class="img-holder">
-								<img src="images/user.svg" height="84" alt="">
-							</div>
-							<div class="text-holder">
-								<h3>Command-less Interface</h3>
-								<p>No need for users to upload their image through multiple command-line arguments. Easily upload a user container and let us do the rest! </p>
-							</div>
-						</li>
-					</ul>
-				</div>
-				<div class="col-md-7">
-					<div class="slide-holder">
-						<div class="img-slide scroll-trigger"><img src="https://outcrawl.com/static/76acbf5eebdbc17b190ddb2d02988e64/b3b80/cover.jpg" height="365" width="650" alt=""></div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
-		
-	<!-- </div> -->
-	
-	
-	</br></br>
+					<h1>No Cluster? No problem.</h1>
 
-	<div class="container mt-3">
-		<!-- Left-aligned --> 
-		<div class="media border p-3">
-			<div class="media-left">
-				<img src="images/img_avatar1.png" class="mr-3 mt-3 rounded-circle" style="width:60px;">
+				<h2>Connect to clusters with management and deployment tools!</h2>
+				
+				<h1>No Job? No problem.</h1>
+
+				<h2>Host Kubernetes clusters and start earning!</h2>
+
+				<br>
+				<button type="button" class="btn btn-primary btn-round" style=" background-color: #ffffff !important;" onclick="location.href='/register'" type="submit" >Sign Up Now</button>
+			
+			<br>
+			<br>
 			</div>
-			<div class="media-body" align="left">
-				<h4 class="media-heading">Frank Lagomarsino <small><i>August 19, 2018</i></small></h4>
-				<p>Kubernetes Konekt really helped me with seamlessly connecting me to a kubernetes cluster. I was able to launch my
-				application with ease and paid within 5 minutes!</p>
-			</div>
+	
 		</div>
-		
-		<!-- Right-aligned -->
-		<div class="media border p-3">
-			<div class="media-body" align="left">
-		  		<h4 class="media-heading">John Dough <small><i>November 30, 2018</i></small></h4>
-		    	<p>I cannot believe how easy it was to upload my container and launch my application! Usually it takes me more than half
-		    	an hour trying to run my endless list of commands, but all I had to do was click three buttons.</p>
-		  	</div>
-		  	<div class="media-right">
-		    	<img src="images/img_avatar1.png" class="mr-3 mt-3 rounded-circle" style="width:60px;">
-		  	</div>
+		</div>
+		<div class="col-lg-6">
+			<img src="images/home-page-image.png"  style="width:80%;" class="img-fluid" alt="Responsive image">
 		</div>
 	</div>
+	<div class="fixed-bottom">
+		<img src="images/clouds.png" alt="">
+	</div>
+	
 	
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script

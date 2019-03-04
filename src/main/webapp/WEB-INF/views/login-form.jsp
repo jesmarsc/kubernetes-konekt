@@ -50,7 +50,7 @@
 
 		</form:form>
 		
-		<input class="btn btn-primary" onclick="location.href='register'" type="submit" value="Register" />
+		<input class="btn btn-primary" onclick="location.href='/register'" type="submit" value="Register" />
 		
   		</div>
 
