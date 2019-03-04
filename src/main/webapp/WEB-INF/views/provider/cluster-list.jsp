@@ -22,9 +22,12 @@
 		<c:url var="removeLink" value="/provider/delete">
 			<c:param name="clusterUrl" value="${cluster.clusterUrl}" />
 		</c:url>
-
-
-
+		  
+		<c:if test="${count.index % 2 == 0}">
+			<div class="row">
+		</c:if>
+		
+		<div class=" col-sm-10 col-md-10 col-lg-6">
 		<div class="card text-center  col-sm-10 col-md-10 col-lg-12">
 			<div class="card-header ">
 				<div class="card-header-blue">
@@ -36,31 +39,46 @@
 
 					<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
 					<a class=" btn active btn-dark mx-1 my-1"
-						href="javascript:show(4,'${cluster.clusterUrl}')" role="button">Show
+						href="/provider?value=4" role="button">Show
 						More Metric</a>
 				</div>
 			</div>
 			<div class="card-body">
 				<div class=" form-group">
-
 					<div class="row">
-						
 						<c:set var="clusterUrl" value="${cluster.clusterUrl}" />
 						<c:set var="ipAddress"
 							value="${fn:substringAfter(clusterUrl,'https://')}" />
-						<iframe
-							src="http://104.198.3.94:3000/d/g1Q_TZjmk/gauges?refresh=10s&orgId=1&var-datasource=prometheus&var-instance=${ipAddress}:443&kiosk&theme=light"
-							width="1150" height="300"></iframe>
 
-
-
+						<div class="col-lg-4">
+							<iframe
+								src="http://104.198.3.94:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=2&orgId=1&var-instance=${ipAddress}:443&kiosk&theme=light"
+								width="100%" height="100%" frameborder="0"></iframe>
+						</div>
+						
+						<div class="col-lg-4">
+							<iframe
+								src="http://104.198.3.94:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=3&orgId=1&var-instance=${ipAddress}:443&kiosk&theme=light"
+								width="100%" height="100%" frameborder="0"></iframe>
+						</div>
+						<div class="col-lg-4">
+							<iframe
+								src="http://104.198.3.94:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=4&orgId=1&var-instance=${ipAddress}:443&kiosk&theme=light"
+								width="100%" height="100%" frameborder="0"></iframe>
+						</div>
 					</div>
 				</div>
-			</div>
 		</div>
-
+		</div>
+		</div>
+		 
+		<c:if test="${count.index % 2 == 1|| count.last}">
+		</div>
+		</c:if>
+		
 	</c:forEach>
 	</div>
+
 
 
 

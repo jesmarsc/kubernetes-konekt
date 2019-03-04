@@ -21,15 +21,10 @@
     
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
 	<link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link href="/css/light-bootstrap-dashboard.css?v=2.0.1" rel="stylesheet" />
-	<style>
-     body {
-        font-family: 'Maven+Pro', serif;
-        font-size: 20px;
-      }
-     </style> 
+
 </head>
 
 <body>

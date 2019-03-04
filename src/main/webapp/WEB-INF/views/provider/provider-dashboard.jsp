@@ -172,12 +172,12 @@
 	</c:choose>
 
 				<div id="cluster-list-div1"
-					class=" cluster-list-div d-none container mx-1  col-sm-10 col-md-10 col-lg-12  ">
+					class=" cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ">
 					<%@ include file="cluster-list.jsp"%>
 				</div>
 
 				<div id="cluster-workload-div1"
-					class=" cluster-workload-div  d-none container mx-1  col-sm-10 col-md-10 col-lg-12">
+					class=" cluster-workload-div d-none  container mx-1  col-sm-10 col-md-10 col-lg-12">
 					<%@ include file="cluster-workload.jsp"%>
 				</div>
 
@@ -199,37 +199,34 @@
 
 	<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
 	<script type="text/javascript">
-		
-  	var count = 0;
   	var url = new URL(window.location.href );
   	var showThisId = url.searchParams.get("value");
-$(window).on('load',function(){
-		
-		if(showThisId != null){
+  	var clusterListClone;
+
+	$(document).ready(function(){
+		clusterListClone =  $(".clusterList-div").clone();
+		if(showThisId != null ){
+			remove();
 			show(showThisId,'');
 		}else{
 			show(1,'');
 		}
-		
-		});
-
+	});
 	function remove(){
-		document.getElementById("cluster-list-div1").className= "d-none";
 		document.getElementById("cluster-workload-div1").className="d-none";
 		document.getElementById("cluster-upload-form-div1").className="d-none";
+		$( "div" ).remove( ".clusterList-div" );
 		$( "div" ).remove( ".clusterMetric-div" );
 	}
-	
-	
+
 	function show(showId, ipInstance){
-		
 		remove();
 		setActiveEmpty();
 		if(showId == 1){
-			document.getElementById("clusterListNavLink").className="active";
-			document.getElementById("cluster-list-div1").className= "cluster-list-div container mx-1  col-sm-10 col-md-10 col-lg-12  ";
 			window.history.pushState("","","/provider?value=1");
-		}else if(showId == 2){
+			document.getElementById("clusterListNavLink").className="active";
+			$(".cluster-list-div").append(clusterListClone);
+		}else if(showId == 2){		
 			document.getElementById("clusterWorkloadNavLink").className="active";
 			document.getElementById("cluster-workload-div1").className="cluster-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12";
 			window.history.pushState("","","/provider?value=2");
@@ -257,14 +254,7 @@ $(window).on('load',function(){
 	</script>
 
 	
-
-	<div id="sample" class="container mx-1"></div>
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-	<script src="/js/scripts.js"></script>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>	
-	</div>
+</div>
 	<!--   Core JS Files   -->
 <script src="js/core/jquery.3.2.1.min.js" type="text/javascript"></script>
 <script src="js/core/popper.min.js" type="text/javascript"></script>

@@ -16,15 +16,9 @@
     
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link href="/css/light-bootstrap-dashboard.css?v=2.0.1" rel="stylesheet" />
-     <style>
-     body {
-        font-family: 'Maven+Pro', serif;
-        font-size: 20px;
-      }
-     </style>   
+  
 </head>
 	<!-- 
 	 href"#" means clicking the text does not redirect the page to a new page.
@@ -212,7 +206,7 @@
 					<!-- Form to upload deployment yaml file to cluster -->
 					<div class="form-group row ">
 						<div class="col-lg-1"></div>
-						<label><font face="Voltaire" color="#000"> Browse For Yaml File: </font></label>
+						 <h3>Browse For Yaml File: </h3>
 						</div>
 					<form:form class="custom-file " method="POST" action="/user/upload"
 						enctype="multipart/form-data"
@@ -228,8 +222,7 @@
 						<!-- display selected file  -->
 
 						<div class="form-group row ">
-							<label class="custom-file-label" for="customFile"> <font
-								face="Voltaire" color="#000"></font></label>
+							<label class="custom-file-label" for="customFile">  </label>
 						</div>
 						
 						<!-- Select cluster 
@@ -252,7 +245,7 @@
  -->
 						<!-- submit -->
 						<div
-							class="border-box row mx-0 my-2 col-sm-10 col-md-10 col-lg-12">
+							class="border-box row mx-0  col-sm-10 col-md-10 col-lg-12">
 							<input class="btn btn-primary text-center" type="submit"
 								value="Submit" />
 						</div>
@@ -284,67 +277,9 @@
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-		
-	
-		<script src="http://code.jquery.com/jquery-3.1.1.js"></script>
-
 			</div>
-	<script type="text/javascript">
-		
-  	var count = 0;
-  	var url = new URL(window.location.href );
-  	var showThisId = url.searchParams.get("value");
-  	console.log(showThisId);
-	$(window).on('load',function(){
-		
-		if(showThisId != null){
-			show(showThisId,'');
-		}else{
-			show(1,'');
-		}
-		
-		});
-
-	function remove(){
-		document.getElementById("user-workload-div").className="d-none";
-		document.getElementById("user-upload-workload").className="d-none";
-	}
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.0/jquery.min.js"></script>	
 	
-	
-	function show(showId, ipInstance){
-
-		ipInstance = '35.247.41.79:9090';
-		remove();
-		setActiveEmpty();
-		if(showId == 1){
-			document.getElementById("userWorkloadNavLink").className="active";
-			document.getElementById("user-workload-div").className="user-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12 "
-		}else if(showId == 2){
-			document.getElementById("userUploadNavLink").className="active";
-			document.getElementById("user-upload-workload").className="user-upload-workload container  col-sm-10 col-md-10 col-lg-12";
-
-		}else if(showId == 3){
-			document.getElementById("clusterUploadFormNavLink").className="active";
-			$(".cluster-upload-form-div").append(clusterUploadFormClone);
-		}else if(showId == 4){
-			document.getElementById("clusterListNavLink").className="active";
-			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-instance='+ipInstance+'&theme=light&kiosk" width="1150" height="300" frameborder="0"></iframe></div>');
-		}
-		
-	}
-	
-	function setActiveEmpty(){
-		document.getElementById("userWorkloadNavLink").className="";
-		document.getElementById("userUploadNavLink").className="";		
-	}
-
-	</script>
-	<script type="application/javascript">
-$('input[type="file"]').change(function(e){
- var fileName = e.target.files[0].name;
-$('.custom-file-label').html(fileName);
-});
-</script>
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
@@ -364,4 +299,51 @@ $('.custom-file-label').html(fileName);
 	
 	
 </body>
+	<script type="text/javascript">
+		
+  	var count = 0;
+  	var url = new URL(window.location.href );
+  	var showThisId = url.searchParams.get("value");
+  	$(document).ready(function(){
+		if(showThisId != null ){
+			remove();
+			show(showThisId,'');
+		}else{
+			show(1,'');
+		}
+	});
+	
+	function remove(){
+		document.getElementById("user-workload-div").className="d-none";
+		document.getElementById("user-upload-workload").className="d-none";
+	}
+	
+	
+	function show(showId, ipInstance){
+		remove();
+		setActiveEmpty();
+		if(showId == 1){
+			document.getElementById("userWorkloadNavLink").className="active";
+			document.getElementById("user-workload-div").className="user-workload-div container mx-1  col-sm-10 col-md-10 col-lg-12 "
+			window.history.pushState("","","/user?value=1");
+		}else if(showId == 2){
+			document.getElementById("userUploadNavLink").className="active";
+			document.getElementById("user-upload-workload").className="user-upload-workload container  col-sm-10 col-md-10 col-lg-12";
+			window.history.pushState("","","/user?value=2");
+		}
+		
+	}
+	
+	function setActiveEmpty(){
+		document.getElementById("userWorkloadNavLink").className="";
+		document.getElementById("userUploadNavLink").className="";		
+	}
+
+	</script>
+	<script type="application/javascript">
+$('input[type="file"]').change(function(e){
+ var fileName = e.target.files[0].name;
+$('.custom-file-label').html(fileName);
+});
+</script>
 </html>
