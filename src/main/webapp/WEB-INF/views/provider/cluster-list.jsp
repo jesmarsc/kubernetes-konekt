@@ -39,7 +39,7 @@
 
 					<!-- TODO: GET CLUSTER IP SUBSTRING 255.255.255.255 NOT HTTPS://255.255.255.255 -->
 					<a class=" btn active btn-dark mx-1 my-1"
-						href="/provider?value=4" role="button">Show
+						href="/provider?value=4&clusterUrl=${cluster.clusterUrl}" role="button">Show
 						More Metric</a>
 				</div>
 			</div>

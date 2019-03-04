@@ -68,7 +68,6 @@ public class ProviderController {
         Account currentAccount = accountService.findByUserName(username);
         List<Container> containers = containerService.getContainersByProviderId(currentAccount.getId());
         UploadClusterForm newClusterForm = new UploadClusterForm();
-        System.out.println(currentAccount.getClusters());
         model.addAttribute("currentAccount", currentAccount);
         model.addAttribute("runningContainers", containers);
         model.addAttribute("newClusterForm", newClusterForm);

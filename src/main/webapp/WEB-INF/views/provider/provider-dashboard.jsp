@@ -201,6 +201,7 @@
 	<script type="text/javascript">
   	var url = new URL(window.location.href );
   	var showThisId = url.searchParams.get("value");
+  	
   	var clusterListClone;
 
 	$(document).ready(function(){
@@ -219,7 +220,9 @@
 		$( "div" ).remove( ".clusterMetric-div" );
 	}
 
-	function show(showId, ipInstance){
+	function show(showId, fakeip){
+		console.log("here")
+		console.log(showThisId)
 		remove();
 		setActiveEmpty();
 		if(showId == 1){
@@ -235,10 +238,14 @@
 			document.getElementById("cluster-upload-form-div1").className="cluster-upload-form-div container mx-1  col-sm-10 col-md-10 col-lg-12";
 			window.history.pushState("","","/provider?value=3");
 		}else if(showId == 4){
+			var ipInstance = url.searchParams.get("clusterUrl");
+			var newHref ="/provider?value=4&clusterUrl=" + String(ipInstance)
 			document.getElementById("clusterListNavLink").className="active";
 			ipInstance = ipInstance.substring(8);
-			window.history.pushState("","","/provider?value=4");
-			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+ipInstance+':443&var-namespace=monitoring&kiosk&theme=light" width="1150" height="775" frameborder="0"></iframe></div>');
+			console.log(ipInstance);
+			 
+			window.history.pushState("","",newHref);
+			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+ipInstance+':443&var-namespace=monitoring&kiosk&theme=light" width="100%" height="800" frameborder="0"></iframe></div>');
 				
 		}
 		
