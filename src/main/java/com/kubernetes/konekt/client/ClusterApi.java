@@ -380,6 +380,7 @@ public class ClusterApi {
 
     public void deleteDeployment(String namespace, String deploymentName) throws ApiException {
         V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions |
+        
         appsInstance.deleteNamespacedDeploymentWithHttpInfo(deploymentName, namespace, body, pretty, null, null, null);
         //appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
     }

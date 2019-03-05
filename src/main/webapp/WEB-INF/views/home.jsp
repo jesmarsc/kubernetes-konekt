@@ -121,7 +121,7 @@
 
 					<h1>No Cluster? No problem.</h1>
 
-				<h2>Connect to clusters with management and deployment tools!</h2>
+				<h2>Upload your containers and that's it!</h2>
 				
 				<h1>No Job? No problem.</h1>
 
