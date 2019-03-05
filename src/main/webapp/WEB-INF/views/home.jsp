@@ -32,7 +32,7 @@
 		
 	}
 	body {
-		background-color: #326CE5;
+		background-color: #006CFF;
 		
 	}
 	h1 { font-family: "Maven Pro"; font-size: 40px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; } 

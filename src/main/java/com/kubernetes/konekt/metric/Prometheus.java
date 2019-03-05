@@ -1,14 +1,21 @@
 package com.kubernetes.konekt.metric;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.sql.rowset.serial.SerialException;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +27,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kubernetes.konekt.client.ClusterApi;
+import com.kubernetes.konekt.entity.PrometheusFederation;
+import com.kubernetes.konekt.service.PrometheusFederationService;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ObjectMeta;
@@ -34,6 +43,7 @@ public class Prometheus {
     
     @Autowired
     private ObjectMapper objectMapper;
+    
     
     private ClusterApi clusterApi;
     
@@ -180,6 +190,7 @@ public class Prometheus {
         Yaml.dump(configYaml, fileWriter);
         fileWriter.close();
         this.updateAdditionalConfigs();
+         
     }
     
     public void removeCluster(String instanceIp) throws IOException, ApiException {
@@ -218,6 +229,7 @@ public class Prometheus {
         fileWriter.close();
         
         this.updateAdditionalConfigs();
+        
     }
     
     public void removePrometheusInstance(String instanceIp) throws IOException, ApiException {

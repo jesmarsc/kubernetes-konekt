@@ -5,11 +5,15 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.rowset.serial.SerialException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -18,12 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kubernetes.konekt.entity.Cluster;
 import com.kubernetes.konekt.entity.Container;
+import com.kubernetes.konekt.entity.PrometheusFederation;
 import com.kubernetes.konekt.form.YamlBuilderForm;
 import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
 import com.kubernetes.konekt.service.AccountService;
 import com.kubernetes.konekt.service.ClusterService;
 import com.kubernetes.konekt.service.ContainerService;
+import com.kubernetes.konekt.service.PrometheusFederationService;
 
 import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
@@ -89,6 +95,10 @@ public class ClusterApi {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
+    
+    @Autowired
+    private PrometheusFederationService prometheusFederationService;
+    
 
     private Boolean settingPrometheus = false;
 
@@ -247,10 +257,53 @@ public class ClusterApi {
                 }
             }
             Prometheus prometheus = new Prometheus();
+            getLatestPrometheusFederation();
             prometheus.addCluster(url.substring(8), user, pass);
+            pushLatestPrometheusFederation();
         }
 
         settingPrometheus = false;
+    }
+    
+    private void getLatestPrometheusFederation() {
+        PrometheusFederation prometheusFederation = prometheusFederationService.getPrometheusFederationById(new Long(1));
+        Blob fileBlob = prometheusFederation.getPrometheusFile();
+        try {
+            Integer blobLength = (int) fileBlob.length();
+            byte[] Data = fileBlob.getBytes(1, blobLength);
+            try (FileOutputStream stream = new FileOutputStream("prometheus-federation.yaml")) {
+                stream.write(Data);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } 
+    
+    }
+    private void pushLatestPrometheusFederation() {
+        File file = new File("prometheus-federation.yaml");
+
+     try {
+        byte[] fileContent = Files.readAllBytes(file.toPath());
+        Blob fileBlob = new javax.sql.rowset.serial.SerialBlob(fileContent);
+        // write to db
+        PrometheusFederation prometheusFederation = prometheusFederationService.getPrometheusFederationById(new Long(1));
+        prometheusFederation.setPrometheusFile(fileBlob);
+        System.out.println(prometheusFederation);
+        prometheusFederationService.savePrometheusFederation(prometheusFederation);
+    } catch (IOException e) {
+        e.printStackTrace();
+    } catch (SerialException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    } catch (SQLException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+        
     }
 
     public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {
