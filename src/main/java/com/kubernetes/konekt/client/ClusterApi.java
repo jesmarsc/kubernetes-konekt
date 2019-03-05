@@ -382,17 +382,20 @@ public class ClusterApi {
 
     public void deleteDeployment(String namespace, String deploymentName) throws ApiException {
         V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions |
-        appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
+        appsInstance.deleteNamespacedDeploymentWithHttpInfo(deploymentName, namespace, body, pretty, null, null, null);
+        //appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
     }
 
     public void deleteService(String namespace, String serviceName) throws ApiException {
         V1DeleteOptions body = new V1DeleteOptions();
-        coreInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
+        coreInstance.deleteNamespacedServiceWithHttpInfo(serviceName, namespace, body, pretty, null, null, null);
+        //coreInstance.deleteNamespacedService(serviceName, namespace, body, pretty, null, null, null);
     }
 
     public void deleteConfigMap(String namespace, String configName) throws ApiException {
         V1DeleteOptions body = new V1DeleteOptions();
-        coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
+        coreInstance.deleteNamespacedConfigMapWithHttpInfo(configName, namespace, body, pretty, null, null, null);
+        //coreInstance.deleteNamespacedConfigMap(configName, namespace, body, pretty, null, null, null);
     }
 
     public void deleteNamespace(String namespace) throws ApiException {
