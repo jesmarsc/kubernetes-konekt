@@ -1,4 +1,4 @@
-- job_name: 35.247.84.239
+- job_name: 35.185.210.221
   metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
   scheme: https
   params:
@@ -8,13 +8,13 @@
     - '{job=~"kube.*"}'
   static_configs:
   - targets:
-    - 35.247.84.239
+    - 35.185.210.221
   basic_auth:
     username: admin
-    password: 5hsiDOChHW9GW5Pw
+    password: gQUd1wSvMAssWQtD
   tls_config:
     insecure_skip_verify: true
-- job_name: 35.228.78.48
+- job_name: 35.197.42.85
   metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
   scheme: https
   params:
@@ -24,57 +24,9 @@
     - '{job=~"kube.*"}'
   static_configs:
   - targets:
-    - 35.228.78.48
+    - 35.197.42.85
   basic_auth:
     username: admin
-    password: AsRLCYeaALSj8FjH
-  tls_config:
-    insecure_skip_verify: true
-- job_name: 35.203.35.39
-  metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
-  scheme: https
-  params:
-    match[]:
-    - '{job=~"node.*"}'
-    - '{job=~"container.*"}'
-    - '{job=~"kube.*"}'
-  static_configs:
-  - targets:
-    - 35.203.35.39
-  basic_auth:
-    username: admin
-    password: j3k9u2DAACrBWcUh
-  tls_config:
-    insecure_skip_verify: true
-- job_name: 35.226.6.242
-  metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
-  scheme: https
-  params:
-    match[]:
-    - '{job=~"node.*"}'
-    - '{job=~"container.*"}'
-    - '{job=~"kube.*"}'
-  static_configs:
-  - targets:
-    - 35.226.6.242
-  basic_auth:
-    username: admin
-    password: 1FdAmCkTgkuow2hc
-  tls_config:
-    insecure_skip_verify: true
-- job_name: 35.225.186.140
-  metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
-  scheme: https
-  params:
-    match[]:
-    - '{job=~"node.*"}'
-    - '{job=~"container.*"}'
-    - '{job=~"kube.*"}'
-  static_configs:
-  - targets:
-    - 35.225.186.140
-  basic_auth:
-    username: admin
-    password: tgqTXNvcuHwZsqtj
+    password: zzw5G8yFchP8SxEt
   tls_config:
     insecure_skip_verify: true

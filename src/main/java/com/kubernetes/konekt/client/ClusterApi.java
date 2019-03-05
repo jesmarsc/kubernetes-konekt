@@ -233,7 +233,6 @@ public class ClusterApi {
                 if(file.isFile() && !file.isHidden()) {
                     filePath = directoryPath + file.getName();
                     FileReader fr = new FileReader(filePath);
-                    System.out.println(file.getName());
                     @SuppressWarnings("rawtypes")
                     Map customObjectMap = Yaml.loadAs(fr, Map.class);
                     if(customObjectMap.containsValue("ServiceMonitor")) {
@@ -247,10 +246,9 @@ public class ClusterApi {
                     }
                 }
             }
+            Prometheus prometheus = new Prometheus();
+            prometheus.addCluster(url.substring(8), user, pass);
         }
-
-        Prometheus prometheus = new Prometheus();
-        prometheus.addCluster(url.substring(8), user, pass);
 
         settingPrometheus = false;
     }
