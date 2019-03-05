@@ -245,7 +245,7 @@
 			console.log(ipInstance);
 			 
 			window.history.pushState("","",newHref);
-			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://104.198.3.94:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+ipInstance+':443&var-namespace=monitoring&kiosk&theme=light" width="100%" height="800" frameborder="0"></iframe></div>');
+			$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://35.197.36.213:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+ipInstance+':443&var-namespace=monitoring&kiosk&theme=light" width="100%" height="825" frameborder="0"></iframe></div>');
 				
 		}
 		

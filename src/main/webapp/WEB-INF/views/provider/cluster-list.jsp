@@ -52,18 +52,18 @@
 
 						<div class="col-lg-4">
 							<iframe
-								src="http://104.198.3.94:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=2&orgId=1&var-instance=${ipAddress}:443&kiosk&theme=light"
+								src="http://35.197.36.213:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=2&orgId=1&var-instance=${ipAddress}:443&kiosk=tv&theme=light"
 								width="100%" height="100%" frameborder="0"></iframe>
 						</div>
 						
 						<div class="col-lg-4">
 							<iframe
-								src="http://104.198.3.94:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=3&orgId=1&var-instance=${ipAddress}:443&kiosk&theme=light"
+								src="http://35.197.36.213:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=3&orgId=1&var-instance=${ipAddress}:443&kiosk=tv&theme=light"
 								width="100%" height="100%" frameborder="0"></iframe>
 						</div>
 						<div class="col-lg-4">
 							<iframe
-								src="http://104.198.3.94:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=4&orgId=1&var-instance=${ipAddress}:443&kiosk&theme=light"
+								src="http://35.197.36.213:3000/d-solo/g1Q_TZjmk/gauges?refresh=10s&panelId=4&orgId=1&var-instance=${ipAddress}:443&kiosk=tv&theme=light"
 								width="100%" height="100%" frameborder="0"></iframe>
 						</div>
 					</div>

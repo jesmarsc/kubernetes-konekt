@@ -37,10 +37,13 @@ public class Prometheus {
     
     private ClusterApi clusterApi;
     
-    private static final String masterPrometheus = "35.247.41.79:9090";
+    private static final String masterPrometheus = "35.199.188.36:9090";
     
+    /*
+     * Setup the master cluster
+     */
     public Prometheus() {
-        clusterApi = new ClusterApi("https://35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
+        clusterApi = new ClusterApi("https://35.185.210.221", "admin", "gQUd1wSvMAssWQtD");
     }
     
     public Metric getUsageMetric(String instanceIp) throws IOException {
@@ -249,6 +252,20 @@ public class Prometheus {
         clusterApi.replaceSecret(meta.getName(), meta.getNamespace(), body);
     }
     
+    public void createAdditionalConfigs() throws IOException, ApiException {
+        byte[] bytes = IOUtils.toByteArray(new FileInputStream("prometheus-federation.yaml"));
+        Map<String, byte[]> data = new HashMap<String, byte[]>();
+        data.put("prometheus-federation.yaml", bytes);
+        V1Secret body = new V1Secret();
+        body.setData(data);
+        V1ObjectMeta meta = new V1ObjectMeta();
+        meta.setName("prometheus-additional-configs");
+        meta.setNamespace("monitoring");
+        body.setMetadata(meta);
+        
+        clusterApi.createSecret(meta.getNamespace(), body);
+    }
+    
     public RestTemplate getRestTemplate() {
         return restTemplate;
     }
@@ -269,11 +286,7 @@ public class Prometheus {
         Prometheus test = new Prometheus();
         test.setObjectMapper(new ObjectMapper());
         test.setRestTemplate(new RestTemplate());
-        /*
-        test.removeCluster("what");
-        test.addCluster("35.247.84.239", "admin", "5hsiDOChHW9GW5Pw");
         test.updateAdditionalConfigs();
-        */
     }
 
 }
