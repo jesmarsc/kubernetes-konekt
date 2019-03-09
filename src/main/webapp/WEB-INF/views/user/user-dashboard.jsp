@@ -60,7 +60,7 @@
 				</ul>
 			</div>
 		</div>
-		<div class="main-panel" >
+		<div class="main-panel" style="background-color: #FFFFFF" >
 			<!-- Navbar -->
 			<nav class="navbar navbar-expand-lg ">
 				<div class=" container  ">
@@ -177,6 +177,8 @@
 								</c:url>
 								<c:url var="statusLink" value="/user/get-status">
 									<c:param name="containerId" value="${container.id}" />
+									<c:param name="clusterUrl" value="${container.clusterUrl}" />
+									<c:param name="user" value="${currentAccount.userName}" />
 								</c:url>
 								<tr>
 									<td>${container.id}</td>
@@ -259,10 +261,7 @@
 
 			</div>
 
-			<div id="cluster-metrics-div1"
-				class=" cluster-metrics-div container mx-1 col-sm-10 col-md-10 col-lg-12  ">
-
-			</div>
+			
 
 		</div>
 

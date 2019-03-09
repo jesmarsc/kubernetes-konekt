@@ -19,7 +19,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>YAML Builder</title>
+<title>Workload Status</title>
 <link href="https://fonts.googleapis.com/css?family=Maven+Pro:bold|700"
 	rel="stylesheet">
 
@@ -122,16 +122,18 @@ body {
 
 				</div>
 			</nav>
-			<div class="container-fluid col-xs-12 col-sm-6">
-				<h3> Status </h3>
-				<pre>${statusResult}</pre>
+			<div class="container mx-3">
+				<h3> <b>${statusResult} </b> </h3>
+				
 			</div>
-
+			
+			<div id="cluster-metrics-div1"
+				class=" cluster-metrics-div container mx-1 col-sm-10 col-md-10 col-lg-12  ">
+			</div>
 
 		</div>
 	</div>
-	<!-- Begin Body -->
-
+	
 
 
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
@@ -140,7 +142,17 @@ body {
 	<script
 		src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
+<script>
 
+	$(document).ready(function(){
+		var url = new URL(window.location.href );
+	  	var clusterUrl = url.searchParams.get("clusterUrl").substring(8);
+	  	var username = url.searchParams.get("user");
+		$(".cluster-metrics-div").append('<div class="clusterMetric-div"><iframe src="http://35.197.36.213:3000/d/GjdqjUrmz/global-metrics?refresh=10s&orgId=1&var-datasource=prometheus&var-instance='+clusterUrl+':443&var-namespace='+username+'&kiosk&theme=light" width="100%" height="825" frameborder="0"></iframe></div>');
+		
+	});
+	
+	</script>
 
 </body>
 </html>

@@ -21,7 +21,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="container" items="${runningContainers}">
-					<c:url var="removeLink" value="/provider/delete-container">
+					<c:url var="removeLink" value="/provider/delete-container?value=2">
 						<c:param name="containerId" value="${container.id}" />
 					</c:url>
 					<tr>

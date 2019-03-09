@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: simple-web-service
+  name: my-app
 spec:
   selector:
     matchLabels:
-      app: simple-web-service
+      app: my-app
   replicas: 1
   template:
     metadata:
       labels:
-        app: simple-web-service
+        app: my-app
     spec:
       containers:
         - name: simple-web-service
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: simple-web-service
+  name: my-app-service
 spec:
   selector:
-    app: simple-web-service
+    app: my-app
   ports:
   - protocol: "TCP"
     port: 8600

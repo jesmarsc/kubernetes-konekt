@@ -47,6 +47,7 @@ import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapList;
 import io.kubernetes.client.models.V1DeleteOptions;
 import io.kubernetes.client.models.V1Deployment;
+import io.kubernetes.client.models.V1DeploymentCondition;
 import io.kubernetes.client.models.V1DeploymentList;
 import io.kubernetes.client.models.V1Namespace;
 import io.kubernetes.client.models.V1NamespaceList;
@@ -108,7 +109,7 @@ public class ClusterApi {
 
     public ClusterApi(String clusterUrl, String clusterUser, String clusterPass) {
         client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-        client.setDebugging(false); // watches do not work if set to true
+        client.setDebugging(true); // watches do not work if set to true
         client.setBasePath(clusterUrl);
         Configuration.setDefaultApiClient(client);
         coreInstance = new CoreV1Api(client);
@@ -292,7 +293,6 @@ public class ClusterApi {
         // write to db
         PrometheusFederation prometheusFederation = prometheusFederationService.getPrometheusFederationById(new Long(1));
         prometheusFederation.setPrometheusFile(fileBlob);
-        System.out.println(prometheusFederation);
         prometheusFederationService.savePrometheusFederation(prometheusFederation);
     } catch (IOException e) {
         e.printStackTrace();
@@ -320,21 +320,32 @@ public class ClusterApi {
 
         if(kind.equals("Service")) {
             V1ServiceList result = getNamespacedV1ServiceList(namespace);
-            System.out.println(result);
             for(V1Service item : result.getItems()) {
                 if(item.getMetadata().getUid().equals(uid)) {
-                    return item.toString();
+                    if(!item.getStatus().getLoadBalancer().getIngress().isEmpty()) {
+                        return "Your application has been exposed on IP address " + item.getStatus().getLoadBalancer().getIngress().get(0).getIp().toString()
+                                + ":" + item.getSpec().getPorts().get(0).getPort().toString()  ;   
+                    }else {
+                        return "Your request to expose your application is still being processed. Should be ready soon!";
+                    }
                 }
             }
         }
 
-        if(kind.equals("Deployment")) {
+        else if(kind.equals("Deployment")) {
             V1DeploymentList result = getNamespacedV1DeploymentList(namespace);
-            System.out.println(result);
             for(V1Deployment item : result.getItems()) {
-                System.out.println(item.getMetadata().getUid());
                 if(item.getMetadata().getUid().equals(uid)) {
-                    return item.toString();
+                    if(!item.getStatus().getConditions().isEmpty()) {
+                        String finalMessage = new String();
+                        for(V1DeploymentCondition message : item.getStatus().getConditions()) {
+                            finalMessage += message.getMessage() + "<br><br>"; 
+                        }
+                        return finalMessage;
+                    }
+                    else {
+                        return "Your workload is still being upload. This may take a few minutes. \n";
+                    }
                 }
             }
         }
