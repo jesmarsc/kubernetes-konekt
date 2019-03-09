@@ -16,7 +16,6 @@ import java.util.Map;
 import javax.sql.rowset.serial.SerialException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -323,8 +322,9 @@ public class ClusterApi {
             for(V1Service item : result.getItems()) {
                 if(item.getMetadata().getUid().equals(uid)) {
                     if(!item.getStatus().getLoadBalancer().getIngress().isEmpty()) {
-                        return "Your application has been exposed on IP address " + item.getStatus().getLoadBalancer().getIngress().get(0).getIp().toString()
-                                + ":" + item.getSpec().getPorts().get(0).getPort().toString()  ;   
+                        String url = item.getStatus().getLoadBalancer().getIngress().get(0).getIp().toString()
+                                + ":" + item.getSpec().getPorts().get(0).getPort().toString(); 
+                        return "Your application has been exposed on IP address <a href=\"http://" + url + "\" target=\"_blank\"> "+ url +" </a>"  ;   
                     }else {
                         return "Your request to expose your application is still being processed. Should be ready soon!";
                     }
