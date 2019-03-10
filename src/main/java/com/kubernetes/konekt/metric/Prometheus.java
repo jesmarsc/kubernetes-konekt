@@ -4,12 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.sql.Blob;
-import java.sql.SQLException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,13 +44,17 @@ public class Prometheus {
     
     private ClusterApi clusterApi;
     
+    /*
+     * Prometheus LoadBalancer IP
+     */
     private static final String masterPrometheus = "35.199.188.36:9090";
     
     /*
-     * Setup the master cluster
+     * Point to master cluster
      */
     public Prometheus() {
-        clusterApi = new ClusterApi("https://35.185.210.221", "admin", "gQUd1wSvMAssWQtD");
+        clusterApi = new ClusterApi();
+        clusterApi.setupClient("https://35.185.210.221", "admin", "gQUd1wSvMAssWQtD");
     }
     
     public Metric getUsageMetric(String instanceIp) throws IOException {
@@ -65,17 +66,6 @@ public class Prometheus {
         metric.setMem(memPercent);
         metric.setNet(kiloBytesPerSecond);
         return metric;
-    }
-    
-    public Map<String, Double> getUsageMap(String instanceIp) throws IOException {
-        Map<String, Double> map = new HashMap<String, Double>();
-        double cpuPercent = getCpuUsage(instanceIp) * 100;
-        double memPercent = getMemUsage(instanceIp) * 100;
-        double kiloBytesPerSecond = (getNetInputUsage(instanceIp)+getNetOutputUsage(instanceIp))/1000;
-        map.put("cpu", cpuPercent);
-        map.put("mem", memPercent);
-        map.put("net", kiloBytesPerSecond);
-        return map;
     }
     
     public double getCpuUsage(String instanceIp) throws IOException {
@@ -163,42 +153,44 @@ public class Prometheus {
         return node.get("data").get("result").get(0).get("value").get(1).asDouble();
     }
     
+    @SuppressWarnings("unchecked")
     public void addCluster(String instanceIp, String username, String password) throws IOException, ApiException {
         
         FileReader templateReader = new FileReader("prometheus-template.yaml");
-        
-        ArrayList<Object> yaml = Yaml.loadAs(templateReader, ArrayList.class);
-        Map<String, Object> map = (HashMap) yaml.get(0);
-        map.put("job_name", instanceIp);
-        
-        ArrayList<Object> static_configs = (ArrayList) map.get("static_configs");
-        Map<String, Object> targets = (HashMap) static_configs.get(0);
-        ArrayList<String> instances = (ArrayList) targets.get("targets");
-        instances.add(instanceIp);
-        
-        Map<String, Object> basic_auth = (HashMap) map.get("basic_auth");
-        basic_auth.put("username", username);
-        basic_auth.put("password", password);
+        ArrayList<Map<String, Object>> yaml = Yaml.loadAs(templateReader, ArrayList.class);
         templateReader.close();
         
-        FileReader configReader = new FileReader("prometheus-federation.yaml");
-        ArrayList<Object> configYaml = Yaml.loadAs(configReader, ArrayList.class);
-        configYaml.add(map);
-        configReader.close();
+        Map<String, Object> map = yaml.get(0);
+        map.put("job_name", instanceIp);
         
-        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
-        Yaml.dump(configYaml, fileWriter);
-        fileWriter.close();
-        this.updateAdditionalConfigs();
-         
+        ArrayList<Object> static_configs = (ArrayList<Object>) map.get("static_configs");
+        Map<String, Object> targets = (HashMap<String, Object>) static_configs.get(0);
+        ArrayList<String> instances = (ArrayList<String>) targets.get("targets");
+        instances.add(instanceIp);
+        
+        Map<String, Object> basic_auth = (HashMap<String, Object>) map.get("basic_auth");
+        basic_auth.put("username", username);
+        basic_auth.put("password", password);
+        
+        V1Secret secret = clusterApi.getSecret("prometheus-additional-configs", "monitoring");
+        Map<String, byte[]> data = secret.getData();
+        String config = new String(data.get("prometheus-federation.yaml"), StandardCharsets.UTF_8);
+        ArrayList<Map<String, Object>> configYaml = Yaml.loadAs(config, ArrayList.class);
+        configYaml.add(map);
+        data.put("prometheus-federation.yaml", Yaml.dump(configYaml).getBytes());
+
+        clusterApi.replaceSecret(secret.getMetadata().getName(), secret.getMetadata().getNamespace(), secret);
     }
     
+    @SuppressWarnings("unchecked")
     public void removeCluster(String instanceIp) throws IOException, ApiException {
         
-        FileReader configReader = new FileReader("prometheus-federation.yaml");
-        ArrayList<Map<String, Object>> configYaml = Yaml.loadAs(configReader, ArrayList.class);
-        Iterator<Map<String, Object>> iterator = configYaml.iterator();
+        V1Secret secret = clusterApi.getSecret("prometheus-additional-configs", "monitoring");
+        Map<String, byte[]> data = secret.getData();
+        String config = new String(data.get("prometheus-federation.yaml"), StandardCharsets.UTF_8);
+        ArrayList<Map<String, Object>> configYaml = Yaml.loadAs(config, ArrayList.class);
         
+        Iterator<Map<String, Object>> iterator = configYaml.iterator();
         while(iterator.hasNext()) {
             Map<String, Object> job = iterator.next();
             if(job.get("job_name").equals(instanceIp)){
@@ -206,62 +198,8 @@ public class Prometheus {
                 break;
             }
         }
-        
-        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
-        Yaml.dump(configYaml, fileWriter);
-        fileWriter.close();
-        this.updateAdditionalConfigs();
-    }
-    
-    public void addPrometheusInstance(String instanceIp) throws IOException, ApiException {
-        
-        FileReader fileReader = new FileReader("prometheus-federation.yaml");
-        ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
-        Map<String, Object> topMap = (HashMap) topArray.get(0);
-        ArrayList<Object> static_configs = (ArrayList) topMap.get("static_configs");
-        Map<String, Object> targets = (HashMap) static_configs.get(0);
-        ArrayList<String> instances = (ArrayList) targets.get("targets");
-        instances.add(instanceIp);
-        fileReader.close();
-        
-        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
-        Yaml.dump(topArray, fileWriter);
-        fileWriter.close();
-        
-        this.updateAdditionalConfigs();
-        
-    }
-    
-    public void removePrometheusInstance(String instanceIp) throws IOException, ApiException {
-        
-        FileReader fileReader = new FileReader("prometheus-federation.yaml");
-        ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
-        Map<String, Object> topMap = (HashMap) topArray.get(0);
-        ArrayList<Object> static_configs = (ArrayList) topMap.get("static_configs");
-        Map<String, Object> targets = (HashMap) static_configs.get(0);
-        ArrayList<String> instances = (ArrayList) targets.get("targets");
-        instances.remove(instanceIp);
-        fileReader.close();
-        
-        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
-        Yaml.dump(topArray, fileWriter);
-        fileWriter.close();
-        
-        this.updateAdditionalConfigs();
-    }
-    
-    public void updateAdditionalConfigs() throws IOException, ApiException {
-        byte[] bytes = IOUtils.toByteArray(new FileInputStream("prometheus-federation.yaml"));
-        Map<String, byte[]> data = new HashMap<String, byte[]>();
-        data.put("prometheus-federation.yaml", bytes);
-        V1Secret body = new V1Secret();
-        body.setData(data);
-        V1ObjectMeta meta = new V1ObjectMeta();
-        meta.setName("prometheus-additional-configs");
-        meta.setNamespace("monitoring");
-        body.setMetadata(meta);
-        
-        clusterApi.replaceSecret(meta.getName(), meta.getNamespace(), body);
+        data.put("prometheus-federation.yaml", Yaml.dump(configYaml).getBytes());
+        clusterApi.replaceSecret(secret.getMetadata().getName(), secret.getMetadata().getNamespace(), secret);
     }
     
     public void createAdditionalConfigs() throws IOException, ApiException {
@@ -298,7 +236,44 @@ public class Prometheus {
         Prometheus test = new Prometheus();
         test.setObjectMapper(new ObjectMapper());
         test.setRestTemplate(new RestTemplate());
-        test.updateAdditionalConfigs();
     }
+    
+    /*
+    public void addPrometheusInstance(String instanceIp) throws IOException, ApiException {
+        
+        FileReader fileReader = new FileReader("prometheus-federation.yaml");
+        ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
+        Map<String, Object> topMap = (HashMap) topArray.get(0);
+        ArrayList<Object> static_configs = (ArrayList) topMap.get("static_configs");
+        Map<String, Object> targets = (HashMap) static_configs.get(0);
+        ArrayList<String> instances = (ArrayList) targets.get("targets");
+        instances.add(instanceIp);
+        fileReader.close();
+        
+        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
+        Yaml.dump(topArray, fileWriter);
+        fileWriter.close();
+        
+        this.updateAdditionalConfigs();
+    }
+    
+    public void removePrometheusInstance(String instanceIp) throws IOException, ApiException {
+        
+        FileReader fileReader = new FileReader("prometheus-federation.yaml");
+        ArrayList<Object> topArray = Yaml.loadAs(fileReader, ArrayList.class);
+        Map<String, Object> topMap = (HashMap) topArray.get(0);
+        ArrayList<Object> static_configs = (ArrayList) topMap.get("static_configs");
+        Map<String, Object> targets = (HashMap) static_configs.get(0);
+        ArrayList<String> instances = (ArrayList) targets.get("targets");
+        instances.remove(instanceIp);
+        fileReader.close();
+        
+        FileWriter fileWriter = new FileWriter("prometheus-federation.yaml");
+        Yaml.dump(topArray, fileWriter);
+        fileWriter.close();
+        
+        this.updateAdditionalConfigs();
+    }
+    */
 
 }

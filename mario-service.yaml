@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-app
+  name: mario-game
 spec:
   selector:
     matchLabels:
-      app: my-app
+      app: mario-game
   replicas: 1
   template:
     metadata:
       labels:
-        app: my-app
+        app: mario-game
     spec:
       containers:
-        - name: simple-web-service
+        - name: mario-game
           image: pengbai/docker-supermario
           ports:
             - name: http
@@ -22,10 +22,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-app-service
+  name: mario-game-ip
 spec:
   selector:
-    app: my-app
+    app: mario-game
   ports:
   - protocol: "TCP"
     port: 8600
