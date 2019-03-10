@@ -1,6 +1,6 @@
 package com.kubernetes.konekt.metric;
 
-public class Metric {
+public class Metric implements Comparable<Metric>{
     private double cpu;
     private double mem;
     private double net;
@@ -27,5 +27,10 @@ public class Metric {
     }
     public void setNet(double net) {
         this.net = net;
+    }
+    @Override
+    public int compareTo(Metric arg0) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

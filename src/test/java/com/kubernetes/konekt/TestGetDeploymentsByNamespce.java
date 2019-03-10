@@ -3,6 +3,7 @@ package com.kubernetes.konekt;
 import com.kubernetes.konekt.client.ClusterApi;
 
 import io.kubernetes.client.ApiException;
+import io.kubernetes.client.models.V1ServiceList;
 
 public class TestGetDeploymentsByNamespce {
 
@@ -14,7 +15,7 @@ public class TestGetDeploymentsByNamespce {
 		ClusterApi clusterApi = new ClusterApi();
 		
 		try {
-		clusterApi.getDeploymentsByNamespace(namespace);
+			clusterApi.getDeploymentsByNamespace(namespace);
 		}catch(ApiException e) {
 			e.printStackTrace();
 		}

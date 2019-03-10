@@ -11,16 +11,18 @@ public class UploadContainerToClusterForm {
 	
 	
 	
+	public UploadContainerToClusterForm() {
+
+		this.yaml = new String();
+		this.clusterUrl = new String();
+	}
+
 	public String getClusterUrl() {
 		return clusterUrl;
 	}
 
 	public void setClusterUrl(String clusterUrl) {
 		this.clusterUrl = clusterUrl;
-	}
-
-	public UploadContainerToClusterForm() {
-		
 	}
 
 	public String getYaml() {

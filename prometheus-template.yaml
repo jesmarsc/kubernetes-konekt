@@ -1,0 +1,15 @@
+- job_name:
+  metrics_path: /api/v1/namespaces/monitoring/services/prometheus-k8s:9090/proxy/federate
+  scheme: https
+  params:
+    match[]:
+    - '{job=~"node.*"}'
+    - '{job=~"container.*"}'
+    - '{job=~"kube.*"}'
+  static_configs:
+  - targets: []
+  basic_auth:
+    username:
+    password:
+  tls_config:
+    insecure_skip_verify: true

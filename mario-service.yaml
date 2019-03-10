@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mario-game
+spec:
+  selector:
+    matchLabels:
+      app: mario-game
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: mario-game
+    spec:
+      containers:
+        - name: mario-game
+          image: pengbai/docker-supermario
+          ports:
+            - name: http
+              containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mario-game-ip
+spec:
+  selector:
+    app: mario-game
+  ports:
+  - protocol: "TCP"
+    port: 8600
+    targetPort: 8080
+  type: LoadBalancer

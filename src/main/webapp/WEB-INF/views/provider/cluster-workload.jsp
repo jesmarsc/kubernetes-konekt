@@ -6,7 +6,7 @@
 
 <html>
 	
-	<div id="clusterWork-div">
+	<div class="clusterWork-div" id="clusterWork-div">
 
 	<h3>Running On Your Clusters</h3>
 		<!-- Beginning of table -->
@@ -21,7 +21,7 @@
 			</thead>
 			<tbody>
 				<c:forEach var="container" items="${runningContainers}">
-					<c:url var="removeLink" value="/provider/delete-container">
+					<c:url var="removeLink" value="/provider/delete-container?value=2">
 						<c:param name="containerId" value="${container.id}" />
 					</c:url>
 					<tr>
@@ -29,7 +29,7 @@
 						<td>${container.containerName}</td>
 						<td>${container.kind}</td>
 						<td>
-							<a class="btn btn-primary" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
+							<a class="btn btn-danger" href="${removeLink}" onclick="if(!(confirm('Are you sure you want to delete container')))return false" role="button">Delete Container</a>
 						</td>
 					</tr>
 				</c:forEach>

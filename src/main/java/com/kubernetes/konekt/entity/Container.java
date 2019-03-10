@@ -10,8 +10,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "container_info")
+@JsonIgnoreProperties({"account"})
 public class Container {
 
 	@Id
@@ -30,6 +33,9 @@ public class Container {
 
 	@Column(name = "container_status")
 	private String status;
+	
+	@Column(name = "container_uid")
+	private String uid;
 
 	@Column(name = "provider_id")
 	private Long providerId;
@@ -42,7 +48,7 @@ public class Container {
 
 	}
 
-	public Container(String containerName, String kind, String status, String clusterUrl, Long providerId) {
+	public Container(String containerName, String kind, String status, String clusterUrl, Long providerId, String uid) {
 
 		this.containerName = containerName;
 		this.clusterUrl = clusterUrl;
@@ -50,6 +56,15 @@ public class Container {
 		this.status = status;
 		this.kind = kind;
 		this.providerId = providerId;
+		this.uid = uid;
+	}
+
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public Long getProviderId() {

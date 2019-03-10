@@ -11,7 +11,7 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-<section class="register-block" style='background-image:url("/images/7135.jpg")'>
+<section class="register-block" >
     <div class="container">
 	<div class="row">
 		<div class="col-md-4 register-sec">
@@ -70,7 +70,7 @@
   		</div>
 
 	<div class="col-md-8 banner-sec">
-    	<img class="d-block img-fluid" src="https://i.pinimg.com/originals/39/0b/9b/390b9b3ea5f1df1d315ba7928beb8949.jpg">
+    	<img class="d-block img-fluid" src="images/kubernetes-horizontal-color.png">
 	</div>
 	</div>
 </div>

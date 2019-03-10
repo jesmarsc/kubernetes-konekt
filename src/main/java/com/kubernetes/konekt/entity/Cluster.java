@@ -12,12 +12,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "cluster_info")
+@JsonIgnoreProperties({"account", "encryptedUsername", "encryptedPassword"})
 public class Cluster {
 
-	//TODO: add to database status, prometheus_uid, prometheus_ip
-	
+	//TODO: add to database status
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,21 +46,16 @@ public class Cluster {
 	@JoinColumn(name="provider_account_id")
 	private Account account;
 	
-	@Column(name = "prometheus_ip")
-	private String prometheusIp;
-	
-	
 	public Cluster() {
 	}
 	
 	public Cluster(String clusterUrl, String clusterUsername, String clusterPassword, 
-	        Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin, String prometheusIp) {
+	        Blob encryptedUsername, Blob encryptedPassword, Integer roundRobin) {
 		this.clusterUrl = clusterUrl;
 		this.encryptedUsername = encryptedUsername;
 		this.encryptedPassword = encryptedPassword;
 		this.roundRobin = roundRobin;
 		this.status = "Pending";
-		this.prometheusIp = prometheusIp;
 	}
 
 	public Integer getRoundRobin() {
@@ -111,18 +108,11 @@ public class Cluster {
 	}
 
 	@Override
-	public String toString() {
-		return clusterUrl;
-	}
-
-
-	public String getPrometheusIp() {
-		return prometheusIp;
-	}
-
-	public void setPrometheusIp(String prometheusIp) {
-		this.prometheusIp = prometheusIp;
-	}
+    public String toString() {
+        return "Cluster [id=" + id + ", clusterUrl=" + clusterUrl + ", encryptedUsername=" + encryptedUsername
+                + ", encryptedPassword=" + encryptedPassword + ", status=" + status + ", roundRobin=" + roundRobin
+                + ", account=" + account + "]";
+    }
 
 	public String getStatus() {
 		return status;
@@ -132,5 +122,5 @@ public class Cluster {
 		this.status = status;
 	}
 	
-
+	
 }
