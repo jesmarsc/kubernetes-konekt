@@ -97,10 +97,10 @@ public class ClusterApi {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
-    
+
     @Autowired
     private PrometheusFederationService prometheusFederationService;
-    
+
     @Autowired
     private Prometheus prometheus;
 
@@ -114,7 +114,7 @@ public class ClusterApi {
         client.setDebugging(true);	// watches do not work if set to true
         client.setBasePath(clusterUrl);
         Configuration.setDefaultApiClient(client);
-        
+
         coreInstance = new CoreV1Api(client);
         appsInstance = new AppsV1Api(client);
         customObjectsInstance = new CustomObjectsApi(client);
@@ -215,21 +215,21 @@ public class ClusterApi {
     }
 
     public void setupPrometheus(Long providerId, String url, String user, String pass) throws ApiException, IOException {
-        
+
         settingPrometheus = true;
-        
+
         if(!this.checkNamespaceAlreadyExist("monitoring")) {
-    
+
             String filePath = "manifests/ultimate-prometheus-setup.yaml";
             String namespace = "monitoring";
-    
+
             File bigYamlFile = new File(filePath);
             parseYaml(bigYamlFile, namespace,  providerId);
-    
+
             //run all yaml files in custom-objects directory
             String directoryPath = "manifests/custom-objects/";
             File folder = new File(directoryPath);
-    
+
             for(File file : folder.listFiles()) {
                 if(file.isFile() && !file.isHidden()) {
                     filePath = directoryPath + file.getName();
@@ -252,13 +252,13 @@ public class ClusterApi {
             getLatestPrometheusFederation();
             prometheus.addCluster(url.substring(8), user, pass);
             pushLatestPrometheusFederation();
-            */
+             */
         }
-        
+
         prometheus.addCluster(url.substring(8), user, pass);
         settingPrometheus = false;
     }
-    
+
     private void getLatestPrometheusFederation() {
         PrometheusFederation prometheusFederation = prometheusFederationService.getPrometheusFederationById(new Long(1));
         Blob fileBlob = prometheusFederation.getPrometheusFile();
@@ -275,29 +275,29 @@ public class ClusterApi {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } 
-    
+
     }
-  
+
     private void pushLatestPrometheusFederation() {
         File file = new File("prometheus-federation.yaml");
 
-     try {
-        byte[] fileContent = Files.readAllBytes(file.toPath());
-        Blob fileBlob = new javax.sql.rowset.serial.SerialBlob(fileContent);
-        // write to db
-        PrometheusFederation prometheusFederation = prometheusFederationService.getPrometheusFederationById(new Long(1));
-        prometheusFederation.setPrometheusFile(fileBlob);
-        prometheusFederationService.savePrometheusFederation(prometheusFederation);
-    } catch (IOException e) {
-        e.printStackTrace();
-    } catch (SerialException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    } catch (SQLException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-    }
-        
+        try {
+            byte[] fileContent = Files.readAllBytes(file.toPath());
+            Blob fileBlob = new javax.sql.rowset.serial.SerialBlob(fileContent);
+            // write to db
+            PrometheusFederation prometheusFederation = prometheusFederationService.getPrometheusFederationById(new Long(1));
+            prometheusFederation.setPrometheusFile(fileBlob);
+            prometheusFederationService.savePrometheusFederation(prometheusFederation);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SerialException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
     public V1ServiceList getNamespacedV1ServiceList(String namespace) throws ApiException {
@@ -436,7 +436,7 @@ public class ClusterApi {
         result = coreInstance.replaceNamespacedSecret(name, namespace, body, pretty);
         return result;
     }
-    
+
     public V1Secret getSecret(String name, String namespace) throws ApiException {
         V1Secret result = null;
         result = coreInstance.readNamespacedSecret(name, namespace, pretty, null, null);
@@ -445,7 +445,7 @@ public class ClusterApi {
 
     public void deleteDeployment(String namespace, String deploymentName) throws ApiException {
         V1DeleteOptions body = new V1DeleteOptions(); // V1DeleteOptions |
-        
+
         appsInstance.deleteNamespacedDeploymentWithHttpInfo(deploymentName, namespace, body, pretty, null, null, null);
         //appsInstance.deleteNamespacedDeployment(deploymentName, namespace, body, pretty, null, null, null);
     }
