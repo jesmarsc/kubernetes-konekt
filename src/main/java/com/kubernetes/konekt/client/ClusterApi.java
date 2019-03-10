@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kubernetes.konekt.entity.Cluster;
@@ -60,6 +60,7 @@ import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.Yaml;
 
 @Component
+@RequestScope
 public class ClusterApi {
 
     private ApiClient client;
@@ -76,7 +77,7 @@ public class ClusterApi {
 
     private AppsV1beta2Api appsBeta2Api;
 
-    private static String pretty = "true";
+    private static final String pretty = "true";
 
     @Autowired
     private ClusterService clusterService;
@@ -89,31 +90,21 @@ public class ClusterApi {
 
     @Autowired
     private ClusterSecurity clusterSecurity;
+    
+    @Autowired
+    private Prometheus prometheus;
 
     private Boolean settingPrometheus = false;
 
     public ClusterApi() {
-
-    }
-
-    public ClusterApi(String clusterUrl, String clusterUser, String clusterPass) {
-        client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-        client.setDebugging(false); // watches do not work if set to true
-        client.setBasePath(clusterUrl);
-        Configuration.setDefaultApiClient(client);
-        coreInstance = new CoreV1Api(client);
-        appsInstance = new AppsV1Api(client);
-        customObjectsInstance = new CustomObjectsApi(client);
-        apiExtensionsInstance = new ApiextensionsV1beta1Api(client);
-        rbacAuthApi = new RbacAuthorizationV1Api();
-        appsBeta2Api = new AppsV1beta2Api();
     }
 
     public void setupClient(String clusterUrl, String clusterUser, String clusterPass) {
         client = Config.fromUserPassword(clusterUrl, clusterUser, clusterPass, false);
-        client.setDebugging(false);	// watches do not work if set to true
+        client.setDebugging(true);	// watches do not work if set to true
         client.setBasePath(clusterUrl);
         Configuration.setDefaultApiClient(client);
+        
         coreInstance = new CoreV1Api(client);
         appsInstance = new AppsV1Api(client);
         customObjectsInstance = new CustomObjectsApi(client);
@@ -246,10 +237,9 @@ public class ClusterApi {
                     }
                 }
             }
-            Prometheus prometheus = new Prometheus();
-            prometheus.addCluster(url.substring(8), user, pass);
         }
-
+        
+        prometheus.addCluster(url.substring(8), user, pass);
         settingPrometheus = false;
     }
 
@@ -375,6 +365,12 @@ public class ClusterApi {
     public V1Secret replaceSecret(String name, String namespace, V1Secret body) throws ApiException {
         V1Secret result = null;
         result = coreInstance.replaceNamespacedSecret(name, namespace, body, pretty);
+        return result;
+    }
+    
+    public V1Secret getSecret(String name, String namespace) throws ApiException {
+        V1Secret result = null;
+        result = coreInstance.readNamespacedSecret(name, namespace, pretty, null, null);
         return result;
     }
 
