@@ -221,8 +221,7 @@
 	}
 
 	function show(showId, fakeip){
-		console.log("here")
-		console.log(showThisId)
+
 		remove();
 		setActiveEmpty();
 		if(showId == 1){
