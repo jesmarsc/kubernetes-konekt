@@ -316,7 +316,7 @@ public class ClusterApi {
             V1ServiceList result = getNamespacedV1ServiceList(namespace);
             for(V1Service item : result.getItems()) {
                 if(item.getMetadata().getUid().equals(uid)) {
-                    if(!item.getStatus().getLoadBalancer().getIngress().isEmpty()) {
+                    if(item.getStatus().getLoadBalancer().getIngress() != null) {
                         String url = item.getStatus().getLoadBalancer().getIngress().get(0).getIp().toString()
                                 + ":" + item.getSpec().getPorts().get(0).getPort().toString(); 
                         return "Your application has been exposed on IP address <a href=\"http://" + url + "\" target=\"_blank\"> "+ url +" </a>"  ;   
