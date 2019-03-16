@@ -116,7 +116,7 @@ public class ProviderController {
 
         try {
             prometheus.removeCluster(clusterUrl.substring(8));
-        } catch (IOException | ApiException e) {
+        } catch (ApiException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
