@@ -6,16 +6,13 @@
 
 ### Latest Instructions:
 - Visit https://kubernetes-konekt.cfapps.io/ to access latest working model.
-- Username: mary Password: fun123
 
 ### Current State:
 - Spring Security implemented
 - Migrated to latest database
 - Provider: can upload cluster URL and credentials
-- User: can launch deployment with a YAML file
+- User: can launch deployment/services with a YAML file
 
 ### TODO:
-- Launch ~~Deployments~~ AND Services
-- Delete ~~Deployments~~ AND Services
-- Integrate Prometheus for loadbalancer
-- Integrate YAML builder
+- Improve YAML builder
+- Find concurrency issues
