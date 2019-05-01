@@ -9,12 +9,18 @@ A platform where users can create services and providers supply the cloud resour
 - ~~Visit https://kubernetes-konekt.cfapps.io/ to access demo.~~ No funds available to host.
 
 ## Features
-### Real-time cluster performance metrics
+### Real-time Cluster Performance Metrics
 ![Gauges](images/Provider-Dashboard.PNG)
 ![Performance Graphs](images/Performance-Graphs.PNG)
 
 ### Manage Deployments
 ![Deployments](images/User-Dashboard.PNG)
+
+## Backend
+### Architecture
+![User-Backend](images/User-Backend.png)
+### Technologies Used
+![Technologies-Used](images/Technologies-Used.png)
 
 ### Current State:
 - User Accounts managed with Spring Security on MySQL database
