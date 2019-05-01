@@ -1,70 +1,27 @@
 package com.kubernetes.konekt.client;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
+import java.sql.*;
 import java.nio.file.Files;
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.sql.rowset.serial.SerialException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.annotation.RequestScope;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kubernetes.konekt.entity.Cluster;
-import com.kubernetes.konekt.entity.Container;
-import com.kubernetes.konekt.entity.PrometheusFederation;
 import com.kubernetes.konekt.form.YamlBuilderForm;
 import com.kubernetes.konekt.metric.Prometheus;
 import com.kubernetes.konekt.security.ClusterSecurity;
-import com.kubernetes.konekt.service.AccountService;
-import com.kubernetes.konekt.service.ClusterService;
-import com.kubernetes.konekt.service.ContainerService;
-import com.kubernetes.konekt.service.PrometheusFederationService;
+import com.kubernetes.konekt.service.*;
+import com.kubernetes.konekt.entity.*;
 
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.ApiResponse;
-import io.kubernetes.client.Configuration;
-import io.kubernetes.client.apis.ApiextensionsV1beta1Api;
-import io.kubernetes.client.apis.AppsV1Api;
-import io.kubernetes.client.apis.AppsV1beta2Api;
-import io.kubernetes.client.apis.CoreV1Api;
-import io.kubernetes.client.apis.CustomObjectsApi;
-import io.kubernetes.client.apis.RbacAuthorizationV1Api;
-import io.kubernetes.client.models.V1ClusterRole;
-import io.kubernetes.client.models.V1ClusterRoleBinding;
-import io.kubernetes.client.models.V1ConfigMap;
-import io.kubernetes.client.models.V1ConfigMapList;
-import io.kubernetes.client.models.V1DeleteOptions;
-import io.kubernetes.client.models.V1Deployment;
-import io.kubernetes.client.models.V1DeploymentCondition;
-import io.kubernetes.client.models.V1DeploymentList;
-import io.kubernetes.client.models.V1Namespace;
-import io.kubernetes.client.models.V1NamespaceList;
-import io.kubernetes.client.models.V1ObjectMeta;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1PodList;
-import io.kubernetes.client.models.V1Role;
-import io.kubernetes.client.models.V1RoleBinding;
-import io.kubernetes.client.models.V1Secret;
-import io.kubernetes.client.models.V1Service;
-import io.kubernetes.client.models.V1ServiceAccount;
-import io.kubernetes.client.models.V1ServiceList;
-import io.kubernetes.client.models.V1beta1CustomResourceDefinition;
-import io.kubernetes.client.models.V1beta2DaemonSet;
-import io.kubernetes.client.models.V1beta2Deployment;
-import io.kubernetes.client.util.Config;
-import io.kubernetes.client.util.Yaml;
+import io.kubernetes.client.*;
+import io.kubernetes.client.apis.*;
+import io.kubernetes.client.models.*;
+import io.kubernetes.client.util.*;
 
 @Component
 @RequestScope
